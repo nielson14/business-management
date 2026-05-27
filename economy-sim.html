@@ -270,8 +270,8 @@ const PHASES = [
     event:{ type:'Market Opportunity', title:'Well-funded competitor enters your market', desc:'A startup just launched a rival product with heavy VC backing and aggressive pricing. How do you respond?' },
     eventOptions:{
       market:['Lower my price to compete directly on price','Hold my premium position and invest in quality differentiation','Increase marketing spend to strengthen brand loyalty'],
-      mixed:['Apply for a government export subsidy to offset the competitor's advantage','Adjust pricing within the government-allowed range to stay competitive','Lobby for an import tariff to protect the domestic market'],
-      command:['Report the competitor to the central planning bureau for market disruption','Request an increased production quota from the government to match output','Accept the government-assigned market share and focus on meeting the quota']
+      mixed:["Apply for a government export subsidy to offset the competitor advantage","Adjust pricing within the government-allowed range to stay competitive","Lobby for an import tariff to protect the domestic market"],
+      command:["Report the competitor to the central planning bureau for market disruption","Request an increased production quota from the government to match output","Accept the government-assigned market share and focus on meeting the quota"]
     },
     // Supply/demand base (0-100 scale, higher demand = curve shifted right)
     supplyBase:60, demandBase:82,
@@ -297,8 +297,8 @@ const PHASES = [
     event:{ type:'Supply Shock', title:'Raw material tariff raises your costs 30%', desc:'A new government tariff on imported materials just increased your cost per unit by 30%. How do you protect your margin?' },
     eventOptions:{
       market:['Pass the full cost increase to customers by raising price','Absorb the cost to retain customers, accepting a lower margin','Switch to domestic suppliers — slower transition but long-term savings'],
-      mixed:['Apply for a government cost-offset subsidy for affected producers','Split the cost — raise price partially and absorb the rest','Negotiate with the government to reduce the tariff on your material category'],
-      command:['Submit a cost-increase report to the planning bureau and await new pricing directives','Continue at the government-set price and request a budget subsidy to cover losses','Request permission to substitute government-approved alternative materials']
+      mixed:["Apply for a government cost-offset subsidy for affected producers","Split the cost: raise price partially and absorb the rest","Negotiate with the government to reduce the tariff on this material"],
+      command:['Submit a cost-increase report to the planning bureau and await new pricing directives',"Continue at the government-set price and request a budget subsidy to cover losses","Request permission to substitute government-approved alternative materials"]
     },
     supplyBase:75, demandBase:85,
     sliders:{
@@ -320,9 +320,9 @@ const PHASES = [
     news:{ headline:'Recession Confirmed — Retail Bankruptcies Up 34%', body:'GDP has contracted for a second consecutive quarter. Consumer spending dropped 12% and retail bankruptcies are rising sharply across the country.' },
     event:{ type:'Crisis Decision', title:'Your largest client cancels a $200K contract', desc:'Your biggest account just cut spending due to their own downturn. You have a serious revenue gap to fill or costs to cut.' },
     eventOptions:{
-      market:['Cut workforce immediately to reduce expenses and survive the shortfall','Aggressively pursue new smaller clients to replace the lost revenue','Offer the client a steep discount to retain them at a lower margin'],
-      mixed:['Apply for a government business stabilization grant for recession-affected companies','Reduce employee hours rather than laying off — government subsidizes partial wages','Pivot to fulfilling government infrastructure contracts opened during the recession'],
-      command:['Submit a revised output plan to the central authority reflecting lower demand','Request that the government reallocate your workers to a higher-demand sector','Wait for the government to issue new demand directives and adjust quota accordingly']
+      market:['Cut workforce immediately to reduce expenses and survive the shortfall',"Aggressively pursue new smaller clients to replace the lost revenue","Offer the client a steep discount to retain them at a lower margin"],
+      mixed:['Apply for a government business stabilization grant for recession-affected companies',"Reduce employee hours rather than laying off: government subsidizes partial wages","Pivot to fulfilling government infrastructure contracts opened during the recession"],
+      command:["Submit a revised output plan to the central authority reflecting lower demand","Request that the government reallocate your workers to a higher-demand sector","Wait for the government to issue new demand directives and adjust quota accordingly"]
     },
     supplyBase:65, demandBase:42,
     sliders:{
@@ -345,8 +345,8 @@ const PHASES = [
     event:{ type:'Survival Decision', title:'Your bank calls in your outstanding business loan', desc:'Lenders are pulling credit. You must act immediately — liquidate inventory, seek an angel investor, or apply for an SBA emergency loan.' },
     eventOptions:{
       market:['Liquidate inventory at a steep loss to immediately pay off the loan','Seek an angel investor — give up partial equity in exchange for emergency capital','Apply for an SBA emergency loan — takes time but preserves full ownership'],
-      mixed:['Apply for a government-backed emergency business rescue loan at reduced interest','Negotiate with the government-regulated bank for a mandated repayment extension','Accept a partial government bailout in exchange for temporary oversight of operations'],
-      command:['Report the financial crisis to the state planning authority and request emergency funds','Request a government debt forgiveness directive — standard in command economies during downturns','Have the state absorb the business debt in exchange for converting to full state ownership']
+      mixed:["Apply for a government-backed emergency business rescue loan at reduced interest","Negotiate with the government-regulated bank for a mandated repayment extension","Accept a partial government bailout in exchange for temporary oversight of operations"],
+      command:["Report the financial crisis to the state planning authority and request emergency funds","Request a government debt forgiveness directive: standard in command economies during downturns","Have the state absorb the business debt in exchange for converting to full state ownership"]
     },
     supplyBase:48, demandBase:22,
     sliders:{
