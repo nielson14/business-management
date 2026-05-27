@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership Challenge Simulator – Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F8F6F2;
+  --surface: #FFFFFF;
+  --surface2: #F2EFE9;
+  --surface3: #E8E4DC;
+  --border: #D8D3C8;
+  --text: #1E1C18;
+  --text-muted: #7A7468;
+  --text-dim: #B8B2A8;
+  --ink: #1E1C18;
+  --autocratic: #8B1A1A;
+  --autocratic-light: #F8ECEC;
+  --democratic: #1A5C8B;
+  --democratic-light: #ECF3F8;
+  --laissez: #2A7A3A;
+  --laissez-light: #ECF5EE;
+  --theory-x: #6B3A8B;
+  --theory-x-light: #F3EEF8;
+  --theory-y: #1A6B5C;
+  --theory-y-light: #EEF5F3;
+  --theory-z: #8B5A1A;
+  --theory-z-light: #F5F0EE;
+  --herzberg: #1A3A6B;
+  --herzberg-light: #EEF1F8;
+  --maslow: #6B1A4A;
+  --maslow-light: #F5EEF2;
+  --accent: #C4862A;
+  --accent-light: #FBF3E8;
+  --radius: 12px;
+  --radius-sm: 7px;
+  --serif: 'Cormorant Garamond', serif;
+  --sans: 'Outfit', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Subtle grain texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+header {
+  position: relative;
+  z-index: 2;
+  background: var(--ink);
+  color: #F8F6F2;
+  padding: 0;
+}
+.header-top {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.header-brand {
+  padding: 1.25rem 2rem;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.header-brand h1 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1;
+  color: #F8F6F2;
+}
+.header-brand .sub {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(248,246,242,0.4);
+  margin-top: 0.3rem;
+}
+.header-scenario-track {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  padding: 0 1.5rem;
+  gap: 0;
+  overflow-x: auto;
+}
+.sc-step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.sc-step:last-child { border-right: none; }
+.sc-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.sc-name {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.35);
+  font-weight: 500;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+.sc-step.active .sc-num { border-color: var(--accent); background: var(--accent); color: #fff; }
+.sc-step.active .sc-name { color: rgba(255,255,255,0.9); }
+.sc-step.done .sc-num { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+.sc-step.done .sc-name { color: rgba(255,255,255,0.5); }
+
+.header-profile {
+  padding: 0.75rem 1.5rem;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+.profile-stat { text-align: center; }
+.profile-stat-label { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+.profile-stat-val { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--accent); }
+
+/* Layout */
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 75px);
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--ink);
+  color: #F8F6F2;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.sb-section-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 0.75rem;
+}
+
+/* Manager Profile */
+.profile-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.profile-avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2A2520, #3A3028);
+  border: 2px solid rgba(196,134,42,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.75rem;
+  position: relative;
+}
+.profile-name {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  color: #F8F6F2;
+}
+.profile-title {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+/* Style breakdown bars */
+.style-bars { display: flex; flex-direction: column; gap: 0.6rem; }
+.style-bar-row { }
+.style-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.3rem;
+}
+.style-bar-name { font-size: 0.7rem; font-weight: 600; }
+.style-bar-count { font-size: 0.62rem; color: rgba(255,255,255,0.35); }
+.style-bar-track {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.style-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+/* Theory reference */
+.theory-pills { display: flex; flex-direction: column; gap: 0.4rem; }
+.theory-pill {
+  padding: 0.5rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+}
+.theory-pill-name { font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 0.15rem; }
+.theory-pill-desc { font-size: 0.6rem; color: rgba(255,255,255,0.3); line-height: 1.35; }
+
+/* Main content */
+.main {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Scenario card */
+.scenario-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: slideUp 0.4s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.scenario-top {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+.scenario-num {
+  font-family: var(--serif);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 50px;
+}
+.scenario-meta { flex: 1; }
+.scenario-category {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.scenario-title {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.3px;
+}
+.scenario-context {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* Characters */
+.characters-row {
+  padding: 1rem 1.5rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.character-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.75rem;
+}
+.char-emoji { font-size: 0.9rem; }
+.char-name { font-weight: 600; }
+.char-role { color: var(--text-muted); }
+
+/* Situation detail */
+.situation-body {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.situation-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+.situation-text {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+.situation-quote {
+  margin: 1rem 0;
+  padding: 0.85rem 1.1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-style: italic;
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.situation-key-fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--surface2);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Decision area */
+.decision-area {
+  padding: 1.5rem;
+}
+.decision-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Style selector */
+.style-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+.style-option {
+  padding: 0.85rem 0.75rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.style-option:hover { border-color: var(--text-dim); }
+.style-option.sel-autocratic { border-color: var(--autocratic); background: var(--autocratic-light); }
+.style-option.sel-democratic { border-color: var(--democratic); background: var(--democratic-light); }
+.style-option.sel-laissez { border-color: var(--laissez); background: var(--laissez-light); }
+.style-icon { font-size: 1.25rem; margin-bottom: 0.3rem; }
+.style-name { font-size: 0.75rem; font-weight: 700; margin-bottom: 0.15rem; }
+.style-option.sel-autocratic .style-name { color: var(--autocratic); }
+.style-option.sel-democratic .style-name { color: var(--democratic); }
+.style-option.sel-laissez .style-name { color: var(--laissez); }
+.style-desc { font-size: 0.62rem; color: var(--text-muted); line-height: 1.3; }
+
+/* Theory selector */
+.theory-selector {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.theory-option {
+  padding: 0.65rem 0.5rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.theory-option:hover { border-color: var(--text-dim); }
+.theory-option.sel-maslow { border-color: var(--maslow); background: var(--maslow-light); }
+.theory-option.sel-theory-x { border-color: var(--theory-x); background: var(--theory-x-light); }
+.theory-option.sel-theory-y { border-color: var(--theory-y); background: var(--theory-y-light); }
+.theory-option.sel-theory-z { border-color: var(--theory-z); background: var(--theory-z-light); }
+.theory-option.sel-herzberg { border-color: var(--herzberg); background: var(--herzberg-light); }
+.theory-name { font-size: 0.68rem; font-weight: 700; margin-bottom: 0.15rem; }
+.theory-option.sel-maslow .theory-name { color: var(--maslow); }
+.theory-option.sel-theory-x .theory-name { color: var(--theory-x); }
+.theory-option.sel-theory-y .theory-name { color: var(--theory-y); }
+.theory-option.sel-theory-z .theory-name { color: var(--theory-z); }
+.theory-option.sel-herzberg .theory-name { color: var(--herzberg); }
+.theory-tagline { font-size: 0.58rem; color: var(--text-muted); line-height: 1.3; }
+
+/* Response area */
+.response-wrap { margin-bottom: 1rem; }
+.response-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.response-hint { font-size: 0.62rem; color: var(--text-dim); font-weight: 400; letter-spacing: 0; text-transform: none; }
+textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--text);
+  resize: vertical;
+  min-height: 110px;
+  outline: none;
+  line-height: 1.65;
+  transition: border-color 0.15s;
+}
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196,134,42,0.1); }
+textarea::placeholder { color: var(--text-dim); }
+
+/* Buttons */
+.btn {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.7rem 1.6rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--ink); color: #F8F6F2; }
+.btn-primary:hover { background: #3A3530; transform: translateY(-1px); }
+.btn-primary:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; transform: none; }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--text-muted); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #A8701E; transform: translateY(-1px); }
+.btn-row { display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; }
+
+/* Consequence card */
+.consequence-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  animation: slideUp 0.35s ease;
+}
+.consequence-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+.consequence-icon { font-size: 1.25rem; }
+.consequence-title { font-weight: 700; font-size: 0.9rem; }
+.consequence-text { font-size: 0.83rem; color: var(--text-muted); line-height: 1.65; }
+.consequence-outcome {
+  margin-top: 0.85rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.outcome-positive { background: #EEF8F2; color: #1A6B3A; }
+.outcome-negative { background: #F8EEEE; color: #8B1A1A; }
+.outcome-mixed { background: #FBF3E8; color: #8B5A1A; }
+
+/* Results */
+.manager-report {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.report-header {
+  background: var(--ink);
+  color: #F8F6F2;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.report-avatar { font-size: 2.5rem; }
+.report-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; margin-bottom: 0.2rem; }
+.report-sub { font-size: 0.72rem; color: rgba(255,255,255,0.4); letter-spacing: 0.06em; }
+.report-body { padding: 1.75rem 2rem; }
+
+.style-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.style-summary-card {
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  border: 1.5px solid transparent;
+}
+.style-summary-count { font-family: var(--serif); font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 0.25rem; }
+.style-summary-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; }
+
+/* Feedback */
+.feedback-section { margin-top: 1.5rem; }
+.feedback-label { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; font-weight: 600; }
+.score-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.sc {
+  font-size: 0.7rem; font-weight: 700; padding: 0.3rem 0.85rem;
+  border-radius: 100px; letter-spacing: 0.03em;
+}
+.sc.great { background: #EEF8F2; color: #1A6B3A; border: 1px solid rgba(26,107,58,0.25); }
+.sc.ok { background: #FBF3E8; color: #8B5A1A; border: 1px solid rgba(139,90,26,0.25); }
+.sc.needs { background: #F8EEEE; color: #8B1A1A; border: 1px solid rgba(139,26,26,0.25); }
+
+.feedback-body {
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: var(--text);
+  white-space: pre-wrap;
+  min-height: 80px;
+}
+
+.typing-dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,80%,100%{opacity:.15} 40%{opacity:1} }
+
+/* Decision summary table */
+.decision-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.8rem; }
+.decision-table th { text-align: left; padding: 0.5rem 0.75rem; background: var(--surface2); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+.decision-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.4; }
+.decision-table tr:last-child td { border-bottom: none; }
+
+@media(max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .style-selector { grid-template-columns: 1fr; }
+  .theory-selector { grid-template-columns: repeat(2, 1fr); }
+  .style-summary-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-brand">
+      <h1>Leadership Challenge Simulator</h1>
+      <div class="sub">Business Management · Strand 3 · Standards 1–4</div>
+    </div>
+    <div class="header-scenario-track" id="scenario-track"></div>
+    <div class="header-profile">
+      <div class="profile-stat">
+        <div class="profile-stat-label">Scenarios</div>
+        <div class="profile-stat-val" id="h-completed">0/5</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-label">Dominant Style</div>
+        <div class="profile-stat-val" id="h-dominant">—</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+
+    <div>
+      <div class="sb-section-label">Your Manager Profile</div>
+      <div class="profile-ring-wrap">
+        <div class="profile-avatar">👔</div>
+        <div class="profile-name" id="manager-name">New Manager</div>
+        <div class="profile-title">Business Management · Grade 11–12</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-label">Leadership Style Usage</div>
+      <div class="style-bars">
+        <div class="style-bar-row">
+          <div class="style-bar-label">
+            <span class="style-bar-name" style="color:var(--autocratic)">Autocratic</span>
+            <span class="style-bar-count" id="sb-auto-count">0 used</span>
+          </div>
+          <div class="style-bar-track"><div class="style-bar-fill" id="sb-auto" style="width:0%;background:var(--autocratic)"></div></div>
+        </div>
+        <div class="style-bar-row">
+          <div class="style-bar-label">
+            <span class="style-bar-name" style="color:var(--democratic)">Democratic</span>
+            <span class="style-bar-count" id="sb-dem-count">0 used</span>
+          </div>
+          <div class="style-bar-track"><div class="style-bar-fill" id="sb-dem" style="width:0%;background:var(--democratic)"></div></div>
+        </div>
+        <div class="style-bar-row">
+          <div class="style-bar-label">
+            <span class="style-bar-name" style="color:var(--laissez)">Laissez-faire</span>
+            <span class="style-bar-count" id="sb-lf-count">0 used</span>
+          </div>
+          <div class="style-bar-track"><div class="style-bar-fill" id="sb-lf" style="width:0%;background:var(--laissez)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-label">Theory Quick Reference</div>
+      <div class="theory-pills">
+        <div class="theory-pill">
+          <div class="theory-pill-name" style="color:#D4A8E0">Maslow</div>
+          <div class="theory-pill-desc">Hierarchy of needs: Survival → Security → Belonging → Importance → Self</div>
+        </div>
+        <div class="theory-pill">
+          <div class="theory-pill-name" style="color:#B8A0D4">Theory X</div>
+          <div class="theory-pill-desc">People dislike work, need supervision and direction</div>
+        </div>
+        <div class="theory-pill">
+          <div class="theory-pill-name" style="color:#A0C8C0">Theory Y</div>
+          <div class="theory-pill-desc">People are self-motivated and enjoy meaningful challenge</div>
+        </div>
+        <div class="theory-pill">
+          <div class="theory-pill-name" style="color:#D4C0A0">Theory Z</div>
+          <div class="theory-pill-desc">People are disciplined, collaborative, and focused on long-term relationships</div>
+        </div>
+        <div class="theory-pill">
+          <div class="theory-pill-name" style="color:#A0B8D4">Herzberg</div>
+          <div class="theory-pill-desc">Hygiene factors prevent dissatisfaction; motivators create true satisfaction</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+const WORKER_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
+
+// ─── SCENARIOS ────────────────────────────────────────────────────────────────
+const SCENARIOS = [
+  {
+    id: 1,
+    category: 'Employee Performance',
+    title: 'The Disappearing Star',
+    context: 'You manage a team of 8 at Meridian Consulting. Jordan, your previously top-performing analyst, has become visibly withdrawn over the past month. Deadlines are being missed for the first time.',
+    characters: [
+      { emoji: '👩‍💼', name: 'Jordan', role: 'Senior Analyst — previously top performer' },
+      { emoji: '👥', name: 'The Team', role: '7 others watching how you handle this' }
+    ],
+    situation: `Jordan used to be the first one in and the last one out. Clients loved working with her. But for the past four weeks, she has submitted three reports late, skipped two team meetings without explanation, and seems distracted in every conversation.\n\nYou pull Jordan aside and ask if everything is okay. She says: "Everything is fine, I just have some personal stuff going on. Can we talk about this later?"\n\nThe rest of your team has noticed. Two colleagues have asked you privately if Jordan is okay. One said: "If this keeps up, it's not fair to the rest of us."`,
+    quote: '"Everything is fine, I just have some personal stuff going on. Can we talk about this later?"',
+    keyFact: '⏱ Jordan has been with the company 4 years with no prior performance issues',
+    bestStyle: 'democratic',
+    bestTheory: 'maslow',
+    consequence: {
+      autocratic: { text: 'You issue Jordan a formal written warning and set strict performance targets with weekly check-ins. Jordan becomes even more withdrawn. You later learn she was dealing with a family illness — the warning made her feel unsupported at her most vulnerable moment. She resigns two weeks later.', outcome: 'negative', label: 'Jordan resigns. Your team morale drops significantly.' },
+      democratic: { text: 'You create a private space for Jordan to share what is happening and ask how you can support her. She opens up about a family crisis. Together you arrange flexible hours temporarily and redistribute one deadline. Jordan feels seen and supported — within three weeks she is back to full performance.', outcome: 'positive', label: 'Jordan recovers fully. Team sees you as a human, empathetic leader.' },
+      laissez: { text: 'You decide to give Jordan space and let her work it out on her own. Weeks pass. Her performance continues to decline. The team grows resentful. A client escalates a complaint about missed deliverables. You are now managing a much larger crisis than you started with.', outcome: 'negative', label: 'Situation escalates. Client complaint filed. Team trust erodes.' }
+    },
+    placeholder: 'Describe your specific management approach. Which level of Maslow\'s hierarchy is Jordan likely experiencing? How does that inform your leadership style choice? What would you actually say to Jordan in your next conversation?'
+  },
+  {
+    id: 2,
+    category: 'Team Conflict',
+    title: 'Two Leaders, One Team',
+    context: 'You manage the product team at Vantage Tech. Marcus and Priya are both highly skilled senior developers — and they cannot agree on anything. The tension is affecting the entire team.',
+    characters: [
+      { emoji: '👨‍💻', name: 'Marcus', role: 'Senior Dev — 6 years, prefers structured processes' },
+      { emoji: '👩‍💻', name: 'Priya', role: 'Senior Dev — 3 years, prefers agile experimentation' },
+      { emoji: '👥', name: 'Rest of team', role: '5 developers caught in the middle' }
+    ],
+    situation: `Marcus and Priya have fundamentally different working styles. Marcus wants detailed specifications before writing a single line of code. Priya wants to build prototypes quickly and iterate. Neither is wrong — but in team meetings, their debates have become personal.\n\nLast week, Priya said in front of the whole team: "Marcus, your process is why we miss every market window." Marcus replied: "Priya, your shortcuts are why we spend months fixing bugs."\n\nThe other five developers have started choosing sides. Two team meetings this week ended without decisions. A product launch is 6 weeks away.`,
+    quote: '"Marcus, your process is why we miss every market window." / "Priya, your shortcuts are why we spend months fixing bugs."',
+    keyFact: '🗓 Product launch in 6 weeks — team decisions are now delayed by conflict',
+    bestStyle: 'autocratic',
+    bestTheory: 'herzberg',
+    consequence: {
+      autocratic: { text: 'You call Marcus and Priya in separately, acknowledge both approaches have merit, then set clear team-wide working norms that all members must follow. You define how decisions get made, who has final say on architecture vs speed trade-offs, and make it non-negotiable. The personal dynamic is still tense, but the team starts moving again.', outcome: 'positive', label: 'Team unblocked. Launch stays on track. Conflict contained.' },
+      democratic: { text: 'You schedule a team meeting to collectively work out the conflict. Marcus and Priya dominate the discussion again, the other five stay quiet, and you end up with no resolution. The team interprets your lack of decisive action as weakness. A developer goes to HR complaining about the hostile work environment.', outcome: 'negative', label: 'Conflict escalates. HR involvement. Launch at risk.' },
+      laissez: { text: 'You trust that two experienced professionals can work it out. They cannot. The conflict spreads. Three developers ask to be moved to other teams. With the launch six weeks away, you are now rebuilding your team while trying to ship a product.', outcome: 'negative', label: 'Team fractures. Launch delayed 3 months. Significant damage to your reputation.' }
+    },
+    placeholder: 'Explain your approach to resolving this conflict. Apply Herzberg\'s two-factor theory: what are the hygiene factors causing dissatisfaction on this team? Why did you choose your leadership style — why is it appropriate for this specific situation rather than the others?'
+  },
+  {
+    id: 3,
+    category: 'Employee Retention',
+    title: 'The Talent Who Wants More',
+    context: 'You are the manager at Apex Strategies. Devon is your most talented junior employee — consistently exceeding targets, proactively taking on extra work, and mentoring newer hires. Devon just asked for a meeting.',
+    characters: [
+      { emoji: '🌟', name: 'Devon', role: 'Junior Associate — highest performer, 18 months in' },
+      { emoji: '🏢', name: 'Apex Leadership', role: 'Budget is tight — no salary increases this quarter' }
+    ],
+    situation: `Devon sits down with you and says: "I want to be honest with you. I love this company and I love my work. But I feel like I\'ve hit a ceiling. I\'m doing work that is two levels above my title and I\'m being paid at the junior level. I have two other offers. I\'m not trying to threaten anyone — I just want to know if there is a path forward here, because I would rather stay."\n\nYou know Devon is right. The work has been at a senior level for months. But leadership has a budget freeze on promotions and salary increases this quarter. You have limited formal power to change Devon\'s compensation immediately.`,
+    quote: '"I feel like I\'ve hit a ceiling... I have two other offers. I want to know if there is a path forward here."',
+    keyFact: '💰 Budget freeze prevents salary increases this quarter — but you have other tools',
+    bestStyle: 'democratic',
+    bestTheory: 'theory-y',
+    consequence: {
+      autocratic: { text: 'You tell Devon that promotions and raises are not possible right now and that you need Devon to stay focused on the current role. Devon feels dismissed. They accept one of the competing offers within two weeks. You spend the next three months recruiting and training a replacement — at a higher cost than the raise would have been.', outcome: 'negative', label: 'Devon leaves. Replacement costs exceed what a raise would have cost.' },
+      democratic: { text: 'You are honest with Devon about the budget freeze, but work together to create a concrete growth plan: a senior title reclassification request (no salary change needed), lead role on an upcoming high-visibility project, a mentoring stipend, and a committed timeline for when compensation review will happen. Devon feels respected and seen. They decline the other offers.', outcome: 'positive', label: 'Devon stays. Engagement and output increase further.' },
+      laissez: { text: 'You sympathize but say there is not much you can do and suggest Devon raise it with HR. Devon interprets this as you not going to bat for them. They accept a competing offer. Your remaining team hears about it and three others update their resumes.', outcome: 'negative', label: 'Devon and two others leave within 90 days. Team morale in freefall.' }
+    },
+    placeholder: 'Apply Theory Y to this situation — what does Devon\'s behavior tell you about their motivation? What specific non-monetary tools can a manager use to motivate and retain a Theory Y employee? Walk through exactly what you would say and do in this meeting.'
+  },
+  {
+    id: 4,
+    category: 'Crisis Management',
+    title: 'System Down, Clock Ticking',
+    context: 'You manage the operations team at Summit Financial. It is 8:47 AM on a Monday. Your company\'s transaction processing system just failed. Customers cannot access accounts. Your phone is ringing.',
+    characters: [
+      { emoji: '💻', name: 'Tech Team', role: '4 engineers — capable but looking to you for direction' },
+      { emoji: '📞', name: 'Customer Service', role: '12 reps getting flooded with calls' },
+      { emoji: '👔', name: 'CFO', role: 'Asking for a status update in 15 minutes' }
+    ],
+    situation: `At 8:47 AM, your monitoring system alerts you that the transaction processing system is down. No customer can log in or move money. The customer service queue already has 340 calls waiting.\n\nYour team has gathered in the war room. Everyone is looking at you. The engineers are capable but paralyzed — there are three possible causes and they are arguing about which one to investigate first. The CFO has called twice.\n\nEvery minute of downtime costs the company approximately $12,000 and damages customer trust. There is no time for consensus.`,
+    quote: '"Every minute costs $12,000. The CFO calls again. Your team is looking at you."',
+    keyFact: '⚡ Every minute of downtime = $12,000 in losses. No time for consensus.',
+    bestStyle: 'autocratic',
+    bestTheory: 'theory-x',
+    consequence: {
+      autocratic: { text: 'You immediately assign one engineer to each of the three possible causes, assign a fourth to prepare the CFO update, and direct customer service on what messaging to use. You make every decision without debate. Within 22 minutes the cause is identified and fixed. Total downtime: 31 minutes. You brief the CFO with clear facts.', outcome: 'positive', label: 'System restored in 31 minutes. CFO satisfied. Team performed under pressure.' },
+      democratic: { text: 'You ask the team to collectively decide which cause to investigate. The debate takes 18 minutes. By the time investigation starts, 40 minutes have passed. The CFO calls your director instead. System is eventually fixed after 74 minutes. A post-mortem review includes questions about your crisis leadership.', outcome: 'negative', label: 'System down 74 minutes. $888,000 in losses. Leadership questioned.' },
+      laissez: { text: 'You tell the team: "You all know more about this than I do — figure it out and keep me posted." The engineers continue arguing without direction. Customer service improvises messaging that contradicts what the CFO says publicly. Chaos for 90 minutes. The incident makes the local news.', outcome: 'negative', label: 'System down 90 minutes. PR crisis. Board notified.' }
+    },
+    placeholder: 'Explain why autocratic leadership is not just acceptable but necessary in this specific situation. Apply Theory X: in a crisis, why do even capable, motivated employees temporarily need directive leadership? How do you transition your leadership style AFTER the crisis is resolved?'
+  },
+  {
+    id: 5,
+    category: 'Team Recovery',
+    title: 'After the Fall',
+    context: 'You manage the innovation team at Crestline Products. Six months ago your team launched a new product that failed spectacularly — publicly. Your team is talented, but their confidence is shattered.',
+    characters: [
+      { emoji: '🎯', name: 'The Team', role: '6 creative professionals — demoralized after public failure' },
+      { emoji: '📊', name: 'Leadership', role: 'Cautiously optimistic — giving you one more chance' },
+      { emoji: '🌱', name: 'New Project', role: 'Assigned last week — team has shown zero initiative' }
+    ],
+    situation: `The product launch six months ago was covered by two industry blogs as a case study in poor market research. Your team did excellent creative work — the failure was a strategic misjudgment made above your level, but your team\'s names were attached to the project.\n\nSince then, team members arrive on time and complete assigned tasks — but nothing more. No one volunteers ideas in meetings. No one takes risks. When you ask for input on the new project, you get silence and shrugs. One team member told you privately: "Why would I stick my neck out again?"\n\nLeadership has given your team a significant new project. The expectation is innovation — but your team is operating in pure survival mode.`,
+    quote: '"Why would I stick my neck out again?"',
+    keyFact: '🧠 Team is technically competent — the problem is psychological safety, not skill',
+    bestStyle: 'democratic',
+    bestTheory: 'theory-z',
+    consequence: {
+      autocratic: { text: 'You set strict deliverables and deadlines and make clear that the team needs to step up or face consequences. The team produces technically acceptable work — but no creativity, no risk-taking, no innovation. Leadership receives a mediocre project. The team that used to generate breakthrough ideas is now just executing instructions.', outcome: 'mixed', label: 'Project delivered but uninspired. Team\'s creative potential permanently diminished.' },
+      democratic: { text: 'You start by acknowledging the failure openly and taking shared responsibility. You establish team working agreements about how ideas will be evaluated (merit, not seniority) and that no idea will be mocked. You create small low-stakes opportunities for team members to succeed and rebuild confidence. Slowly, voices start returning. The new project benefits from genuine creative input.', outcome: 'positive', label: 'Psychological safety restored. Team begins generating ideas again.' },
+      laissez: { text: 'You give the team full autonomy to run the new project however they want, hoping freedom will restore confidence. Without structure and without someone modeling that it is safe to take risks, the team defaults to the most conservative, low-risk approach possible. Leadership is disappointed again.', outcome: 'negative', label: 'Conservative project receives poor feedback. Team confidence drops further.' }
+    },
+    placeholder: 'Apply Theory Z to this scenario — how does long-term relationship building and cooperative culture address what this team is experiencing? How does democratic leadership help rebuild psychological safety? What specific steps would you take in your first week with this team?'
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentIdx = 0;
+let decisions = [];
+let styleCounts = { autocratic: 0, democratic: 0, laissez: 0 };
+let selectedStyle = null;
+let selectedTheory = null;
+let showingConsequence = false;
+
+// ─── BUILD SCENARIO TRACK ─────────────────────────────────────────────────────
+function buildTrack() {
+  document.getElementById('scenario-track').innerHTML = SCENARIOS.map((s, i) => `
+    <div class="sc-step ${i === currentIdx ? 'active' : i < currentIdx ? 'done' : ''}" id="sct-${i}">
+      <div class="sc-num">${i < currentIdx ? '✓' : i + 1}</div>
+      <div class="sc-name">${s.category}</div>
+    </div>
+  `).join('');
+}
+
+function updateHeader() {
+  document.getElementById('h-completed').textContent = `${currentIdx}/5`;
+  const dominant = Object.entries(styleCounts).sort((a,b) => b[1]-a[1])[0];
+  const labels = { autocratic: 'Autocratic', democratic: 'Democratic', laissez: 'Laissez-faire' };
+  document.getElementById('h-dominant').textContent = dominant[1] > 0 ? labels[dominant[0]] : '—';
+}
+
+function updateSidebar() {
+  const total = Math.max(1, currentIdx);
+  ['auto', 'dem', 'lf'].forEach(k => {
+    const key = k === 'auto' ? 'autocratic' : k === 'dem' ? 'democratic' : 'laissez';
+    const count = styleCounts[key];
+    const pct = (count / total) * 100;
+    document.getElementById(`sb-${k}`).style.width = pct + '%';
+    document.getElementById(`sb-${k}-count`).textContent = count + ' used';
+  });
+}
+
+// ─── STYLE / THEORY SELECTION ──────────────────────────────────────────────────
+function selectStyle(style) {
+  selectedStyle = style;
+  document.querySelectorAll('.style-option').forEach(el => {
+    el.classList.remove('sel-autocratic', 'sel-democratic', 'sel-laissez');
+  });
+  document.getElementById(`style-${style}`).classList.add(`sel-${style}`);
+}
+
+function selectTheory(theory) {
+  selectedTheory = theory;
+  document.querySelectorAll('.theory-option').forEach(el => {
+    el.className = 'theory-option';
+  });
+  document.getElementById(`theory-${theory}`).classList.add(`sel-${theory}`);
+}
+
+// ─── RENDER SCENARIO ──────────────────────────────────────────────────────────
+function renderScenario() {
+  if (currentIdx >= SCENARIOS.length) { renderResults(); return; }
+  const sc = SCENARIOS[currentIdx];
+  selectedStyle = null;
+  selectedTheory = null;
+  showingConsequence = false;
+
+  buildTrack();
+  updateHeader();
+  updateSidebar();
+
+  document.getElementById('main').innerHTML = `
+    <!-- Scenario Card -->
+    <div class="scenario-card">
+      <div class="scenario-top">
+        <div class="scenario-num">0${sc.id}</div>
+        <div class="scenario-meta">
+          <div class="scenario-category">${sc.category}</div>
+          <div class="scenario-title">${sc.title}</div>
+          <div class="scenario-context">${sc.context}</div>
+        </div>
+      </div>
+
+      <div class="characters-row">
+        ${sc.characters.map(c => `
+          <div class="character-tag">
+            <span class="char-emoji">${c.emoji}</span>
+            <span class="char-name">${c.name}</span>
+            <span class="char-role">— ${c.role}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="situation-body">
+        <div class="situation-label">The Situation</div>
+        <div class="situation-text">${sc.situation.replace(/\n\n/g, '</p><p style="margin-top:.75rem">').replace(/^/, '<p>').replace(/$/, '</p>')}</div>
+        <div class="situation-quote">${sc.quote}</div>
+        <div><span class="situation-key-fact">${sc.keyFact}</span></div>
+      </div>
+
+      <div class="decision-area">
+        <div class="decision-label">Step 1 — Choose a Leadership Style</div>
+        <div class="style-selector">
+          <div class="style-option" id="style-autocratic" onclick="selectStyle('autocratic')">
+            <div class="style-icon">⚡</div>
+            <div class="style-name" style="color:var(--autocratic)">Autocratic</div>
+            <div class="style-desc">You decide. Direct authority. Clear commands. No committee.</div>
+          </div>
+          <div class="style-option" id="style-democratic" onclick="selectStyle('democratic')">
+            <div class="style-icon">🤝</div>
+            <div class="style-name" style="color:var(--democratic)">Democratic</div>
+            <div class="style-desc">Involve the team. Listen first. Collaborate toward the decision.</div>
+          </div>
+          <div class="style-option" id="style-laissez" onclick="selectStyle('laissez')">
+            <div class="style-icon">🌊</div>
+            <div class="style-name" style="color:var(--laissez)">Laissez-Faire</div>
+            <div class="style-desc">Step back. Trust the team. Minimal interference from you.</div>
+          </div>
+        </div>
+
+        <div class="decision-label" style="margin-top:1rem">Step 2 — Choose a Motivation Theory to Apply</div>
+        <div class="theory-selector">
+          <div class="theory-option" id="theory-maslow" onclick="selectTheory('maslow')">
+            <div class="theory-name" style="color:var(--maslow)">Maslow</div>
+            <div class="theory-tagline">Hierarchy of Needs — which level is unmet?</div>
+          </div>
+          <div class="theory-option" id="theory-theory-x" onclick="selectTheory('theory-x')">
+            <div class="theory-name" style="color:var(--theory-x)">Theory X</div>
+            <div class="theory-tagline">People need supervision and clear direction</div>
+          </div>
+          <div class="theory-option" id="theory-theory-y" onclick="selectTheory('theory-y')">
+            <div class="theory-name" style="color:var(--theory-y)">Theory Y</div>
+            <div class="theory-tagline">People are self-motivated — unlock them</div>
+          </div>
+          <div class="theory-option" id="theory-theory-z" onclick="selectTheory('theory-z')">
+            <div class="theory-name" style="color:var(--theory-z)">Theory Z</div>
+            <div class="theory-tagline">Long-term trust, collaboration, and culture</div>
+          </div>
+          <div class="theory-option" id="theory-herzberg" onclick="selectTheory('herzberg')">
+            <div class="theory-name" style="color:var(--herzberg)">Herzberg</div>
+            <div class="theory-tagline">Fix hygiene factors + add motivators</div>
+          </div>
+        </div>
+
+        <div class="decision-label" style="margin-top:1rem">Step 3 — Write Your Management Response</div>
+        <div class="response-wrap">
+          <div class="response-label">
+            <span>Your approach as manager</span>
+            <span class="response-hint">Use the theory and leadership style vocabulary correctly — the AI will check</span>
+          </div>
+          <textarea id="response" placeholder="${sc.placeholder}"></textarea>
+        </div>
+
+        <div class="btn-row">
+          ${currentIdx > 0 ? '<button class="btn btn-outline" onclick="goBack()">← Previous</button>' : ''}
+          <button class="btn btn-primary" onclick="submitScenario()">See Consequences & Advance →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── SUBMIT ────────────────────────────────────────────────────────────────────
+function submitScenario() {
+  const response = document.getElementById('response')?.value.trim();
+
+  if (!selectedStyle) {
+    alert('Please select a leadership style before continuing.'); return;
+  }
+  if (!selectedTheory) {
+    alert('Please select a motivation theory before continuing.'); return;
+  }
+  if (!response || response.length < 50) {
+    const ta = document.getElementById('response');
+    ta.style.borderColor = 'var(--autocratic)';
+    ta.focus();
+    ta.placeholder = 'Please write a more detailed response before continuing...';
+    return;
+  }
+
+  const sc = SCENARIOS[currentIdx];
+  const consequence = sc.consequence[selectedStyle];
+  styleCounts[selectedStyle]++;
+
+  decisions.push({
+    scenarioId: sc.id,
+    scenarioTitle: sc.title,
+    category: sc.category,
+    style: selectedStyle,
+    theory: selectedTheory,
+    response,
+    consequenceText: consequence.text,
+    outcome: consequence.outcome,
+    bestStyle: sc.bestStyle,
+    bestTheory: sc.bestTheory,
+    wasOptimal: selectedStyle === sc.bestStyle
+  });
+
+  // Show consequence
+  const outcomeClass = consequence.outcome === 'positive' ? 'outcome-positive' : consequence.outcome === 'negative' ? 'outcome-negative' : 'outcome-mixed';
+  const outcomeEmoji = consequence.outcome === 'positive' ? '✅' : consequence.outcome === 'negative' ? '❌' : '⚠️';
+
+  const styleLabels = { autocratic: 'Autocratic', democratic: 'Democratic', laissez: 'Laissez-Faire' };
+  const theoryLabels = { maslow: 'Maslow', 'theory-x': 'Theory X', 'theory-y': 'Theory Y', 'theory-z': 'Theory Z', herzberg: 'Herzberg' };
+
+  const consequenceEl = document.createElement('div');
+  consequenceEl.className = 'consequence-card';
+  consequenceEl.innerHTML = `
+    <div class="consequence-header">
+      <div class="consequence-icon">📋</div>
+      <div>
+        <div class="consequence-title">What Happened — ${styleLabels[selectedStyle]} + ${theoryLabels[selectedTheory]}</div>
+        <div style="font-size:.7rem;color:var(--text-muted);margin-top:.1rem">Optimal choice: ${styleLabels[sc.bestStyle]} + ${theoryLabels[sc.bestTheory]}</div>
+      </div>
+      ${selectedStyle === sc.bestStyle ? '<span style="background:#EEF8F2;color:#1A6B3A;font-size:.68rem;font-weight:700;padding:.25rem .65rem;border-radius:100px;margin-left:auto">Optimal Choice</span>' : selectedStyle !== sc.bestStyle ? '<span style="background:#F8EEEE;color:#8B1A1A;font-size:.68rem;font-weight:700;padding:.25rem .65rem;border-radius:100px;margin-left:auto">Not Optimal</span>' : ''}
+    </div>
+    <div class="consequence-text">${consequence.text}</div>
+    <div class="consequence-outcome ${outcomeClass}">${outcomeEmoji} ${consequence.label}</div>
+    <div class="btn-row" style="margin-top:1rem">
+      ${currentIdx < SCENARIOS.length - 1
+        ? '<button class="btn btn-primary" onclick="nextScenario()">Next Scenario →</button>'
+        : '<button class="btn btn-accent" onclick="nextScenario()">Get Final Analysis →</button>'
+      }
+    </div>
+  `;
+  document.getElementById('main').appendChild(consequenceEl);
+  consequenceEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  updateSidebar();
+  updateHeader();
+}
+
+function nextScenario() {
+  currentIdx++;
+  renderScenario();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  if (currentIdx > 0) {
+    const d = decisions.pop();
+    styleCounts[d.style]--;
+    currentIdx--;
+    renderScenario();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────────────────────
+function renderResults() {
+  buildTrack();
+  updateHeader();
+
+  const optimal = decisions.filter(d => d.wasOptimal).length;
+  const styleLabels = { autocratic: 'Autocratic', democratic: 'Democratic', laissez: 'Laissez-Faire' };
+  const dominant = Object.entries(styleCounts).sort((a,b)=>b[1]-a[1])[0];
+
+  document.getElementById('main').innerHTML = `
+    <div class="manager-report">
+      <div class="report-header">
+        <div class="report-avatar">👔</div>
+        <div>
+          <div class="report-title">Your Manager Performance Report</div>
+          <div class="report-sub">LEADERSHIP CHALLENGE SIMULATOR · STRAND 3 ANALYSIS</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--accent)">${optimal}/5</div>
+          <div style="font-size:.68rem;color:rgba(255,255,255,.4)">Optimal decisions</div>
+        </div>
+      </div>
+
+      <div class="report-body">
+        <div class="style-summary-grid">
+          <div class="style-summary-card" style="background:var(--autocratic-light);border-color:var(--autocratic)">
+            <div class="style-summary-count" style="color:var(--autocratic)">${styleCounts.autocratic}</div>
+            <div class="style-summary-label" style="color:var(--autocratic)">Autocratic</div>
+          </div>
+          <div class="style-summary-card" style="background:var(--democratic-light);border-color:var(--democratic)">
+            <div class="style-summary-count" style="color:var(--democratic)">${styleCounts.democratic}</div>
+            <div class="style-summary-label" style="color:var(--democratic)">Democratic</div>
+          </div>
+          <div class="style-summary-card" style="background:var(--laissez-light);border-color:var(--laissez)">
+            <div class="style-summary-count" style="color:var(--laissez)">${styleCounts.laissez}</div>
+            <div class="style-summary-label" style="color:var(--laissez)">Laissez-Faire</div>
+          </div>
+        </div>
+
+        <table class="decision-table">
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Your Style</th>
+              <th>Your Theory</th>
+              <th>Optimal?</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${decisions.map(d => `
+              <tr>
+                <td><strong>${d.scenarioTitle}</strong><br><span style="color:var(--text-muted);font-size:.72rem">${d.category}</span></td>
+                <td>${styleLabels[d.style]}</td>
+                <td>${d.theory}</td>
+                <td>${d.wasOptimal ? '<span style="color:#1A6B3A;font-weight:700">✓ Yes</span>' : '<span style="color:#8B1A1A;font-weight:700">✗ No</span>'}</td>
+                <td><span style="font-size:.72rem;${d.outcome==='positive'?'color:#1A6B3A':d.outcome==='negative'?'color:#8B1A1A':'color:#8B5A1A'}">${d.outcome === 'positive' ? '✅ Positive' : d.outcome === 'negative' ? '❌ Negative' : '⚠️ Mixed'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="feedback-section">
+          <div class="feedback-label">AI Professional Feedback</div>
+          <div class="score-row" id="score-row"></div>
+          <div class="feedback-body" id="fb-body">
+            <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:.5rem">
+      <button class="btn btn-outline" onclick="resetSim()">🔄 New Simulation</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  `;
+
+  getAIFeedback();
+}
+
+// ─── AI FEEDBACK ─────────────────────────────────────────────────────────────
+async function getAIFeedback() {
+  const styleLabels = { autocratic: 'Autocratic', democratic: 'Democratic', laissez: 'Laissez-Faire' };
+  const theoryLabels = { maslow: "Maslow's Hierarchy", 'theory-x': 'Theory X', 'theory-y': 'Theory Y', 'theory-z': 'Theory Z', herzberg: "Herzberg's Two-Factor" };
+
+  const decisionSummary = decisions.map((d,i) => `
+SCENARIO ${i+1}: "${d.scenarioTitle}" (${d.category})
+  Style chosen: ${styleLabels[d.style]} | Optimal: ${styleLabels[d.bestStyle]}
+  Theory chosen: ${theoryLabels[d.theory]} | Optimal: ${theoryLabels[d.bestTheory]}
+  Was optimal choice: ${d.wasOptimal ? 'YES' : 'NO'}
+  Outcome: ${d.outcome}
+  Student response: "${d.response}"
+  `).join('\n');
+
+  const optimal = decisions.filter(d => d.wasOptimal).length;
+  const dominant = Object.entries(styleCounts).sort((a,b)=>b[1]-a[1])[0];
+
+  const systemPrompt = `You are a demanding but fair business management professor reviewing a high school student's leadership simulation for Utah Business Management Strand 3. You hold work to real professional standards.
+
+SCORING — strict:
+- "Great" = correct style/theory choice with strong, vocabulary-accurate justification showing genuine understanding
+- "OK" = correct choice but weak justification, or partially correct reasoning
+- "Needs Work" = wrong style/theory for the situation, or response shows fundamental misunderstanding of the theories
+
+Start with this EXACT line:
+SCORES: Leadership Style Application:[Great/OK/Needs Work] | Theory Application:[Great/OK/Needs Work] | Written Justification:[Great/OK/Needs Work] | Situational Awareness:[Great/OK/Needs Work] | Overall Leadership:[Great/OK/Needs Work]
+
+Then 4-5 paragraphs of direct professional feedback:
+1. Evaluate style choices across all 5 scenarios — did the student understand WHEN each style is appropriate? Quote their actual choices. Call out the Crisis scenario (4) specifically — autocratic is the ONLY correct answer there and laissez-faire in a crisis is a career-ending mistake.
+2. Evaluate theory applications — did they correctly identify which theory applied and why? Did they confuse Theory X and Y? Did they understand Maslow means identifying which LEVEL of need is unmet?
+3. Evaluate the written responses — did they use theory vocabulary correctly? Did they actually describe what they would DO and SAY, or just abstract principles? Quote their actual words.
+4. Evaluate their manager profile — ${optimal}/5 optimal choices. Are they over-relying on one style? A manager who uses laissez-faire in crises or autocratic with burned-out teams will consistently fail. Address their specific pattern.
+5. What makes an effective manager — adaptability. Reference the two scenarios where they got it right vs wrong specifically.
+
+End with one hard challenge: pick their worst decision and ask them to rewrite it correctly using the right theory vocabulary. Students are preparing for real careers. No markdown ** or ##.`;
+
+  const userPrompt = `Student Leadership Simulation Results:
+Optimal decisions: ${optimal}/5
+Dominant style: ${styleLabels[dominant[0]]} (used ${dominant[1]} times)
+Style breakdown: Autocratic: ${styleCounts.autocratic}, Democratic: ${styleCounts.democratic}, Laissez-faire: ${styleCounts.laissez}
+
+${decisionSummary}`;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1100,
+        messages: [{ role: 'user', content: systemPrompt + '\n\n' + userPrompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'Could not generate feedback. Please try again.';
+    const sm = text.match(/SCORES:(.+)/);
+    let main = text;
+    if (sm) {
+      main = main.replace(sm[0], '').trim();
+      document.getElementById('score-row').innerHTML = sm[1].split('|').map(p => {
+        const [lbl, rat] = p.split(':').map(s => s.trim());
+        const cls = rat === 'Great' ? 'great' : rat === 'OK' ? 'ok' : 'needs';
+        return `<span class="sc ${cls}">${lbl}: ${rat}</span>`;
+      }).join('');
+    }
+    document.getElementById('fb-body').textContent = main;
+  } catch(err) {
+    document.getElementById('fb-body').textContent = 'Connection error: ' + err.message;
+  }
+}
+
+// ─── RESET ─────────────────────────────────────────────────────────────────────
+function resetSim() {
+  if (!confirm('Start a new simulation?')) return;
+  currentIdx = 0;
+  decisions = [];
+  styleCounts = { autocratic: 0, democratic: 0, laissez: 0 };
+  selectedStyle = null;
+  selectedTheory = null;
+  renderScenario();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderScenario();
+</script>
+</body>
+</html>
