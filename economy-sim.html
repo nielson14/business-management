@@ -7,1235 +7,902 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg: #1C1410;
-  --surface: #241C16;
-  --surface2: #2E241C;
-  --surface3: #3A2E24;
-  --border: #4A3C30;
-  --text: #F0E8DC;
-  --text-muted: #9A8878;
-  --text-dim: #5A4A3A;
-  --gold: #D4A840;
-  --gold-light: rgba(212,168,64,0.15);
-  --gold-mid: rgba(212,168,64,0.4);
-  --green: #4CAF7D;
-  --green-light: rgba(76,175,125,0.15);
-  --red: #E05A4A;
-  --red-light: rgba(224,90,74,0.15);
-  --blue: #5A9FD4;
-  --blue-light: rgba(90,159,212,0.15);
-  --amber: #E09A40;
-  --expansion: #4CAF7D;
-  --peak: #D4A840;
-  --recession: #E09A40;
-  --depression: #E05A4A;
-  --radius: 10px;
-  --radius-sm: 6px;
-  --serif: 'Playfair Display', serif;
-  --sans: 'Libre Franklin', sans-serif;
+  --bg: #1C1410; --surface: #241C16; --surface2: #2E241C; --surface3: #3A2E24;
+  --border: #4A3C30; --text: #F0E8DC; --text-muted: #9A8878; --text-dim: #5A4A3A;
+  --gold: #D4A840; --gold-light: rgba(212,168,64,0.15); --gold-mid: rgba(212,168,64,0.4);
+  --green: #4CAF7D; --green-light: rgba(76,175,125,0.15);
+  --red: #E05A4A; --red-light: rgba(224,90,74,0.15);
+  --blue: #5A9FD4; --amber: #E09A40;
+  --radius: 10px; --radius-sm: 6px;
+  --serif: 'Playfair Display', serif; --sans: 'Libre Franklin', sans-serif;
 }
-
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Subtle texture */
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
 }
-
+.progress-strip { height: 3px; background: var(--surface3); position: relative; overflow: hidden; }
+.progress-strip-fill { height: 100%; background: linear-gradient(90deg,#4CAF7D,#D4A840,#E09A40,#E05A4A); transition: width .5s ease; }
 header {
-  position: relative;
-  z-index: 2;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 1.25rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  position: relative; z-index: 2; background: var(--surface);
+  border-bottom: 1px solid var(--border); padding: 1.1rem 1.75rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
 }
-.header-left h1 {
-  font-family: var(--serif);
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: -0.3px;
-  line-height: 1;
-}
-.header-left .sub {
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-top: 0.3rem;
-}
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-.biz-health {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.health-label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-}
-.health-bar-wrap {
-  width: 100px;
-  height: 6px;
-  background: var(--surface3);
-  border-radius: 100px;
-  overflow: hidden;
-}
-.health-bar-fill {
-  height: 100%;
-  border-radius: 100px;
-  transition: width 0.6s ease, background 0.6s ease;
-}
-.cash-display {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  color: var(--gold);
-  font-weight: 700;
-}
-.cash-label {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  text-align: right;
-}
+.header-left h1 { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; color: var(--gold); }
+.header-left .sub { font-size: 0.62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); margin-top: .25rem; }
+.header-stats { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+.hstat { text-align: right; }
+.hstat-label { font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); }
+.hstat-val { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--gold); line-height: 1.1; }
+.hstat-val.pos { color: var(--green); } .hstat-val.neg { color: var(--red); }
+.health-wrap { width: 80px; height: 5px; background: var(--surface3); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+.health-fill { height: 100%; border-radius: 3px; transition: width .6s ease, background .6s ease; }
+.phase-dots { display: flex; gap: .4rem; align-items: center; }
+.pdot { width: 8px; height: 8px; border-radius: 50%; background: var(--surface3); transition: all .3s; }
+.pdot.done { background: var(--gold-mid); }
+.pdot.active { background: var(--gold); width: 18px; border-radius: 4px; }
 
-.main-layout {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  min-height: calc(100vh - 65px);
-}
+.layout { position: relative; z-index: 1; display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 58px); }
 
-/* Sidebar */
-.sidebar {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+/* SIDEBAR */
+.sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 1.25rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
+.sb-label { font-size: .58rem; letter-spacing: .15em; text-transform: uppercase; color: var(--text-dim); margin-bottom: .6rem; }
 
-.sidebar-section-label {
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 0.75rem;
-}
+.cycle-track { display: flex; flex-direction: column; gap: .35rem; }
+.cphase { display: flex; align-items: center; gap: .65rem; padding: .55rem .65rem; border-radius: var(--radius-sm); border: 1px solid transparent; transition: all .3s; }
+.cphase.active { border-color: var(--border); background: var(--surface2); }
+.cphase.done { opacity: .6; }
+.cph-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.cph-name { font-size: .78rem; font-weight: 600; line-height: 1; margin-bottom: .15rem; }
+.cph-desc { font-size: .62rem; color: var(--text-muted); }
+.cph-badge { font-size: .56rem; font-weight: 700; padding: .12rem .4rem; border-radius: 2px; text-transform: uppercase; margin-left: auto; flex-shrink: 0; }
 
-/* Business cycle tracker */
-.cycle-track {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.cycle-phase {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  transition: all 0.3s;
-  cursor: default;
-}
-.cycle-phase.active {
-  border-color: var(--border);
-  background: var(--surface2);
-}
-.phase-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.phase-info { flex: 1; }
-.phase-name {
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1;
-  margin-bottom: 0.2rem;
-}
-.phase-desc {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  line-height: 1.3;
-}
-.phase-badge {
-  font-size: 0.58rem;
-  font-weight: 700;
-  padding: 0.15rem 0.4rem;
-  border-radius: 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+.sys-cards { display: flex; flex-direction: column; gap: .35rem; }
+.sys-card { padding: .6rem .7rem; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all .15s; }
+.sys-card:hover { border-color: var(--gold-mid); }
+.sys-card.sel { border-color: var(--gold); background: var(--gold-light); }
+.sys-card-name { font-size: .78rem; font-weight: 600; color: var(--text); margin-bottom: .15rem; }
+.sys-card.sel .sys-card-name { color: var(--gold); }
+.sys-card-desc { font-size: .63rem; color: var(--text-muted); line-height: 1.35; }
+.sys-constraint { font-size: .62rem; color: var(--amber); margin-top: .25rem; font-weight: 600; display: none; }
+.sys-card.sel .sys-constraint { display: block; }
 
-/* Economic system selector */
-.system-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.system-card {
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.system-card:hover { border-color: var(--gold-mid); }
-.system-card.selected {
-  border-color: var(--gold);
-  background: var(--gold-light);
-}
-.system-name {
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-  color: var(--text);
-}
-.system-card.selected .system-name { color: var(--gold); }
-.system-desc { font-size: 0.65rem; color: var(--text-muted); line-height: 1.3; }
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; }
+.mbox { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .55rem .65rem; }
+.mbox-label { font-size: .56rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: .2rem; }
+.mbox-val { font-family: var(--serif); font-size: .95rem; font-weight: 700; line-height: 1; }
+.mbox-val.pos { color: var(--green); } .mbox-val.neg { color: var(--red); } .mbox-val.neu { color: var(--gold); }
 
-/* Business metrics sidebar */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-}
-.metric-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.6rem 0.75rem;
-}
-.metric-label {
-  font-size: 0.58rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-bottom: 0.25rem;
-}
-.metric-val {
-  font-family: var(--serif);
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1;
-}
-.metric-val.positive { color: var(--green); }
-.metric-val.negative { color: var(--red); }
-.metric-val.neutral { color: var(--gold); }
-.metric-change {
-  font-size: 0.62rem;
-  margin-top: 0.2rem;
-}
+/* MAIN */
+.main { padding: 1.75rem; display: flex; flex-direction: column; gap: 1.25rem; overflow-y: auto; }
 
-/* Main content area */
-.main-content {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.phase-banner {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem;
 }
+.pb-icon { font-size: 2.2rem; line-height: 1; flex-shrink: 0; }
+.pb-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; line-height: 1.1; margin-bottom: .35rem; }
+.pb-desc { font-size: .83rem; color: var(--text-muted); line-height: 1.6; max-width: 480px; }
+.pb-sys-note { font-size: .72rem; margin-top: .5rem; padding: .4rem .7rem; border-radius: var(--radius-sm); display: inline-block; font-weight: 600; }
+.pb-pills { margin-left: auto; display: flex; flex-direction: column; gap: .35rem; flex-shrink: 0; }
+.pill { font-size: .65rem; padding: .22rem .7rem; border-radius: 100px; font-weight: 600; text-align: center; white-space: nowrap; }
 
-/* Phase header */
-.phase-header {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 1.25rem;
-}
-.phase-icon {
-  font-size: 2.5rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.phase-header-title {
-  font-family: var(--serif);
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 0.4rem;
-}
-.phase-header-desc {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  max-width: 500px;
-}
-.phase-conditions {
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  flex-shrink: 0;
-}
-.condition-pill {
-  font-size: 0.68rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 100px;
-  font-weight: 600;
-  text-align: center;
-  white-space: nowrap;
-}
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-/* Supply/Demand chart */
-.chart-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-}
-.chart-title {
-  font-family: var(--serif);
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-  color: var(--gold);
-}
-.chart-subtitle {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-bottom: 1.25rem;
-}
-.sd-chart-wrap {
-  position: relative;
-  height: 200px;
-  background: var(--surface2);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-canvas#sd-canvas {
-  width: 100%;
-  height: 100%;
-}
-.chart-labels {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.4rem;
-  padding: 0 0.5rem;
-}
-.chart-label-item {
-  font-size: 0.62rem;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-}
-.chart-legend {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 0.75rem;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-.legend-line {
-  width: 20px;
-  height: 2px;
-  border-radius: 1px;
-}
-.equilibrium-info {
-  margin-top: 0.75rem;
-  padding: 0.6rem 0.85rem;
-  background: var(--gold-light);
-  border: 1px solid var(--gold-mid);
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  color: var(--gold);
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-.eq-item { display: flex; gap: 0.4rem; }
-.eq-label { color: var(--text-muted); }
+.news-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.1rem; display: flex; gap: .75rem; }
+.news-icon { font-size: 1rem; flex-shrink: 0; margin-top: .1rem; }
+.news-headline { font-size: .82rem; font-weight: 600; margin-bottom: .2rem; line-height: 1.3; }
+.news-body { font-size: .75rem; color: var(--text-muted); line-height: 1.5; }
 
-/* Decision panel */
-.decision-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-}
-.decision-title {
-  font-family: var(--serif);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--gold);
-  margin-bottom: 0.25rem;
-}
-.decision-subtitle {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-bottom: 1.25rem;
-  line-height: 1.5;
-}
-.decisions-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-.decision-control { }
-.dc-label {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.dc-value {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  color: var(--gold);
-  font-weight: 700;
-}
-input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 3px;
-  background: var(--surface3);
-  border-radius: 2px;
-  outline: none;
-  margin-top: 0.5rem;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: var(--gold);
-  cursor: pointer;
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 6px var(--gold-mid);
-}
+.event-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.1rem; }
+.event-type { font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; margin-bottom: .3rem; }
+.event-title { font-size: .88rem; font-weight: 600; margin-bottom: .25rem; }
+.event-desc { font-size: .77rem; color: var(--text-muted); line-height: 1.5; }
+.event-response { margin-top: .75rem; }
+.event-response label { font-size: .62rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: .35rem; }
+select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .5rem .7rem; font-family: var(--sans); font-size: .83rem; color: var(--text); outline: none; transition: border-color .15s; }
+select:focus { border-color: var(--gold-mid); }
+select option { background: var(--surface); }
 
-/* Justification */
-.justification-area {
-  margin-top: 1rem;
-}
-.just-label {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.4rem;
-  display: block;
-}
-textarea {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.75rem;
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  color: var(--text);
-  resize: vertical;
-  min-height: 70px;
-  outline: none;
-  line-height: 1.6;
-  transition: border-color 0.15s;
-}
+/* SD CHART */
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+.chart-title { font-family: var(--serif); font-size: .95rem; font-weight: 700; color: var(--gold); margin-bottom: .15rem; }
+.chart-sub { font-size: .72rem; color: var(--text-muted); margin-bottom: 1rem; }
+.sd-wrap { position: relative; height: 190px; background: var(--surface2); border-radius: var(--radius-sm); border: 1px solid var(--border); overflow: hidden; }
+.chart-legend { display: flex; gap: 1.25rem; margin-top: .6rem; flex-wrap: wrap; }
+.leg-item { display: flex; align-items: center; gap: .35rem; font-size: .68rem; color: var(--text-muted); }
+.leg-line { width: 18px; height: 2px; border-radius: 1px; }
+.eq-strip { margin-top: .65rem; padding: .55rem .85rem; background: var(--gold-light); border: 1px solid var(--gold-mid); border-radius: var(--radius-sm); font-size: .75rem; color: var(--gold); display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.eq-item { display: flex; gap: .35rem; }
+.eq-lbl { color: var(--text-muted); }
+
+/* LIVE PREVIEW */
+.live-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
+.lp-title { font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: .75rem; }
+.lp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: .75rem; }
+.lp-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .6rem .75rem; }
+.lp-label { font-size: .58rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: .25rem; }
+.lp-val { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; }
+.lp-val.pos { color: var(--green); } .lp-val.neg { color: var(--red); } .lp-val.neu { color: var(--gold); }
+.lp-note { font-size: .62rem; color: var(--text-muted); margin-top: .2rem; }
+
+/* DECISIONS */
+.decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+.dc-title { font-family: var(--serif); font-size: .95rem; font-weight: 700; color: var(--gold); margin-bottom: .2rem; }
+.dc-sub { font-size: .73rem; color: var(--text-muted); margin-bottom: 1.1rem; line-height: 1.5; }
+.sliders-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 1rem; }
+.slider-block {}
+.sl-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .3rem; }
+.sl-label { font-size: .65rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.sl-val { font-family: var(--serif); font-size: 1rem; color: var(--gold); font-weight: 700; }
+.sl-hint { font-size: .65rem; color: var(--text-dim); line-height: 1.35; margin-bottom: .4rem; font-style: italic; }
+.sl-range-note { font-size: .6rem; color: var(--amber); margin-top: .3rem; font-weight: 600; }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--surface3); border-radius: 2px; outline: none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); cursor: pointer; border: 2px solid var(--bg); box-shadow: 0 0 6px var(--gold-mid); }
+input[type=range]:disabled::-webkit-slider-thumb { background: var(--text-dim); box-shadow: none; cursor: not-allowed; }
+input[type=range]:disabled { opacity: .5; cursor: not-allowed; }
+
+.just-area { margin-top: .85rem; }
+.just-label { font-size: .63rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: .35rem; }
+textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .7rem; font-family: var(--sans); font-size: .84rem; color: var(--text); resize: vertical; min-height: 75px; outline: none; line-height: 1.6; transition: border-color .15s; }
 textarea:focus { border-color: var(--gold-mid); }
 textarea::placeholder { color: var(--text-dim); }
 
-/* News ticker */
-.news-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.85rem;
-}
-.news-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
-.news-headline {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-  line-height: 1.3;
-}
-.news-body { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
-
-/* Scenario event */
-.event-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--gold);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-}
-.event-type {
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 0.35rem;
-}
-.event-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; }
-.event-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-
-/* Buttons */
-.btn {
-  font-family: var(--sans);
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 0.7rem 1.6rem;
-  border-radius: var(--radius-sm);
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.02em;
-}
+.btn { font-family: var(--sans); font-size: .86rem; font-weight: 600; padding: .65rem 1.5rem; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all .2s; }
 .btn-gold { background: var(--gold); color: var(--bg); }
 .btn-gold:hover { filter: brightness(1.1); transform: translateY(-1px); }
 .btn-gold:disabled { background: var(--surface3); color: var(--text-dim); cursor: not-allowed; transform: none; filter: none; }
 .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
 .btn-outline:hover { border-color: var(--gold-mid); }
-.btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.25rem; flex-wrap: wrap; }
+.btn-row { display: flex; gap: .65rem; align-items: center; margin-top: 1.1rem; flex-wrap: wrap; }
 
-/* Results */
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-.result-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  text-align: center;
-}
-.result-phase {
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-.result-outcome {
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.3rem;
-}
-.result-label { font-size: 0.72rem; color: var(--text-muted); }
+/* RESULTS */
+.results-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+.rc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; text-align: center; }
+.rc-phase { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .4rem; }
+.rc-val { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; margin-bottom: .25rem; }
+.rc-label { font-size: .68rem; color: var(--text-muted); }
+.rc-details { margin-top: .65rem; font-size: .68rem; color: var(--text-dim); line-height: 1.5; }
 
-/* Feedback */
-.feedback-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.feedback-header {
-  background: var(--gold-light);
-  border-bottom: 1px solid var(--gold-mid);
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-.feedback-avatar {
-  width: 38px; height: 38px;
-  background: var(--gold-light);
-  border: 2px solid var(--gold-mid);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-.feedback-name { font-weight: 700; font-size: 0.9rem; color: var(--gold); }
-.feedback-role { font-size: 0.68rem; color: var(--text-muted); }
-.feedback-body {
-  padding: 1.75rem;
-  font-size: 0.88rem;
-  line-height: 1.8;
-  color: var(--text);
-  white-space: pre-wrap;
-  min-height: 80px;
-}
+.feedback-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.fb-head { background: var(--gold-light); border-bottom: 1px solid var(--gold-mid); padding: .9rem 1.4rem; display: flex; align-items: center; gap: .75rem; }
+.fb-avatar { width: 36px; height: 36px; background: var(--gold-light); border: 2px solid var(--gold-mid); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .95rem; flex-shrink: 0; }
+.fb-name { font-weight: 700; font-size: .88rem; color: var(--gold); }
+.fb-role { font-size: .65rem; color: var(--text-muted); }
+.fb-body { padding: 1.6rem; font-size: .86rem; line-height: 1.85; color: var(--text); white-space: pre-wrap; min-height: 80px; }
 
-/* Score chips */
-.score-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.score-chip {
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.3rem 0.85rem;
-  border-radius: 100px;
-  letter-spacing: 0.03em;
-}
-.score-chip.great { background: var(--green-light); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
-.score-chip.ok { background: rgba(224,154,64,0.15); color: var(--amber); border: 1px solid rgba(224,154,64,0.3); }
-.score-chip.needs { background: var(--red-light); color: var(--red); border: 1px solid rgba(224,90,74,0.3); }
+.score-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.sc { font-size: .68rem; font-weight: 700; padding: .28rem .8rem; border-radius: 100px; }
+.sc.great { background: var(--green-light); color: var(--green); border: 1px solid rgba(76,175,125,.3); }
+.sc.ok { background: rgba(224,154,64,.15); color: var(--amber); border: 1px solid rgba(224,154,64,.3); }
+.sc.needs { background: var(--red-light); color: var(--red); border: 1px solid rgba(224,90,74,.3); }
 
-.typing-dot {
-  display: inline-block; width: 6px; height: 6px;
-  background: var(--gold); border-radius: 50%;
-  animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle;
-}
-.typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.typing-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+.typing-dot { display: inline-block; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle; }
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
 
-/* Phase nav dots */
-.phase-nav {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-.phase-nav-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--surface3);
-  transition: all 0.3s;
-}
-.phase-nav-dot.done { background: var(--gold-mid); }
-.phase-nav-dot.active { background: var(--gold); width: 20px; border-radius: 4px; }
-
-/* Progress bar at top */
-.progress-strip {
-  height: 3px;
-  background: var(--surface3);
-  position: relative;
-  overflow: hidden;
-}
-.progress-strip-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--expansion), var(--peak), var(--recession), var(--depression));
-  transition: width 0.5s ease;
-}
-
-select {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.5rem 0.75rem;
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  color: var(--text);
-  outline: none;
-  width: 100%;
-}
-select option { background: var(--surface); }
-
-@media (max-width: 768px) {
-  .main-layout { grid-template-columns: 1fr; }
+@media(max-width:768px) {
+  .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .decisions-grid { grid-template-columns: 1fr; }
-  .results-grid { grid-template-columns: 1fr 1fr; }
+  .sliders-grid, .two-col, .results-grid, .lp-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
-
-<div class="progress-strip"><div class="progress-strip-fill" id="progress-strip" style="width:0%"></div></div>
+<div class="progress-strip"><div class="progress-strip-fill" id="pstrip" style="width:0%"></div></div>
 
 <header>
   <div class="header-left">
     <h1>Business Economy Simulator</h1>
     <div class="sub">Business Management · Strand 1 · Standards 1–4</div>
   </div>
-  <div class="header-right">
-    <div class="biz-health">
-      <div>
-        <div class="cash-label">Business Health</div>
-        <div class="health-bar-wrap" style="margin-top:4px;">
-          <div class="health-bar-fill" id="health-bar" style="width:100%; background:var(--green);"></div>
-        </div>
-      </div>
+  <div class="header-stats">
+    <div class="hstat">
+      <div class="hstat-label">Business Health</div>
+      <div class="health-wrap"><div class="health-fill" id="health-fill" style="width:100%;background:var(--green)"></div></div>
     </div>
-    <div>
-      <div class="cash-label">Cash on Hand</div>
-      <div class="cash-display" id="cash-display">$50,000</div>
+    <div class="hstat">
+      <div class="hstat-label">Cash on Hand</div>
+      <div class="hstat-val" id="hcash">$50,000</div>
     </div>
-    <div class="phase-nav" id="phase-nav"></div>
+    <div class="hstat">
+      <div class="hstat-label">Cumulative Profit</div>
+      <div class="hstat-val neu" id="hprofit">$0</div>
+    </div>
+    <div class="phase-dots" id="pdots"></div>
   </div>
 </header>
 
-<div class="main-layout">
-
-  <!-- Sidebar -->
+<div class="layout">
   <div class="sidebar">
-
     <div>
-      <div class="sidebar-section-label">Business Life Cycle</div>
+      <div class="sb-label">Business Life Cycle</div>
       <div class="cycle-track" id="cycle-track"></div>
     </div>
-
     <div>
-      <div class="sidebar-section-label">Economic System</div>
-      <div class="system-cards" id="system-cards">
-        <div class="system-card selected" onclick="selectSystem('market')" id="sys-market">
-          <div class="system-name">Market Economy</div>
-          <div class="system-desc">You set all prices. Competition determines success. Maximum freedom, maximum risk.</div>
+      <div class="sb-label">Economic System <span style="color:var(--text-dim);font-size:.55rem;">(set once before Phase 1)</span></div>
+      <div class="sys-cards" id="sys-cards">
+        <div class="sys-card sel" onclick="selectSys('market')" id="sc-market">
+          <div class="sys-card-name">Market Economy</div>
+          <div class="sys-card-desc">You control all prices and production. Maximum freedom — maximum risk. Competition determines your success.</div>
+          <div class="sys-constraint">✓ Full price & production control</div>
         </div>
-        <div class="system-card" onclick="selectSystem('mixed')" id="sys-mixed">
-          <div class="system-name">Mixed Economy</div>
-          <div class="system-desc">Government sets some price floors/ceilings. Partial freedom with safety nets.</div>
+        <div class="sys-card" onclick="selectSys('mixed')" id="sc-mixed">
+          <div class="sys-card-name">Mixed Economy</div>
+          <div class="sys-card-desc">Government sets price floors you cannot undercut. Some production subsidies during downturns.</div>
+          <div class="sys-constraint">⚠ Price floor enforced each phase</div>
         </div>
-        <div class="system-card" onclick="selectSystem('command')" id="sys-command">
-          <div class="system-name">Command Economy</div>
-          <div class="system-desc">Government controls prices and output. Stability, but little strategic freedom.</div>
+        <div class="sys-card" onclick="selectSys('command')" id="sc-command">
+          <div class="sys-card-name">Command Economy</div>
+          <div class="sys-card-desc">Government sets your price and production quota. Stability, but almost no strategic freedom.</div>
+          <div class="sys-constraint">⚠ Price & production locked by govt</div>
         </div>
       </div>
     </div>
-
     <div>
-      <div class="sidebar-section-label">Your Business Metrics</div>
-      <div class="metrics-grid" id="metrics-grid">
-        <div class="metric-box">
-          <div class="metric-label">Revenue</div>
-          <div class="metric-val neutral" id="m-revenue">$0</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Expenses</div>
-          <div class="metric-val neutral" id="m-expenses">$0</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Profit</div>
-          <div class="metric-val neutral" id="m-profit">$0</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Inventory</div>
-          <div class="metric-val neutral" id="m-inventory">0 units</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Employees</div>
-          <div class="metric-val neutral" id="m-employees">10</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Market Share</div>
-          <div class="metric-val neutral" id="m-share">25%</div>
-        </div>
+      <div class="sb-label">Business Metrics</div>
+      <div class="metrics-grid">
+        <div class="mbox"><div class="mbox-label">Revenue</div><div class="mbox-val neu" id="m-rev">$0</div></div>
+        <div class="mbox"><div class="mbox-label">Expenses</div><div class="mbox-val neu" id="m-exp">$0</div></div>
+        <div class="mbox"><div class="mbox-label">Profit</div><div class="mbox-val neu" id="m-pro">$0</div></div>
+        <div class="mbox"><div class="mbox-label">Inventory</div><div class="mbox-val neu" id="m-inv">500 units</div></div>
+        <div class="mbox"><div class="mbox-label">Employees</div><div class="mbox-val neu" id="m-emp">10</div></div>
+        <div class="mbox"><div class="mbox-label">Mkt Share</div><div class="mbox-val neu" id="m-shr">25%</div></div>
       </div>
     </div>
-
   </div>
 
-  <!-- Main Content -->
-  <div class="main-content" id="main-content">
-    <!-- Rendered dynamically -->
-  </div>
-
+  <div class="main" id="main"></div>
 </div>
 
 <script>
 const WORKER_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
 
-const phases = [
+// ─── PHASE DEFINITIONS ───────────────────────────────────────────────────────
+const PHASES = [
   {
-    id: 'expansion',
-    name: 'Expansion',
-    icon: '📈',
-    color: '#4CAF7D',
-    desc: 'The economy is growing. Consumer confidence is high, unemployment is falling, and people are spending freely. Demand is rising across most industries.',
-    conditions: ['High Consumer Demand', 'Rising Employment', 'Low Interest Rates', 'GDP Growing'],
-    news: {
-      headline: 'Economy Booming — Consumer Spending at 5-Year High',
-      body: 'Retail sales jumped 8% last quarter as consumer confidence reaches its highest level in five years. Analysts predict continued growth through the fiscal year.'
+    id:'expansion', name:'Expansion', icon:'📈', color:'#4CAF7D',
+    desc:'The economy is growing. Consumer confidence is high, unemployment is falling, spending is up. Demand is rising strongly across most industries.',
+    conditions:['High Consumer Demand','Rising Employment','Low Interest Rates','GDP Growing'],
+    news:{ headline:'Economy Booming — Consumer Spending at 5-Year High', body:'Retail sales jumped 8% last quarter as consumer confidence reaches its highest level in five years. Analysts predict continued growth.' },
+    event:{ type:'Market Opportunity', title:'Well-funded competitor enters your market', desc:'A startup just launched a rival product with heavy VC backing and aggressive pricing. How do you respond?' },
+    eventOptions:['Lower my price to compete on price','Hold premium position and invest in quality','Increase marketing spend to strengthen brand'],
+    // Supply/demand base (0-100 scale, higher demand = curve shifted right)
+    supplyBase:60, demandBase:82,
+    // Phase-specific slider defaults and constraints
+    sliders:{
+      price:{ default:35, min:5, max:100 },
+      production:{ default:700, min:100, max:2000 },
+      workers:{ default:14, min:2, max:50 }
     },
-    event: {
-      type: 'Market Opportunity',
-      title: 'New competitor enters your market',
-      desc: 'A well-funded startup just launched a competing product. Do you lower prices to compete, hold your premium position, or increase marketing spend?'
-    },
-    baseSupply: 60, baseDemand: 80,
-    demandMultiplier: 1.3, costMultiplier: 0.9,
-    hints: { price: 'Demand is high — you can charge premium prices without losing customers.', production: 'Ramp up production while costs are lower and demand is strong.', workers: 'Hire aggressively — skilled workers are still available before the peak.' }
+    // Cost multipliers
+    costPerUnit:8, wagePerWorker:3200,
+    hints:{
+      price:'Demand is strong — you can charge premium prices. Raising price increases revenue if demand holds.',
+      production:'Ramp up production. Demand is high and costs are still manageable.',
+      workers:'Hire now — skilled workers are available and you need capacity to meet demand.'
+    }
   },
   {
-    id: 'peak',
-    name: 'Peak',
-    icon: '⛰️',
-    color: '#D4A840',
-    desc: 'The economy has reached its maximum output. Inflation is rising, wages are high, and resources are becoming scarce. Every decision carries opportunity cost.',
-    conditions: ['Rising Inflation', 'Tight Labor Market', 'High Competition', 'Resource Scarcity'],
-    news: {
-      headline: 'Inflation Hits 6.2% — Businesses Face Rising Input Costs',
-      body: 'The Federal Reserve signals potential interest rate hikes as inflation pressures mount. Raw material costs have risen 18% year-over-year, squeezing profit margins across industries.'
+    id:'peak', name:'Peak', icon:'⛰️', color:'#D4A840',
+    desc:'Maximum output. Inflation is rising, wages are high, resources are scarce. Every decision carries heavy opportunity cost. Costs are squeezing margins.',
+    conditions:['Rising Inflation','Tight Labor Market','Resource Scarcity','High Competition'],
+    news:{ headline:'Inflation Hits 6.2% — Input Costs Surge 18%', body:'The Fed signals rate hikes. Raw material costs are up 18% year-over-year. Every producer is feeling the squeeze on margins.' },
+    event:{ type:'Supply Shock', title:'Raw material tariff raises your costs 30%', desc:'A new government tariff on imported materials just increased your cost per unit by 30%. How do you protect your margin?' },
+    eventOptions:['Pass the cost increase to customers (raise price)','Absorb the cost to keep customers (hold price, accept lower margin)','Find domestic suppliers (slower, one-time cost, long-term savings)'],
+    supplyBase:75, demandBase:85,
+    sliders:{
+      price:{ default:45, min:5, max:100 },
+      production:{ default:600, min:100, max:2000 },
+      workers:{ default:16, min:2, max:50 }
     },
-    event: {
-      type: 'Supply Shock',
-      title: 'Raw material costs spike 30%',
-      desc: 'A global supply chain disruption has increased your input costs dramatically. Tariffs on imported materials have been raised. How do you protect your profit margin?'
-    },
-    baseSupply: 80, baseDemand: 85,
-    demandMultiplier: 1.1, costMultiplier: 1.3,
-    hints: { price: 'Costs are rising — raise prices carefully or margins will collapse.', production: 'Scarcity is emerging. Secure supply chains before the downturn hits.', workers: 'Labor costs are at their peak. Consider automation investments.' }
+    costPerUnit:12, wagePerWorker:4000,
+    hints:{
+      price:'Costs are surging — hold or raise price or margins will collapse. Watch equilibrium carefully.',
+      production:'Supply chain is tight. Secure what you can, but avoid overproduction as costs are high.',
+      workers:'Labor is expensive and scarce. Overstaffing here destroys profit fast.'
+    }
   },
   {
-    id: 'recession',
-    name: 'Recession',
-    icon: '📉',
-    color: '#E09A40',
-    desc: 'GDP is contracting. Consumer confidence is falling and spending is down. Unemployment is rising and businesses are tightening their belts. Survival mode.',
-    conditions: ['Falling Consumer Demand', 'Rising Unemployment', 'Credit Tightening', 'GDP Shrinking'],
-    news: {
-      headline: 'Recession Confirmed — GDP Contracts for Second Quarter',
-      body: 'Economists officially declare a recession as GDP shrinks for the second consecutive quarter. Consumer spending dropped 12%, and retail bankruptcies are up 34% compared to last year.'
+    id:'recession', name:'Recession', icon:'📉', color:'#E09A40',
+    desc:'GDP is contracting for a second straight quarter. Consumer spending is down 12%, credit is tightening, and unemployment is rising. Survival is the priority.',
+    conditions:['Falling Consumer Demand','Rising Unemployment','Credit Tightening','GDP Shrinking'],
+    news:{ headline:'Recession Confirmed — Retail Bankruptcies Up 34%', body:'GDP has contracted for a second consecutive quarter. Consumer spending dropped 12% and retail bankruptcies are rising sharply across the country.' },
+    event:{ type:'Crisis Decision', title:'Your largest client cancels a $200K contract', desc:'Your biggest account just cut spending due to their own downturn. You have a serious revenue gap to fill or costs to cut.' },
+    eventOptions:['Cut workforce immediately to reduce expenses','Find new smaller clients to replace lost revenue','Offer a discount to retain the client at lower margin'],
+    supplyBase:65, demandBase:42,
+    sliders:{
+      price:{ default:22, min:5, max:100 },
+      production:{ default:300, min:100, max:2000 },
+      workers:{ default:9, min:2, max:50 }
     },
-    event: {
-      type: 'Crisis Decision',
-      title: 'Major client cancels $200K contract',
-      desc: 'Your largest client has cut spending due to their own financial pressures. You face a serious revenue shortfall. Do you cut workers, reduce production, or find new markets?'
-    },
-    baseSupply: 70, baseDemand: 45,
-    demandMultiplier: 0.7, costMultiplier: 1.1,
-    hints: { price: 'Demand has collapsed — cutting prices might attract buyers but destroys margins.', production: 'Excess inventory is dangerous. Match production to reduced demand.', workers: 'Laying off too many workers now makes recovery harder later.' }
+    costPerUnit:9, wagePerWorker:3000,
+    hints:{
+      price:'Demand has collapsed. Cutting price may attract buyers but destroys margin. Find the balance.',
+      production:'Match production closely to reduced demand. Excess inventory is cash locked up.',
+      workers:'Laying off too many now makes recovery slower. Keep your best people if possible.'
+    }
   },
   {
-    id: 'depression',
-    name: 'Depression / Trough',
-    icon: '🏚️',
-    color: '#E05A4A',
-    desc: 'The economy has hit rock bottom. Unemployment is severe, credit is frozen, and consumer spending is at a historic low. Only the most essential goods sell.',
-    conditions: ['Severe Unemployment', 'Deflation Risk', 'Credit Freeze', 'Minimum Consumer Spending'],
-    news: {
-      headline: 'Economic Trough: Unemployment Reaches 14% — Recovery Signs Emerging',
-      body: 'The economy has reached its lowest point with unemployment at 14%. However, economists note early indicators of recovery: housing starts ticking up and consumer sentiment improving slightly.'
+    id:'depression', name:'Depression / Trough', icon:'🏚️', color:'#E05A4A',
+    desc:'Rock bottom. Unemployment is at 14%, credit is frozen, and consumers buy only essentials. But economists see early recovery signals — your decisions now determine your recovery position.',
+    conditions:['14% Unemployment','Deflation Risk','Credit Freeze','Survival Mode'],
+    news:{ headline:'Trough Reached — Early Recovery Signs Emerging', body:'Unemployment peaks at 14% but housing starts are ticking up and consumer sentiment improved slightly last month. Recovery may be near.' },
+    event:{ type:'Survival Decision', title:'Your bank calls in your outstanding business loan', desc:'Lenders are pulling credit. You must act immediately — liquidate inventory, seek an angel investor, or apply for an SBA emergency loan.' },
+    eventOptions:['Liquidate inventory at a loss to pay the loan','Seek an angel investor (give up equity)','Apply for SBA emergency loan (takes time, carries interest)'],
+    supplyBase:48, demandBase:22,
+    sliders:{
+      price:{ default:12, min:5, max:100 },
+      production:{ default:180, min:100, max:2000 },
+      workers:{ default:5, min:2, max:50 }
     },
-    event: {
-      type: 'Survival Decision',
-      title: 'Bank calls your business loan',
-      desc: 'Your lender has called in your outstanding loan amid the credit freeze. You can liquidate inventory at a loss, seek an angel investor, or apply for an SBA emergency loan. Choose wisely.'
-    },
-    baseSupply: 50, baseDemand: 25,
-    demandMultiplier: 0.5, costMultiplier: 0.85,
-    hints: { price: 'Desperate customers buy on price alone. Rock-bottom pricing may be survival strategy.', production: 'Minimum production — only what you know you can sell.', workers: 'Skeleton crew only. Focus on keeping your best people for the recovery.' }
+    costPerUnit:7, wagePerWorker:2800,
+    hints:{
+      price:'Price as low as you can sustain. Only essential spending is happening. Survival first.',
+      production:'Bare minimum production only. Every unsold unit is money you cannot afford to lose.',
+      workers:'Skeleton crew only. Protect your essential staff for when recovery arrives.'
+    }
   }
 ];
 
-const phaseDescriptions = {
-  expansion: 'Growing',
-  peak: 'At Maximum',
-  recession: 'Contracting',
-  depression: 'At Trough'
+// ─── ECONOMIC SYSTEM RULES ───────────────────────────────────────────────────
+// These actually constrain the sliders and modify outcomes
+const SYSTEMS = {
+  market: {
+    name: 'Market Economy',
+    priceConstraint: (phase, val) => val, // full freedom
+    productionConstraint: (phase, val) => val,
+    revenueModifier: 1.0,
+    expenseModifier: 1.0,
+    note: (phase) => 'You control all prices and production decisions.',
+    priceOverride: null, productionOverride: null
+  },
+  mixed: {
+    name: 'Mixed Economy',
+    // Price floor = phase's equilibrium min (demand-adjusted)
+    priceFloor: (phase) => Math.round(8 + phase.demandBase * 0.18),
+    productionConstraint: (phase, val) => val,
+    revenueModifier: 0.95, // slight efficiency loss from regulation
+    expenseModifier: 0.92, // subsidy during downturns
+    note: (phase) => `Government price floor: $${Math.round(8 + phase.demandBase * 0.18)}/unit minimum. You cannot price below this.`,
+    priceOverride: null, productionOverride: null
+  },
+  command: {
+    name: 'Command Economy',
+    // Government sets price and production quota — locked
+    govPrice: (phase) => Math.round(10 + phase.demandBase * 0.22),
+    govProduction: (phase) => Math.round(phase.sliders.production.default * 0.9),
+    revenueModifier: 0.88,
+    expenseModifier: 0.85,
+    note: (phase) => `Government sets your price ($${Math.round(10 + phase.demandBase * 0.22)}/unit) and production quota (${Math.round(phase.sliders.production.default * 0.9)} units). Sliders are locked.`,
+    priceOverride: (phase) => Math.round(10 + phase.demandBase * 0.22),
+    productionOverride: (phase) => Math.round(phase.sliders.production.default * 0.9)
+  }
 };
 
-let currentPhaseIndex = 0;
-let selectedSystem = 'market';
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let phaseIdx = 0;
+let sys = 'market';
 let cash = 50000;
 let health = 100;
+let cumulativeProfit = 0;
+let carryInventory = 500; // carries forward between phases
 let decisions = [];
-let totalRevenue = 0;
-let totalExpenses = 0;
+let sysLocked = false; // lock system after phase 1
 
-// Business state
-let state = {
-  revenue: 0, expenses: 0, profit: 0,
-  inventory: 500, employees: 10, marketShare: 25
-};
-
-function selectSystem(sys) {
-  selectedSystem = sys;
-  ['market','mixed','command'].forEach(s => {
-    document.getElementById(`sys-${s}`).classList.toggle('selected', s === sys);
+// ─── SYSTEM SELECTOR ─────────────────────────────────────────────────────────
+function selectSys(s) {
+  if (sysLocked) return;
+  sys = s;
+  ['market','mixed','command'].forEach(k => {
+    document.getElementById(`sc-${k}`).classList.toggle('sel', k === s);
   });
-  drawSDCurve();
+  renderPhase();
 }
 
-function buildCycleTrack() {
-  document.getElementById('cycle-track').innerHTML = phases.map((p, i) => `
-    <div class="cycle-phase ${i === currentPhaseIndex ? 'active' : ''}" id="cp-${i}">
-      <div class="phase-dot" style="background:${p.color}"></div>
-      <div class="phase-info">
-        <div class="phase-name" style="color:${i === currentPhaseIndex ? p.color : 'var(--text-muted)'}">${p.name}</div>
-        <div class="phase-desc">${phaseDescriptions[p.id]}</div>
-      </div>
-      ${i === currentPhaseIndex ? `<span class="phase-badge" style="background:${p.color}20;color:${p.color}">NOW</span>` : ''}
-      ${i < currentPhaseIndex ? `<span class="phase-badge" style="background:var(--green-light);color:var(--green)">✓</span>` : ''}
-    </div>
-  `).join('');
+// ─── LIVE CALCULATION ─────────────────────────────────────────────────────────
+function calcOutcome(phase, price, production, workers) {
+  const sysRules = SYSTEMS[sys];
+
+  // Apply system overrides
+  const effectivePrice = sysRules.priceOverride ? sysRules.priceOverride(phase) : price;
+  const effectiveProd = sysRules.productionOverride ? sysRules.productionOverride(phase) : production;
+
+  // Price floor for mixed
+  const finalPrice = (sys === 'mixed')
+    ? Math.max(price, sysRules.priceFloor(phase))
+    : effectivePrice;
+
+  // Demand function: units demanded = base * elasticity factor
+  // Higher price = fewer units sold; lower price = more sold
+  // Phase demand base scales the curve
+  const demandCurve = phase.demandBase * 6; // max possible demand
+  const priceElasticity = 1 - (finalPrice / 120); // 0 to 1, drops as price rises
+  const demandedUnits = Math.max(0, Math.round(demandCurve * priceElasticity));
+
+  // Units sold = min(produced, demanded, carry inventory doesn't sell automatically)
+  const unitsSold = Math.min(effectiveProd, demandedUnits);
+  const unsold = effectiveProd - unitsSold; // goes to inventory
+
+  // Revenue
+  const revenue = Math.round(unitsSold * finalPrice * sysRules.revenueModifier);
+
+  // Costs
+  const prodCost = Math.round(effectiveProd * phase.costPerUnit * sysRules.expenseModifier);
+  const laborCost = Math.round(workers * phase.wagePerWorker * sysRules.expenseModifier);
+  // Carry inventory cost (holding cost from previous phase)
+  const holdingCost = Math.round(carryInventory * 1.5);
+  const expenses = prodCost + laborCost + holdingCost;
+
+  const profit = revenue - expenses;
+  const newInventory = Math.max(0, carryInventory + unsold - Math.round(carryInventory * 0.1)); // some spoilage
+
+  // Market status
+  const surplus = demandedUnits < effectiveProd * 0.7;
+  const shortage = demandedUnits > effectiveProd * 1.3;
+  const status = shortage ? 'Shortage' : surplus ? 'Surplus' : 'Near Equilibrium';
+
+  return { finalPrice, effectiveProd, unitsSold, unsold, revenue, prodCost, laborCost, holdingCost, expenses, profit, newInventory, demandedUnits, surplus, shortage, status };
 }
 
-function buildPhaseNav() {
-  document.getElementById('phase-nav').innerHTML = phases.map((p, i) => `
-    <div class="phase-nav-dot ${i === currentPhaseIndex ? 'active' : i < currentPhaseIndex ? 'done' : ''}" style="${i === currentPhaseIndex ? `background:${p.color}` : ''}"></div>
-  `).join('');
-}
-
-function updateMetrics() {
-  document.getElementById('cash-display').textContent = '$' + cash.toLocaleString();
-  document.getElementById('m-revenue').textContent = '$' + state.revenue.toLocaleString();
-  document.getElementById('m-expenses').textContent = '$' + state.expenses.toLocaleString();
-
-  const profit = state.revenue - state.expenses;
-  const profitEl = document.getElementById('m-profit');
-  profitEl.textContent = (profit >= 0 ? '+$' : '-$') + Math.abs(profit).toLocaleString();
-  profitEl.className = 'metric-val ' + (profit > 0 ? 'positive' : profit < 0 ? 'negative' : 'neutral');
-
-  document.getElementById('m-inventory').textContent = state.inventory.toLocaleString() + ' units';
-  document.getElementById('m-employees').textContent = state.employees;
-  document.getElementById('m-share').textContent = state.marketShare + '%';
-
-  const healthPct = Math.max(0, Math.min(100, health));
-  const hBar = document.getElementById('health-bar');
-  hBar.style.width = healthPct + '%';
-  hBar.style.background = healthPct > 60 ? 'var(--green)' : healthPct > 30 ? 'var(--amber)' : 'var(--red)';
-
-  document.getElementById('progress-strip').style.width = ((currentPhaseIndex) / phases.length * 100) + '%';
-}
-
-// Supply/Demand canvas
-function drawSDCurve() {
+// ─── DRAW SUPPLY/DEMAND CHART ─────────────────────────────────────────────────
+function drawChart(phase, price, production) {
   const canvas = document.getElementById('sd-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width = canvas.offsetWidth;
-  const H = canvas.height = canvas.offsetHeight;
+  const W = canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  const H = canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  canvas.style.width = canvas.offsetWidth + 'px';
+  canvas.style.height = canvas.offsetHeight + 'px';
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
 
-  ctx.clearRect(0, 0, W, H);
+  ctx.clearRect(0, 0, w, h);
+  const pad = { l:40, r:20, t:15, b:28 };
+  const cw = w - pad.l - pad.r, ch = h - pad.t - pad.b;
 
-  const phase = phases[currentPhaseIndex];
-  const priceSlider = document.getElementById('price-slider');
-  const prodSlider = document.getElementById('prod-slider');
-
-  let supplyShift = phase.baseSupply;
-  let demandShift = phase.baseDemand;
-
-  // System modifiers
-  if (selectedSystem === 'command') { supplyShift += 10; demandShift = Math.min(demandShift, 60); }
-  if (selectedSystem === 'mixed') { supplyShift += 5; }
-
-  // Draw axes
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-  ctx.lineWidth = 1;
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(40, 10); ctx.lineTo(40, H - 30);
-  ctx.moveTo(40, H - 30); ctx.lineTo(W - 10, H - 30);
+  ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + ch);
+  ctx.moveTo(pad.l, pad.t + ch); ctx.lineTo(pad.l + cw, pad.t + ch);
   ctx.stroke();
 
   // Axis labels
-  ctx.fillStyle = 'rgba(154,136,120,0.8)';
-  ctx.font = '10px Libre Franklin';
-  ctx.fillText('Price', 2, H/2);
-  ctx.fillText('Quantity', W/2, H - 5);
+  ctx.fillStyle = '#7A6858'; ctx.font = `10px Libre Franklin`;
+  ctx.fillText('Price ($)', 2, pad.t + ch/2 + 5);
+  ctx.fillText('Quantity', pad.l + cw/2 - 20, h - 4);
 
-  // Supply curve (upward sloping)
-  ctx.strokeStyle = '#5A9FD4';
-  ctx.lineWidth = 2.5;
+  // Supply shift based on phase supply base (higher = right shift)
+  const sShift = (phase.supplyBase - 50) / 100;
+  // Demand shift based on phase demand base
+  const dShift = (phase.demandBase - 50) / 100;
+
+  // Supply curve (upward sloping, left of center = tight supply, right = loose)
+  ctx.strokeStyle = '#5A9FD4'; ctx.lineWidth = 2.5;
   ctx.beginPath();
-  const sShift = (100 - supplyShift) / 100 * 40;
-  ctx.moveTo(50, H - 35 - sShift);
-  ctx.lineTo(W - 20, 15 + sShift);
+  const sx1 = pad.l + cw * (0.05 + sShift * 0.3);
+  const sx2 = pad.l + cw * (0.7 + sShift * 0.3);
+  ctx.moveTo(sx1, pad.t + ch - 5);
+  ctx.lineTo(sx2, pad.t + 10);
   ctx.stroke();
+  ctx.fillStyle = '#5A9FD4'; ctx.font = 'bold 10px Libre Franklin';
+  ctx.fillText('Supply (S)', sx2 - 65, pad.t + 20);
 
-  // Supply label
-  ctx.fillStyle = '#5A9FD4';
-  ctx.font = 'bold 11px Libre Franklin';
-  ctx.fillText('Supply (S)', W - 75, 20 + sShift);
-
-  // Demand curve (downward sloping)
-  ctx.strokeStyle = '#E05A4A';
-  ctx.lineWidth = 2.5;
+  // Demand curve (downward sloping, right shift = higher demand)
+  ctx.strokeStyle = '#E05A4A'; ctx.lineWidth = 2.5;
   ctx.beginPath();
-  const dShift = (demandShift - 50) / 100 * 50;
-  ctx.moveTo(50, 20 - dShift);
-  ctx.lineTo(W - 20, H - 35 + dShift);
+  const dx1 = pad.l + cw * (0.05 + dShift * 0.35);
+  const dx2 = pad.l + cw * (0.7 + dShift * 0.3);
+  ctx.moveTo(dx1, pad.t + 10);
+  ctx.lineTo(dx2, pad.t + ch - 5);
   ctx.stroke();
+  ctx.fillStyle = '#E05A4A'; ctx.font = 'bold 10px Libre Franklin';
+  ctx.fillText('Demand (D)', dx2 - 65, pad.t + ch - 10);
 
-  // Demand label
-  ctx.fillStyle = '#E05A4A';
-  ctx.font = 'bold 11px Libre Franklin';
-  ctx.fillText('Demand (D)', W - 80, H - 40 + dShift);
+  // Equilibrium (intersection)
+  const eqX = pad.l + cw * (0.42 + (dShift - sShift) * 0.25);
+  const eqY = pad.t + ch * (0.5 - (dShift + sShift) * 0.12);
 
-  // Equilibrium point
-  const eqX = W * 0.45 + (demandShift - supplyShift) * 0.8;
-  const eqY = H * 0.45 + (supplyShift - demandShift) * 0.3;
-
-  ctx.strokeStyle = 'rgba(212,168,64,0.4)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([4, 4]);
+  // Dotted lines to axes
+  ctx.strokeStyle = 'rgba(212,168,64,0.35)'; ctx.lineWidth = 1; ctx.setLineDash([3,4]);
   ctx.beginPath();
-  ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, H - 30);
-  ctx.moveTo(eqX, eqY); ctx.lineTo(40, eqY);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.moveTo(eqX, eqY); ctx.lineTo(eqX, pad.t + ch);
+  ctx.moveTo(eqX, eqY); ctx.lineTo(pad.l, eqY);
+  ctx.stroke(); ctx.setLineDash([]);
 
   // Equilibrium dot
-  ctx.fillStyle = 'var(--gold, #D4A840)';
-  ctx.beginPath();
-  ctx.arc(eqX, eqY, 6, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#1C1410';
-  ctx.beginPath();
-  ctx.arc(eqX, eqY, 3, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Label
   ctx.fillStyle = '#D4A840';
-  ctx.font = 'bold 10px Libre Franklin';
-  ctx.fillText('E*', eqX + 8, eqY - 5);
+  ctx.beginPath(); ctx.arc(eqX, eqY, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#1C1410';
+  ctx.beginPath(); ctx.arc(eqX, eqY, 3, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#D4A840'; ctx.font = 'bold 10px Libre Franklin';
+  ctx.fillText('E*', eqX + 8, eqY - 6);
 
-  // Update equilibrium info
-  const eqPrice = Math.round(20 + (supplyShift + demandShift) / 4);
-  const eqQty = Math.round(100 + (demandShift - supplyShift) * 2);
-  const surplus = demandShift < supplyShift;
-  const shortage = demandShift > supplyShift + 15;
+  // Student's price point on y-axis
+  const sysRules = SYSTEMS[sys];
+  const effectivePrice = sysRules.priceOverride ? sysRules.priceOverride(phase) : price;
+  const finalP = (sys === 'mixed') ? Math.max(price, sysRules.priceFloor(phase)) : effectivePrice;
+  const priceRatio = 1 - (finalP / 110);
+  const priceY = pad.t + ch * priceRatio;
 
-  const eqEl = document.getElementById('eq-info');
+  // Horizontal line showing student's price
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5; ctx.setLineDash([5,3]);
+  ctx.beginPath();
+  ctx.moveTo(pad.l, priceY); ctx.lineTo(pad.l + cw, priceY);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Label student price
+  ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '9px Libre Franklin';
+  ctx.fillText(`Your price: $${finalP}`, pad.l + 4, priceY - 4);
+
+  // Arrow showing if price is above or below equilibrium
+  const eqPrice = Math.round(35 + phase.demandBase * 0.25);
+  if (Math.abs(finalP - eqPrice) > 3) {
+    const aboveEq = finalP > eqPrice;
+    ctx.fillStyle = aboveEq ? '#5A9FD4' : '#E05A4A';
+    ctx.font = 'bold 9px Libre Franklin';
+    ctx.fillText(aboveEq ? '▲ Above equilibrium → surplus risk' : '▼ Below equilibrium → shortage signal', pad.l + cw - 165, priceY + (aboveEq ? -5 : 12));
+  }
+
+  // Update eq strip
+  const eqPrice2 = Math.round(10 + phase.demandBase * 0.28);
+  const eqQty = Math.round(phase.demandBase * 5.5);
+  const out = calcOutcome(phase, price, parseInt(document.getElementById('prod-sl')?.value || phase.sliders.production.default), parseInt(document.getElementById('work-sl')?.value || phase.sliders.workers.default));
+  const eqEl = document.getElementById('eq-strip');
   if (eqEl) {
     eqEl.innerHTML = `
-      <div class="eq-item"><span class="eq-label">Eq. Price:</span> <strong>$${eqPrice}</strong></div>
-      <div class="eq-item"><span class="eq-label">Eq. Quantity:</span> <strong>${eqQty} units</strong></div>
-      <div class="eq-item"><span class="eq-label">Market Status:</span> <strong style="color:${shortage ? 'var(--red)' : surplus ? 'var(--blue)' : 'var(--green)'}">${shortage ? '⚠ Shortage' : surplus ? '↓ Surplus' : '✓ Near Equilibrium'}</strong></div>
+      <div class="eq-item"><span class="eq-lbl">Eq. Price:</span><strong>$${eqPrice2}</strong></div>
+      <div class="eq-item"><span class="eq-lbl">Eq. Quantity:</span><strong>~${eqQty} units</strong></div>
+      <div class="eq-item"><span class="eq-lbl">Your Price:</span><strong style="color:${Math.abs(finalP - eqPrice2) < 5 ? 'var(--green)' : 'var(--amber)'}">$${finalP}</strong></div>
+      <div class="eq-item"><span class="eq-lbl">Market Status:</span><strong style="color:${out.shortage?'var(--red)':out.surplus?'var(--blue)':'var(--green)'}">${out.status}</strong></div>
     `;
   }
 }
 
+// ─── LIVE PREVIEW UPDATE ──────────────────────────────────────────────────────
+function updateLive() {
+  const phase = PHASES[phaseIdx];
+  if (!phase) return;
+
+  const sysRules = SYSTEMS[sys];
+  let price = parseInt(document.getElementById('price-sl')?.value || phase.sliders.price.default);
+  let production = parseInt(document.getElementById('prod-sl')?.value || phase.sliders.production.default);
+  let workers = parseInt(document.getElementById('work-sl')?.value || phase.sliders.workers.default);
+
+  // Apply system overrides for display
+  if (sysRules.priceOverride) price = sysRules.priceOverride(phase);
+  if (sysRules.productionOverride) production = sysRules.productionOverride(phase);
+  if (sys === 'mixed') price = Math.max(price, sysRules.priceFloor(phase));
+
+  // Update display values
+  const pEl = document.getElementById('price-sl-val');
+  const prodEl = document.getElementById('prod-sl-val');
+  const wEl = document.getElementById('work-sl-val');
+  if (pEl) pEl.textContent = '$' + price;
+  if (prodEl) prodEl.textContent = production + ' units';
+  if (wEl) wEl.textContent = workers;
+
+  const out = calcOutcome(phase, price, production, workers);
+
+  // Live preview boxes
+  const setLP = (id, val, cls) => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = val; el.className = 'lp-val ' + (cls || 'neu'); }
+  };
+  setLP('lp-rev', '$' + out.revenue.toLocaleString());
+  setLP('lp-exp', '$' + out.expenses.toLocaleString());
+  setLP('lp-prof', (out.profit >= 0 ? '+$' : '-$') + Math.abs(out.profit).toLocaleString(), out.profit > 0 ? 'pos' : out.profit < 0 ? 'neg' : 'neu');
+  setLP('lp-sold', out.unitsSold.toLocaleString() + ' of ' + production.toLocaleString(), 'neu');
+
+  const noteEl = document.getElementById('lp-note');
+  if (noteEl) {
+    if (out.unsold > 100) noteEl.textContent = `⚠ ${out.unsold.toLocaleString()} units unsold → adds to inventory (holding cost next phase)`;
+    else if (out.shortage) noteEl.textContent = `⚠ Demand exceeds supply — you could sell more if you produced more`;
+    else if (out.holdingCost > 0) noteEl.textContent = `Carrying ${carryInventory} units from previous phase costs $${out.holdingCost.toLocaleString()} this phase`;
+    else noteEl.textContent = '';
+  }
+
+  drawChart(phase, price, production);
+}
+
+// ─── RENDER PHASE ─────────────────────────────────────────────────────────────
 function renderPhase() {
-  const phase = phases[currentPhaseIndex];
-  const isLastPhase = currentPhaseIndex === phases.length - 1;
-  const isResults = currentPhaseIndex >= phases.length;
+  if (phaseIdx >= PHASES.length) { renderResults(); return; }
+  const phase = PHASES[phaseIdx];
+  const sysRules = SYSTEMS[sys];
 
-  if (isResults) { renderResults(); return; }
+  // Lock system after first phase submission
+  if (phaseIdx > 0) sysLocked = true;
+  document.querySelectorAll('.sys-card').forEach(el => el.style.cursor = sysLocked ? 'not-allowed' : 'pointer');
+  document.querySelectorAll('.sys-card').forEach(el => el.style.opacity = sysLocked ? '.6' : '1');
+  if (sysLocked) document.getElementById(`sc-${sys}`).style.opacity = '1';
 
-  buildCycleTrack();
-  buildPhaseNav();
+  // Slider defaults for this phase
+  const pd = phase.sliders.price.default;
+  const prd = phase.sliders.production.default;
+  const wd = phase.sliders.workers.default;
 
-  const systemNote = {
-    market: 'You control all pricing and production decisions.',
-    mixed: 'Government sets price floors. You cannot price below market minimum.',
-    command: 'Government sets output targets. Your production range is restricted.'
-  }[selectedSystem];
+  // Command locks sliders
+  const cmdLock = sys === 'command';
+  const cmdPrice = cmdLock ? SYSTEMS.command.govPrice(phase) : pd;
+  const cmdProd = cmdLock ? SYSTEMS.command.govProduction(phase) : prd;
+  const mixFloor = sys === 'mixed' ? SYSTEMS.mixed.priceFloor(phase) : null;
 
-  document.getElementById('main-content').innerHTML = `
-    <!-- Phase Header -->
-    <div class="phase-header">
-      <div class="phase-icon">${phase.icon}</div>
+  const sysNoteColor = sys === 'command' ? 'var(--red-light);color:var(--red)' : sys === 'mixed' ? 'rgba(224,154,64,.15);color:var(--amber)' : 'var(--green-light);color:var(--green)';
+  const sysNote = sysRules.note(phase);
+
+  // Build cycle track & nav
+  document.getElementById('cycle-track').innerHTML = PHASES.map((p,i) => `
+    <div class="cphase ${i===phaseIdx?'active':i<phaseIdx?'done':''}">
+      <div class="cph-dot" style="background:${p.color}"></div>
+      <div><div class="cph-name" style="color:${i<=phaseIdx?p.color:'var(--text-dim)'}">${p.name}</div><div class="cph-desc">${i<phaseIdx?'Complete':i===phaseIdx?'Current':'Upcoming'}</div></div>
+      ${i===phaseIdx?`<span class="cph-badge" style="background:${p.color}20;color:${p.color}">NOW</span>`:''}
+      ${i<phaseIdx?`<span class="cph-badge" style="background:var(--green-light);color:var(--green)">✓</span>`:''}
+    </div>`).join('');
+
+  document.getElementById('pdots').innerHTML = PHASES.map((_,i) => `
+    <div class="pdot ${i===phaseIdx?'active':i<phaseIdx?'done':''}" style="${i===phaseIdx?`background:${phase.color}`:''}"></div>`).join('');
+
+  document.getElementById('pstrip').style.width = (phaseIdx/PHASES.length*100)+'%';
+
+  document.getElementById('main').innerHTML = `
+    <!-- Banner -->
+    <div class="phase-banner">
+      <div class="pb-icon">${phase.icon}</div>
       <div>
-        <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:${phase.color};margin-bottom:0.35rem;">Phase ${currentPhaseIndex + 1} of 4 — ${selectedSystem.charAt(0).toUpperCase() + selectedSystem.slice(1)} Economy</div>
-        <div class="phase-header-title" style="color:${phase.color}">${phase.name}</div>
-        <div class="phase-header-desc">${phase.desc}</div>
-        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;font-style:italic;">${systemNote}</div>
+        <div style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:${phase.color};margin-bottom:.3rem">Phase ${phaseIdx+1} of 4</div>
+        <div class="pb-title" style="color:${phase.color}">${phase.name}</div>
+        <div class="pb-desc">${phase.desc}</div>
+        <div class="pb-sys-note" style="background:${sysNoteColor};margin-top:.6rem">${sysNote}</div>
+        ${carryInventory > 0 && phaseIdx > 0 ? `<div style="font-size:.7rem;color:var(--amber);margin-top:.4rem">📦 Carrying ${carryInventory.toLocaleString()} unsold units from previous phase — holding cost applies</div>` : ''}
       </div>
-      <div class="phase-conditions">
-        ${phase.conditions.map(c => `<div class="condition-pill" style="background:${phase.color}18;color:${phase.color};border:1px solid ${phase.color}35;">${c}</div>`).join('')}
+      <div class="pb-pills">
+        ${phase.conditions.map(c=>`<div class="pill" style="background:${phase.color}18;color:${phase.color};border:1px solid ${phase.color}35">${c}</div>`).join('')}
       </div>
     </div>
 
-    <!-- News + Event Row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-      <div class="news-card">
+    <!-- News + Event -->
+    <div class="two-col">
+      <div class="news-box">
         <div class="news-icon">📰</div>
-        <div>
-          <div class="news-headline">${phase.news.headline}</div>
-          <div class="news-body">${phase.news.body}</div>
-        </div>
+        <div><div class="news-headline">${phase.news.headline}</div><div class="news-body">${phase.news.body}</div></div>
       </div>
-      <div class="event-card" style="border-left-color:${phase.color}">
+      <div class="event-box" style="border-left:3px solid ${phase.color}">
         <div class="event-type" style="color:${phase.color}">${phase.event.type}</div>
         <div class="event-title">${phase.event.title}</div>
         <div class="event-desc">${phase.event.desc}</div>
+        <div class="event-response">
+          <label>How do you respond to this event?</label>
+          <select id="event-response">
+            <option value="">Select your response…</option>
+            ${phase.eventOptions.map((o,i)=>`<option value="${i}">${o}</option>`).join('')}
+          </select>
+        </div>
       </div>
     </div>
 
     <!-- Supply/Demand Chart -->
     <div class="chart-card">
-      <div class="chart-title">Supply & Demand Curve — ${phase.name} Phase</div>
-      <div class="chart-subtitle">Watch how equilibrium shifts as economic conditions change. Your pricing decisions affect where you sit relative to E*.</div>
-      <div class="sd-chart-wrap">
-        <canvas id="sd-canvas"></canvas>
-      </div>
+      <div class="chart-title">Live Supply & Demand Curve</div>
+      <div class="chart-sub">The curve reflects current economic phase conditions. Your price slider moves the horizontal line — watch where it sits relative to equilibrium E*.</div>
+      <div class="sd-wrap"><canvas id="sd-canvas" style="width:100%;height:100%"></canvas></div>
       <div class="chart-legend">
-        <div class="legend-item"><div class="legend-line" style="background:#5A9FD4"></div>Supply Curve</div>
-        <div class="legend-item"><div class="legend-line" style="background:#E05A4A"></div>Demand Curve</div>
-        <div class="legend-item"><div class="legend-line" style="background:#D4A840"></div>Equilibrium (E*)</div>
+        <div class="leg-item"><div class="leg-line" style="background:#5A9FD4"></div>Supply Curve</div>
+        <div class="leg-item"><div class="leg-line" style="background:#E05A4A"></div>Demand Curve</div>
+        <div class="leg-item"><div class="leg-line" style="background:#D4A840"></div>Equilibrium E*</div>
+        <div class="leg-item"><div class="leg-line" style="background:rgba(255,255,255,.35);border-top:1px dashed rgba(255,255,255,.35)"></div>Your Price</div>
       </div>
-      <div class="equilibrium-info" id="eq-info">
-        <div class="eq-item"><span class="eq-label">Loading…</span></div>
-      </div>
+      <div class="eq-strip" id="eq-strip">Calculating…</div>
     </div>
 
-    <!-- Decision Panel -->
-    <div class="decision-card">
-      <div class="decision-title">Your Management Decisions</div>
-      <div class="decision-subtitle">Adjust your business strategy for the ${phase.name} phase. Each slider represents a real trade-off. Consider supply, demand, costs, and the opportunity cost of each choice.</div>
+    <!-- Live Profit Preview -->
+    <div class="live-preview">
+      <div class="lp-title">📊 Live Outcome Preview — updates as you move sliders</div>
+      <div class="lp-grid">
+        <div class="lp-box"><div class="lp-label">Est. Revenue</div><div class="lp-val neu" id="lp-rev">—</div></div>
+        <div class="lp-box"><div class="lp-label">Est. Expenses</div><div class="lp-val neu" id="lp-exp">—</div></div>
+        <div class="lp-box"><div class="lp-label">Est. Profit / Loss</div><div class="lp-val neu" id="lp-prof">—</div></div>
+        <div class="lp-box"><div class="lp-label">Units Sold</div><div class="lp-val neu" id="lp-sold">—</div></div>
+      </div>
+      <div style="font-size:.68rem;color:var(--amber);margin-top:.6rem" id="lp-note"></div>
+    </div>
 
-      <div class="decisions-grid">
-        <div class="decision-control">
-          <div class="dc-label">
-            <span>Unit Price</span>
-            <span class="dc-value">$<span id="price-val">25</span></span>
+    <!-- Decisions -->
+    <div class="decision-card">
+      <div class="dc-title">Your Management Decisions</div>
+      <div class="dc-sub">Adjust sliders to set your strategy for the ${phase.name} phase. The live preview above updates in real time so you can see the trade-offs before committing.</div>
+      <div class="sliders-grid">
+
+        <div class="slider-block">
+          <div class="sl-header">
+            <span class="sl-label">Unit Price</span>
+            <span class="sl-val" id="price-sl-val">${cmdLock ? '$'+cmdPrice : '$'+pd}</span>
           </div>
-          <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.5rem;font-style:italic;">${phase.hints.price}</div>
-          <input type="range" id="price-slider" min="5" max="100" step="1" value="25" oninput="document.getElementById('price-val').textContent=this.value; drawSDCurve();">
+          <div class="sl-hint">${phase.hints.price}</div>
+          <input type="range" id="price-sl" min="${phase.sliders.price.min}" max="${phase.sliders.price.max}" step="1" value="${cmdLock ? cmdPrice : pd}" ${cmdLock ? 'disabled' : ''} oninput="updateLive()">
+          ${mixFloor ? `<div class="sl-range-note">⚠ Price floor: $${mixFloor}/unit (Mixed economy rule)</div>` : ''}
+          ${cmdLock ? `<div class="sl-range-note">🔒 Government set price: $${cmdPrice}/unit</div>` : ''}
         </div>
-        <div class="decision-control">
-          <div class="dc-label">
-            <span>Production Volume</span>
-            <span class="dc-value"><span id="prod-val">500</span> units</span>
+
+        <div class="slider-block">
+          <div class="sl-header">
+            <span class="sl-label">Production Volume</span>
+            <span class="sl-val" id="prod-sl-val">${cmdLock ? cmdProd+' units' : prd+' units'}</span>
           </div>
-          <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.5rem;font-style:italic;">${phase.hints.production}</div>
-          <input type="range" id="prod-slider" min="100" max="2000" step="50" value="500" ${selectedSystem === 'command' ? 'min="300" max="800"' : ''} oninput="document.getElementById('prod-val').textContent=this.value; drawSDCurve();">
+          <div class="sl-hint">${phase.hints.production}</div>
+          <input type="range" id="prod-sl" min="${phase.sliders.production.min}" max="${phase.sliders.production.max}" step="25" value="${cmdLock ? cmdProd : prd}" ${cmdLock ? 'disabled' : ''} oninput="updateLive()">
+          ${cmdLock ? `<div class="sl-range-note">🔒 Government quota: ${cmdProd} units</div>` : ''}
         </div>
-        <div class="decision-control">
-          <div class="dc-label">
-            <span>Workforce Size</span>
-            <span class="dc-value"><span id="worker-val">10</span> people</span>
+
+        <div class="slider-block">
+          <div class="sl-header">
+            <span class="sl-label">Workforce Size</span>
+            <span class="sl-val" id="work-sl-val">${wd}</span>
           </div>
-          <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.5rem;font-style:italic;">${phase.hints.workers}</div>
-          <input type="range" id="worker-slider" min="2" max="50" step="1" value="10" oninput="document.getElementById('worker-val').textContent=this.value;">
+          <div class="sl-hint">${phase.hints.workers}</div>
+          <input type="range" id="work-sl" min="${phase.sliders.workers.min}" max="${phase.sliders.workers.max}" step="1" value="${wd}" oninput="updateLive()">
+          <div style="font-size:.62rem;color:var(--text-dim);margin-top:.3rem">Wage cost: $${phase.wagePerWorker.toLocaleString()}/worker this phase</div>
         </div>
+
       </div>
 
-      <div class="justification-area">
-        <label class="just-label">Justify your decisions using economic reasoning (required)</label>
-        <textarea id="justification" placeholder="e.g. During expansion, demand is high so I'm raising my price to $45 to maximize revenue before the peak. I'm increasing production to 800 units to meet demand and build inventory before costs rise. I'm hiring 5 more workers because labor is still available and the cost of not having capacity is higher than the wage expense..."></textarea>
+      <div class="just-area">
+        <label class="just-label">Justify your decisions using economic reasoning (required to advance)</label>
+        <textarea id="just" placeholder="Use economic vocabulary: supply, demand, equilibrium, surplus, shortage, scarcity, opportunity cost, inflation, recession. Explain WHY you set each slider where you did and how you responded to the ${phase.event.type.toLowerCase()} scenario..."></textarea>
       </div>
 
       <div class="btn-row">
-        ${currentPhaseIndex > 0 ? '<button class="btn btn-outline" onclick="goBack()">← Previous Phase</button>' : ''}
-        <button class="btn btn-gold" onclick="submitPhase()">${isLastPhase ? 'Submit Final Phase & Get Analysis →' : 'Submit & Advance to Next Phase →'}</button>
+        ${phaseIdx > 0 ? '<button class="btn btn-outline" onclick="goBack()">← Previous Phase</button>' : ''}
+        <button class="btn btn-gold" onclick="submitPhase()">${phaseIdx === PHASES.length-1 ? 'Submit Final Phase & Get Analysis →' : 'Commit Decisions & Advance →'}</button>
       </div>
     </div>
   `;
 
-  // Draw chart after render
+  // Initial live update
   setTimeout(() => {
     const canvas = document.getElementById('sd-canvas');
-    if (canvas) {
-      new ResizeObserver(() => drawSDCurve()).observe(canvas);
-      drawSDCurve();
-    }
-  }, 50);
+    if (canvas) { new ResizeObserver(updateLive).observe(canvas); }
+    updateLive();
+  }, 60);
 
-  updateMetrics();
+  updateSidebarMetrics();
 }
 
+// ─── SUBMIT PHASE ─────────────────────────────────────────────────────────────
 function submitPhase() {
-  const price = parseInt(document.getElementById('price-slider').value);
-  const production = parseInt(document.getElementById('prod-slider').value);
-  const workers = parseInt(document.getElementById('worker-slider').value);
-  const justification = document.getElementById('justification').value.trim();
+  const phase = PHASES[phaseIdx];
+  const just = document.getElementById('just')?.value.trim();
+  const eventResp = document.getElementById('event-response')?.value;
 
-  if (!justification || justification.length < 30) {
-    document.getElementById('justification').style.borderColor = 'var(--red)';
-    document.getElementById('justification').placeholder = 'Please justify your decisions before continuing...';
+  if (!just || just.length < 40) {
+    const ta = document.getElementById('just');
+    ta.style.borderColor = 'var(--red)';
+    ta.placeholder = 'Please write a meaningful justification using economic vocabulary before advancing...';
+    ta.focus();
+    return;
+  }
+  if (eventResp === '' || eventResp === null) {
+    document.getElementById('event-response').style.borderColor = 'var(--red)';
     return;
   }
 
-  const phase = phases[currentPhaseIndex];
+  const sysRules = SYSTEMS[sys];
+  let price = parseInt(document.getElementById('price-sl')?.value || phase.sliders.price.default);
+  let production = parseInt(document.getElementById('prod-sl')?.value || phase.sliders.production.default);
+  let workers = parseInt(document.getElementById('work-sl')?.value || phase.sliders.workers.default);
 
-  // Calculate outcomes
-  const demand = phase.baseDemand * phase.demandMultiplier;
-  const unitsSold = Math.round(Math.min(production, demand * 8 * (50 / price)));
-  const revenue = unitsSold * price;
-  const laborCost = workers * 3500;
-  const prodCost = production * 8 * phase.costMultiplier;
-  const expenses = laborCost + prodCost;
-  const profit = revenue - expenses;
+  const out = calcOutcome(phase, price, production, workers);
 
-  state.revenue += revenue;
-  state.expenses += expenses;
-  state.profit = state.revenue - state.expenses;
-  state.inventory = Math.max(0, production - unitsSold);
-  state.employees = workers;
-  state.marketShare = Math.round(Math.min(60, 25 + (profit / 10000)));
-
-  cash += profit;
-  health = Math.max(10, Math.min(100, health + (profit > 0 ? 10 : profit > -5000 ? -5 : -20)));
+  // Update game state
+  cash += out.profit;
+  cumulativeProfit += out.profit;
+  carryInventory = out.newInventory;
+  health = Math.max(5, Math.min(100, health + (out.profit > 0 ? 8 : out.profit > -5000 ? -6 : -18)));
 
   decisions.push({
-    phase: phase.name,
-    phaseId: phase.id,
-    system: selectedSystem,
-    price, production, workers,
-    justification,
-    revenue, expenses, profit,
-    unitsSold,
-    event: phase.event.title
+    phase: phase.name, phaseId: phase.id,
+    system: sys,
+    price: out.finalPrice, production: out.effectiveProd, workers,
+    eventTitle: phase.event.title,
+    eventResponse: phase.eventOptions[parseInt(eventResp)] || 'Not selected',
+    justification: just,
+    revenue: out.revenue, expenses: out.expenses, profit: out.profit,
+    unitsSold: out.unitsSold, unsold: out.unsold,
+    carryIn: carryInventory > 0 ? carryInventory - out.unsold : 0,
+    holdingCost: out.holdingCost,
+    marketStatus: out.status
   });
 
-  currentPhaseIndex++;
+  phaseIdx++;
+  sysLocked = true;
 
-  if (currentPhaseIndex >= phases.length) {
-    getAIFeedback();
-  } else {
-    renderPhase();
-  }
+  if (phaseIdx >= PHASES.length) { getAIFeedback(); }
+  else { renderPhase(); }
 }
 
 function goBack() {
-  if (currentPhaseIndex > 0) {
-    currentPhaseIndex--;
-    decisions.pop();
+  if (phaseIdx > 0) {
+    phaseIdx--;
+    const d = decisions.pop();
+    // Restore state
+    cash -= d.profit;
+    cumulativeProfit -= d.profit;
+    carryInventory = d.carryIn;
+    health = Math.min(100, health - (d.profit > 0 ? 8 : d.profit > -5000 ? -6 : -18));
+    if (phaseIdx === 0) sysLocked = false;
     renderPhase();
   }
 }
 
+function updateSidebarMetrics() {
+  const totalRev = decisions.reduce((s,d)=>s+d.revenue,0);
+  const totalExp = decisions.reduce((s,d)=>s+d.expenses,0);
+  const totalPro = totalRev - totalExp;
+  const lastD = decisions[decisions.length-1];
+
+  document.getElementById('m-rev').textContent = '$'+totalRev.toLocaleString();
+  document.getElementById('m-exp').textContent = '$'+totalExp.toLocaleString();
+  const pm = document.getElementById('m-pro');
+  pm.textContent = (totalPro>=0?'+$':'-$')+Math.abs(totalPro).toLocaleString();
+  pm.className = 'mbox-val '+(totalPro>0?'pos':totalPro<0?'neg':'neu');
+  document.getElementById('m-inv').textContent = carryInventory.toLocaleString()+' units';
+  document.getElementById('m-emp').textContent = lastD?.workers || 10;
+  document.getElementById('m-shr').textContent = Math.round(Math.min(60,25+(cumulativeProfit/15000)))+'%';
+
+  document.getElementById('hcash').textContent = '$'+Math.max(0,cash).toLocaleString();
+  const hp = document.getElementById('hprofit');
+  hp.textContent = (cumulativeProfit>=0?'+$':'-$')+Math.abs(cumulativeProfit).toLocaleString();
+  hp.className = 'hstat-val '+(cumulativeProfit>0?'pos':cumulativeProfit<0?'neg':'neu');
+
+  const hf = document.getElementById('health-fill');
+  const hp2 = Math.max(0,Math.min(100,health));
+  hf.style.width = hp2+'%';
+  hf.style.background = hp2>60?'var(--green)':hp2>30?'var(--amber)':'var(--red)';
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────────────────────
 function renderResults() {
-  buildPhaseNav();
-  document.getElementById('main-content').innerHTML = `
+  document.getElementById('cycle-track').innerHTML = PHASES.map((p,i)=>`
+    <div class="cphase done">
+      <div class="cph-dot" style="background:${p.color}"></div>
+      <div><div class="cph-name" style="color:${p.color}">${p.name}</div><div class="cph-desc">Complete</div></div>
+      <span class="cph-badge" style="background:var(--green-light);color:var(--green)">✓</span>
+    </div>`).join('');
+
+  document.getElementById('pdots').innerHTML = PHASES.map((_,i)=>`<div class="pdot done"></div>`).join('');
+  document.getElementById('pstrip').style.width = '100%';
+
+  document.getElementById('main').innerHTML = `
     <div>
-      <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;">Simulation Complete</div>
-      <div style="font-family:var(--serif);font-size:1.8rem;font-weight:700;color:var(--gold);margin-bottom:0.4rem;">Your Business Journey</div>
-      <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.5rem;">Here's how your business performed through each phase of the economic cycle.</div>
+      <div style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem">Simulation Complete — ${SYSTEMS[decisions[0]?.system||'market'].name}</div>
+      <div style="font-family:var(--serif);font-size:1.7rem;font-weight:700;color:var(--gold);margin-bottom:.35rem">Your Business Through the Full Cycle</div>
+      <div style="font-size:.83rem;color:var(--text-muted);margin-bottom:1.4rem">Here's how each decision played out across all four economic phases.</div>
     </div>
 
     <div class="results-grid">
-      ${decisions.map(d => `
-        <div class="result-card">
-          <div class="result-phase">${d.phase}</div>
-          <div class="result-outcome" style="color:${d.profit >= 0 ? 'var(--green)' : 'var(--red)'}">${d.profit >= 0 ? '+' : ''}$${Math.abs(d.profit).toLocaleString()}</div>
-          <div class="result-label">Profit / Loss</div>
-          <div style="margin-top:0.75rem;font-size:0.72rem;color:var(--text-muted);">Price: $${d.price} · Prod: ${d.production} · Staff: ${d.workers}</div>
-        </div>
-      `).join('')}
+      ${decisions.map(d=>`
+        <div class="rc">
+          <div class="rc-phase">${d.phase}</div>
+          <div class="rc-val" style="color:${d.profit>=0?'var(--green)':'var(--red)'}">${d.profit>=0?'+':'-'}$${Math.abs(d.profit).toLocaleString()}</div>
+          <div class="rc-label">Profit / Loss</div>
+          <div class="rc-details">Price: $${d.price} · Prod: ${d.production}<br>Sold: ${d.unitsSold} · Staff: ${d.workers}<br>Status: ${d.marketStatus}</div>
+        </div>`).join('')}
     </div>
 
     <div class="score-row" id="score-row"></div>
 
     <div class="feedback-card">
-      <div class="feedback-header">
-        <div class="feedback-avatar">🏦</div>
+      <div class="fb-head">
+        <div class="fb-avatar">🏦</div>
         <div>
-          <div class="feedback-name">Business Economics Advisor</div>
-          <div class="feedback-role">AI Analysis · Strand 1, Standards 1–4</div>
+          <div class="fb-name">Business Economics Advisor</div>
+          <div class="fb-role">AI Analysis · Strand 1, Standards 1–4</div>
         </div>
       </div>
-      <div class="feedback-body" id="feedback-body">
-        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
-      </div>
+      <div class="fb-body" id="fb-body"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
     </div>
 
     <div class="btn-row">
@@ -1245,98 +912,87 @@ function renderResults() {
   `;
 }
 
+// ─── AI FEEDBACK ─────────────────────────────────────────────────────────────
 async function getAIFeedback() {
   renderResults();
+  const chosenSys = decisions[0]?.system || 'market';
+  const sysName = SYSTEMS[chosenSys].name;
 
-  const totalProfit = decisions.reduce((s, d) => s + d.profit, 0);
-  const decisionSummary = decisions.map((d, i) => `
-PHASE ${i+1}: ${d.phase} (${d.system} economy)
-- Price: $${d.price} | Production: ${d.production} units | Workers: ${d.workers}
-- Units Sold: ${d.unitsSold} | Revenue: $${d.revenue.toLocaleString()} | Expenses: $${d.expenses.toLocaleString()} | Profit: ${d.profit >= 0 ? '+' : ''}$${d.profit.toLocaleString()}
-- Scenario faced: "${d.event}"
-- Student reasoning: "${d.justification}"
-  `).join('\n');
+  const summary = decisions.map((d,i)=>`
+PHASE ${i+1}: ${d.phase} | System: ${sysName}
+  Price: $${d.price} | Production: ${d.production} units | Workers: ${d.workers}
+  Units Sold: ${d.unitsSold} | Unsold/Added to Inventory: ${d.unsold}
+  Revenue: $${d.revenue.toLocaleString()} | Expenses: $${d.expenses.toLocaleString()} | Profit: ${d.profit>=0?'+':''}$${d.profit.toLocaleString()}
+  Holding cost from prior inventory: $${d.holdingCost}
+  Market status: ${d.marketStatus}
+  Event faced: "${d.eventTitle}" → Response: "${d.eventResponse}"
+  Student reasoning: "${d.justification}"`).join('\n');
 
-  const systemPrompt = `You are a demanding but fair business economics professor reviewing a high school student's business simulation for Utah's Business Management course Strand 1. You hold work to real-world standards. Poor economic reasoning, pricing decisions that ignore supply/demand, and unjustified choices should be called out directly.
+  const totalProfit = decisions.reduce((s,d)=>s+d.profit,0);
 
-SCORING — apply strictly:
-- "Great" = economically sound, well-reasoned, demonstrates understanding of the concept. Only award when genuinely impressive.
-- "OK" = present but missing depth, partially correct, or lacking economic vocabulary.
-- "Needs Work" = economically irrational, ignores supply/demand signals, or shows fundamental misunderstanding.
+  const systemPrompt = `You are a demanding but fair business economics professor reviewing a high school student's economy simulation for Utah Business Management Strand 1. Hold work to real standards. Poor economic reasoning, ignoring supply/demand signals, and bad opportunity cost decisions should be called out directly.
+
+SCORING — strict:
+- "Great" = economically sound, well-reasoned with correct vocabulary, demonstrates real understanding
+- "OK" = partially correct but lacks depth or misses key economic concepts
+- "Needs Work" = economically irrational, ignores supply/demand signals, wrong vocabulary, or shows fundamental misunderstanding
 
 Start with this EXACT line:
-SCORES: Supply & Demand Application:[Great/OK/Needs Work] | Economic Cycle Awareness:[Great/OK/Needs Work] | Pricing Strategy:[Great/OK/Needs Work] | Decision Justification:[Great/OK/Needs Work] | Overall Performance:[Great/OK/Needs Work]
+SCORES: Supply & Demand Application:[Great/OK/Needs Work] | Business Cycle Awareness:[Great/OK/Needs Work] | Pricing Strategy:[Great/OK/Needs Work] | Opportunity Cost Reasoning:[Great/OK/Needs Work] | Overall Performance:[Great/OK/Needs Work]
 
-Then write 4-5 paragraphs of direct professional feedback:
-1. Evaluate how well the student understood supply and demand shifts across phases — did prices and production move in economically rational directions?
-2. Evaluate understanding of the business life cycle — did decisions in Expansion vs Recession show awareness of where the economy was heading?
-3. Evaluate pricing strategy — did prices account for equilibrium, surplus/shortage conditions, and opportunity cost?
-4. Evaluate the quality of written justifications — were they using economic vocabulary correctly? (supply, demand, equilibrium, scarcity, opportunity cost, inflation, recession, etc.)
-5. Evaluate overall business performance — total profit/loss and what drove it.
+Then 4-5 paragraphs of direct professional feedback:
+1. Did prices move rationally with the supply/demand shifts across phases? Quote their actual prices. Were they above or below equilibrium? Did surplus/shortage conditions emerge from their choices?
+2. Did decisions show understanding of WHERE they were in the business cycle? Did they ramp up in Expansion and cut back in Recession/Depression appropriately?
+3. How did they handle the crisis events each phase? Were responses economically rational given the phase?
+4. Quality of written justifications — did they use correct vocabulary: supply, demand, equilibrium, surplus, shortage, scarcity, opportunity cost, inflation, recession, tariff? Quote their actual words.
+5. Final performance — total profit/loss, inventory management, how carrying unsold inventory affected later phases.
 
-Reference their actual numbers and quote their justifications directly. Be direct when decisions were economically irrational. Students are preparing for real business careers. End with one specific challenge question about opportunity cost or a trade-off they should have considered. No markdown ** or ##.`;
+End with one specific challenge question about opportunity cost or a trade-off they clearly did not think through. Reference their actual numbers. No markdown ** or ##. Students are preparing for real business careers.`;
 
-  const userPrompt = `Student Business Economy Simulation Review:
+  const userPrompt = `Student Economy Simulation:
+Economic System: ${sysName}
+Final Cash: $${cash.toLocaleString()}
+Cumulative Profit/Loss: ${totalProfit>=0?'+':''}$${totalProfit.toLocaleString()}
+Final Business Health: ${health}%
+Ending Inventory: ${carryInventory} units
 
-ECONOMIC SYSTEM CHOSEN: ${decisions[0]?.system || 'market'}
-FINAL CASH: $${cash.toLocaleString()}
-FINAL BUSINESS HEALTH: ${health}%
-TOTAL PROFIT/LOSS: ${totalProfit >= 0 ? '+' : ''}$${totalProfit.toLocaleString()}
-
-DECISIONS BY PHASE:
-${decisionSummary}`;
+${summary}`;
 
   try {
-    const response = await fetch(WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1100,
-        messages: [{ role: 'user', content: `${systemPrompt}\n\n${userPrompt}` }]
-      })
+    const res = await fetch(WORKER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:1100, messages:[{role:'user',content:systemPrompt+'\n\n'+userPrompt}] })
     });
-
-    const data = await response.json();
+    const data = await res.json();
     const text = data.content?.[0]?.text || 'Could not generate feedback. Please try again.';
-
-    const scoreMatch = text.match(/SCORES:(.+)/);
-    let mainText = text;
-
-    if (scoreMatch) {
-      mainText = mainText.replace(scoreMatch[0], '').trim();
-      const parts = scoreMatch[1].split('|');
-      document.getElementById('score-row').innerHTML = parts.map(p => {
-        const [label, rating] = p.split(':').map(s => s.trim());
-        let cls = rating === 'Great' ? 'great' : rating === 'OK' ? 'ok' : 'needs';
-        return `<span class="score-chip ${cls}">${label}: ${rating}</span>`;
+    const sm = text.match(/SCORES:(.+)/);
+    let main = text;
+    if (sm) {
+      main = main.replace(sm[0],'').trim();
+      document.getElementById('score-row').innerHTML = sm[1].split('|').map(p=>{
+        const [lbl,rat] = p.split(':').map(s=>s.trim());
+        const cls = rat==='Great'?'great':rat==='OK'?'ok':'needs';
+        return `<span class="sc ${cls}">${lbl}: ${rat}</span>`;
       }).join('');
     }
-
-    document.getElementById('feedback-body').textContent = mainText;
-
-  } catch (err) {
-    document.getElementById('feedback-body').textContent = 'Could not connect to AI advisor. Please check your connection and try again.\n\nError: ' + err.message;
+    document.getElementById('fb-body').textContent = main;
+  } catch(err) {
+    document.getElementById('fb-body').textContent = 'Connection error: '+err.message+'. Please check your connection and try again.';
   }
+  updateSidebarMetrics();
 }
 
+// ─── RESET ────────────────────────────────────────────────────────────────────
 function resetSim() {
   if (!confirm('Start a new simulation? All progress will be cleared.')) return;
-  currentPhaseIndex = 0;
-  cash = 50000;
-  health = 100;
-  decisions = [];
-  totalRevenue = 0;
-  totalExpenses = 0;
-  state = { revenue: 0, expenses: 0, profit: 0, inventory: 500, employees: 10, marketShare: 25 };
-  selectedSystem = 'market';
-  ['market','mixed','command'].forEach(s => {
-    document.getElementById(`sys-${s}`)?.classList.toggle('selected', s === 'market');
-  });
+  phaseIdx=0; sys='market'; cash=50000; health=100;
+  cumulativeProfit=0; carryInventory=500; decisions=[]; sysLocked=false;
+  ['market','mixed','command'].forEach(k=>document.getElementById(`sc-${k}`).classList.toggle('sel',k==='market'));
+  document.querySelectorAll('.sys-card').forEach(el=>{ el.style.cursor='pointer'; el.style.opacity='1'; });
   renderPhase();
 }
 
-// Init
 renderPhase();
 </script>
 </body>
