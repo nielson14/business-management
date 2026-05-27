@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DECIDE Simulator – Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,600;0,8..60,700;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #EEEAE2;
+  --surface: #F8F5EF;
+  --surface2: #EEEAE2;
+  --surface3: #E4DFD5;
+  --border: #D4CFC4;
+  --text: #1A1814;
+  --text-muted: #6A6458;
+  --text-dim: #AAA49A;
+  --ink: #1A1814;
+  --accent: #2A5C8A;
+  --accent-light: #E8F0F8;
+  --accent-mid: rgba(42,92,138,0.25);
+  --step-d: #8A2A2A; --step-d-l: #F8ECEC;
+  --step-e: #2A5C2A; --step-e-l: #ECF5EC;
+  --step-c: #5C2A8A; --step-c-l: #F2ECF8;
+  --step-i: #8A6C2A; --step-i-l: #F8F4EC;
+  --step-d2:#2A5C8A; --step-d2-l:#ECF2F8;
+  --step-e2:#2A7A6A; --step-e2-l:#ECF5F3;
+  --green: #2A6A3A; --green-l: #EEF6F0;
+  --red: #8A2A2A; --red-l: #F8ECEC;
+  --radius: 10px; --radius-sm: 6px;
+  --display: 'Rajdhani', sans-serif;
+  --body: 'Source Serif 4', serif;
+}
+body { font-family: var(--body); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* HEADER */
+header {
+  background: var(--ink); color: #F8F5EF;
+  display: flex; align-items: stretch;
+  border-bottom: 3px solid var(--accent);
+  position: relative; z-index: 10;
+}
+.hdr-brand {
+  padding: 1.1rem 1.75rem;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.hdr-brand h1 { font-family: var(--display); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.04em; line-height: 1; color: #F8F5EF; }
+.hdr-brand .sub { font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(248,245,239,0.35); margin-top: 0.3rem; }
+
+/* DECIDE step bar */
+.decide-bar {
+  display: flex; flex: 1; align-items: stretch;
+}
+.db-step {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0.6rem 0.5rem; border-right: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.3s; cursor: default; gap: 0.2rem;
+}
+.db-step:last-child { border-right: none; }
+.db-letter {
+  font-family: var(--display); font-size: 1.4rem; font-weight: 700;
+  line-height: 1; color: rgba(255,255,255,0.15); transition: color 0.3s;
+}
+.db-word { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.2); transition: color 0.3s; }
+.db-step.active .db-letter { color: #F8F5EF; }
+.db-step.active .db-word { color: rgba(248,245,239,0.7); }
+.db-step.active { background: rgba(255,255,255,0.05); }
+.db-step.done .db-letter { color: rgba(42,122,106,0.9); }
+.db-step.done .db-word { color: rgba(42,122,106,0.6); }
+
+.hdr-right {
+  padding: 0.75rem 1.5rem; border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; gap: 1.25rem; flex-shrink: 0;
+}
+.hdr-stat { text-align: center; }
+.hdr-stat-label { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+.hdr-stat-val { font-family: var(--display); font-size: 1rem; font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
+
+/* LAYOUT */
+.layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 72px); }
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--ink); padding: 1.5rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  color: #F8F5EF; overflow-y: auto;
+}
+.sb-label { font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 0.75rem; font-family: var(--display); }
+
+/* Dilemma info in sidebar */
+.dilemma-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm); padding: 0.85rem;
+}
+.dilemma-name { font-family: var(--display); font-size: 0.95rem; font-weight: 600; color: #F8F5EF; margin-bottom: 0.25rem; }
+.dilemma-stake { font-size: 0.65rem; color: rgba(255,255,255,0.35); line-height: 1.4; }
+.dilemma-difficulty {
+  display: inline-block; font-size: 0.58rem; font-family: var(--display); font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem;
+  border-radius: 2px; margin-top: 0.5rem;
+}
+
+/* DECIDE progress tracker */
+.decide-progress { display: flex; flex-direction: column; gap: 0.35rem; }
+.dp-row {
+  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.5rem 0.6rem; border-radius: var(--radius-sm);
+  border: 1px solid transparent; transition: all 0.3s;
+}
+.dp-row.active { background: rgba(42,92,138,0.15); border-color: rgba(42,92,138,0.3); }
+.dp-row.done { opacity: 0.6; }
+.dp-letter-badge {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-size: 0.75rem; font-weight: 700;
+  flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.3); transition: all 0.3s;
+}
+.dp-row.active .dp-letter-badge { border-color: var(--accent); background: var(--accent); color: #fff; }
+.dp-row.done .dp-letter-badge { border-color: rgba(42,122,106,0.6); background: rgba(42,122,106,0.15); color: rgba(42,122,106,0.9); }
+.dp-info { flex: 1; }
+.dp-name { font-family: var(--display); font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.5); transition: color 0.3s; }
+.dp-row.active .dp-name { color: #F8F5EF; }
+.dp-row.done .dp-name { color: rgba(255,255,255,0.4); }
+.dp-desc { font-size: 0.6rem; color: rgba(255,255,255,0.25); line-height: 1.3; margin-top: 0.1rem; }
+
+/* Criteria memory panel */
+.criteria-memory { display: flex; flex-direction: column; gap: 0.4rem; }
+.criteria-chip {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm); padding: 0.45rem 0.6rem;
+  font-size: 0.68rem; color: rgba(255,255,255,0.6); line-height: 1.3;
+}
+.criteria-chip.empty { color: rgba(255,255,255,0.2); font-style: italic; }
+
+/* MAIN */
+.main { padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
+
+/* Dilemma selector */
+.dilemma-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.dl-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.dl-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(42,92,138,0.12); }
+.dl-card.selected { border-color: var(--accent); background: var(--accent-light); }
+.dl-difficulty-tag {
+  position: absolute; top: 1rem; right: 1rem;
+  font-family: var(--display); font-size: 0.58rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.2rem 0.5rem; border-radius: 2px;
+}
+.dl-icon { font-size: 1.75rem; margin-bottom: 0.6rem; }
+.dl-title { font-family: var(--display); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: 0.02em; }
+.dl-stakes { font-size: 0.78rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 0.6rem; }
+.dl-preview {
+  font-size: 0.7rem; color: var(--text-muted); padding: 0.5rem 0.65rem;
+  background: var(--surface2); border-radius: var(--radius-sm); line-height: 1.4;
+}
+
+/* Step card */
+.step-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  animation: fadeUp 0.35s ease;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.step-header {
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 1rem;
+}
+.step-letter-big {
+  font-family: var(--display); font-size: 3.5rem; font-weight: 700;
+  line-height: 1; flex-shrink: 0; width: 55px;
+}
+.step-title-area { flex: 1; }
+.step-title { font-family: var(--display); font-size: 1.35rem; font-weight: 700; letter-spacing: 0.03em; line-height: 1; margin-bottom: 0.3rem; }
+.step-subtitle { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+.step-num-badge {
+  font-family: var(--display); font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.65rem;
+  border-radius: 2px; flex-shrink: 0;
+}
+
+.step-body { padding: 1.5rem; }
+.step-instruction {
+  font-size: 0.83rem; color: var(--text-muted); line-height: 1.7;
+  margin-bottom: 1.25rem; padding: 0.85rem 1rem;
+  background: var(--surface2); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+.step-instruction strong { color: var(--text); }
+
+/* Form elements */
+.field-label {
+  font-family: var(--display); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0.4rem;
+}
+.field-hint { font-family: var(--body); font-size: 0.62rem; color: var(--text-dim); font-weight: 400; letter-spacing: 0; text-transform: none; }
+textarea {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.85rem; font-family: var(--body);
+  font-size: 0.86rem; color: var(--text); resize: vertical; min-height: 90px;
+  outline: none; line-height: 1.65; transition: border-color 0.15s;
+}
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(42,92,138,0.1); }
+textarea::placeholder { color: var(--text-dim); }
+input[type=text] {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.65rem 0.85rem; font-family: var(--body);
+  font-size: 0.86rem; color: var(--text); outline: none; transition: border-color 0.15s;
+}
+input[type=text]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(42,92,138,0.1); }
+input::placeholder { color: var(--text-dim); }
+.field-group { margin-bottom: 1rem; }
+
+/* Criteria builder */
+.criteria-builder { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.criteria-row { display: flex; gap: 0.5rem; align-items: center; }
+.criteria-row input { flex: 1; }
+.criteria-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-family: var(--display); font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* Options builder */
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.option-card {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.85rem;
+}
+.option-label-row {
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;
+}
+.option-num {
+  font-family: var(--display); font-size: 0.65rem; font-weight: 700;
+  padding: 0.15rem 0.45rem; border-radius: 2px; flex-shrink: 0;
+}
+.option-card input { font-size: 0.83rem; }
+
+/* Pros/Cons area */
+.pros-cons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.pc-column { }
+.pc-header {
+  font-family: var(--display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0; margin-bottom: 0;
+}
+.pc-header.pros { background: var(--green-l); color: var(--green); }
+.pc-header.cons { background: var(--red-l); color: var(--red); }
+.pc-column textarea { border-radius: 0 0 var(--radius-sm) var(--radius-sm); min-height: 80px; }
+
+/* Decision panel */
+.decision-options { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem; }
+.decision-opt {
+  padding: 0.85rem 1rem; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: flex-start; gap: 0.75rem;
+}
+.decision-opt:hover { border-color: var(--accent); background: var(--accent-light); }
+.decision-opt.selected { border-color: var(--accent); background: var(--accent-light); }
+.decision-opt-num {
+  font-family: var(--display); font-size: 0.72rem; font-weight: 700;
+  width: 24px; height: 24px; border-radius: 50%; background: var(--border);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 0.15s;
+}
+.decision-opt.selected .decision-opt-num { background: var(--accent); color: #fff; }
+.decision-opt-text { font-size: 0.85rem; line-height: 1.5; }
+
+/* Criteria check in decision step */
+.criteria-check-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 1.25rem; }
+.cc-row {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.6rem 0.75rem;
+}
+.cc-criterion { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem; line-height: 1.3; }
+.cc-check { display: flex; gap: 0.4rem; align-items: center; margin-top: 0.35rem; }
+.cc-check-btn {
+  padding: 0.2rem 0.5rem; font-size: 0.62rem; font-family: var(--display); font-weight: 600;
+  border-radius: 2px; cursor: pointer; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-muted); letter-spacing: 0.05em;
+  transition: all 0.12s;
+}
+.cc-check-btn.yes { background: var(--green-l); border-color: rgba(42,106,58,0.3); color: var(--green); }
+.cc-check-btn.no { background: var(--red-l); border-color: rgba(138,42,42,0.3); color: var(--red); }
+.cc-check-btn.partial { background: #FBF3E8; border-color: rgba(138,108,42,0.3); color: #8A6C2A; }
+
+/* Evaluate step */
+.eval-outcome {
+  padding: 1.25rem; border-radius: var(--radius-sm); margin-bottom: 1.25rem;
+  border: 1.5px solid transparent;
+}
+.eval-outcome.positive { background: var(--green-l); border-color: rgba(42,106,58,0.2); }
+.eval-outcome.negative { background: var(--red-l); border-color: rgba(138,42,42,0.2); }
+.eval-outcome.mixed { background: #FBF3E8; border-color: rgba(138,108,42,0.2); }
+.eval-outcome-title {
+  font-family: var(--display); font-size: 0.95rem; font-weight: 700;
+  margin-bottom: 0.4rem; letter-spacing: 0.02em;
+}
+.eval-outcome-text { font-size: 0.83rem; line-height: 1.65; }
+
+/* Buttons */
+.btn {
+  font-family: var(--display); font-size: 0.88rem; font-weight: 600;
+  padding: 0.65rem 1.5rem; border-radius: var(--radius-sm); border: none;
+  cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+}
+.btn-primary { background: var(--ink); color: #F8F5EF; }
+.btn-primary:hover { background: #333; transform: translateY(-1px); }
+.btn-primary:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; transform: none; }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #1E4A72; transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--text-muted); }
+.btn-row { display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-top: 1.25rem; }
+
+/* Final feedback */
+.final-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.final-header {
+  background: var(--ink); color: #F8F5EF; padding: 1.25rem 1.75rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.final-icon { font-size: 1.75rem; }
+.final-title { font-family: var(--display); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.03em; }
+.final-sub { font-size: 0.65rem; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; text-transform: uppercase; }
+.final-body { padding: 1.75rem; }
+
+.decide-summary { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.5rem; margin-bottom: 1.5rem; }
+.ds-cell {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.6rem; text-align: center;
+}
+.ds-letter { font-family: var(--display); font-size: 1.2rem; font-weight: 700; line-height: 1; margin-bottom: 0.2rem; }
+.ds-word { font-size: 0.58rem; font-family: var(--display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.ds-check { font-size: 0.7rem; margin-top: 0.3rem; }
+
+.score-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.sc { font-size: 0.68rem; font-weight: 700; padding: 0.28rem 0.8rem; border-radius: 100px; font-family: var(--display); letter-spacing: 0.04em; }
+.sc.great { background: var(--green-l); color: var(--green); border: 1px solid rgba(42,106,58,0.25); }
+.sc.ok { background: #FBF3E8; color: #8A6C2A; border: 1px solid rgba(138,108,42,0.25); }
+.sc.needs { background: var(--red-l); color: var(--red); border: 1px solid rgba(138,42,42,0.25); }
+
+.fb-body { font-size: 0.88rem; line-height: 1.85; color: var(--text); white-space: pre-wrap; min-height: 80px; }
+.typing-dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle; }
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%,80%,100%{opacity:.15} 40%{opacity:1} }
+
+@media(max-width:768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .dilemma-selector, .options-grid, .pros-cons-grid, .criteria-check-grid, .decide-summary { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-brand">
+    <h1>DECIDE Simulator</h1>
+    <div class="sub">Business Management · Strand 2 · Standard 4</div>
+  </div>
+  <div class="decide-bar" id="decide-bar"></div>
+  <div class="hdr-right">
+    <div class="hdr-stat">
+      <div class="hdr-stat-label">Current Step</div>
+      <div class="hdr-stat-val" id="h-step">Setup</div>
+    </div>
+    <div class="hdr-stat">
+      <div class="hdr-stat-label">Dilemma</div>
+      <div class="hdr-stat-val" id="h-dilemma">—</div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <div>
+      <div class="sb-label">Current Dilemma</div>
+      <div class="dilemma-card" id="sb-dilemma">
+        <div class="dilemma-name">No dilemma selected</div>
+        <div class="dilemma-stake">Choose a business scenario to begin the DECIDE process.</div>
+      </div>
+    </div>
+    <div>
+      <div class="sb-label">DECIDE Progress</div>
+      <div class="decide-progress" id="decide-progress"></div>
+    </div>
+    <div>
+      <div class="sb-label">Your Criteria (from Step E)</div>
+      <div class="criteria-memory" id="criteria-memory">
+        <div class="criteria-chip empty">Criteria appear here after Step E</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+const WORKER_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
+
+const DECIDE_STEPS = [
+  { letter:'D', word:'Define', name:'Define the Goal', desc:'What exactly are you trying to achieve?' },
+  { letter:'E', word:'Establish', name:'Establish Criteria', desc:'What conditions must the solution meet?' },
+  { letter:'C', word:'Choose', name:'Choose Good Options', desc:'What are the realistic alternatives?' },
+  { letter:'I', word:'Identify', name:'Identify Pros & Cons', desc:'Evaluate each option objectively' },
+  { letter:'D', word:'Decide', name:'Decide the Best Option', desc:'Apply your criteria — make the call' },
+  { letter:'E', word:'Evaluate', name:'Evaluate Results', desc:'Reflect on outcomes and learning' },
+];
+
+const STEP_COLORS = [
+  { color:'var(--step-d)', light:'var(--step-d-l)' },
+  { color:'var(--step-e)', light:'var(--step-e-l)' },
+  { color:'var(--step-c)', light:'var(--step-c-l)' },
+  { color:'var(--step-i)', light:'var(--step-i-l)' },
+  { color:'var(--step-d2)', light:'var(--step-d2-l)' },
+  { color:'var(--step-e2)', light:'var(--step-e2-l)' },
+];
+
+const DILEMMAS = [
+  {
+    id: 'vendor',
+    icon: '🏭',
+    title: 'The Vendor Switch',
+    difficulty: 'Moderate',
+    diffColor: '#8A6C2A', diffBg: '#FBF3E8',
+    stakes: 'Your primary supplier just raised prices 22%. This will eliminate your profit margin unless you act. You have three options but each carries risk.',
+    preview: 'Stay, negotiate, or switch — each choice affects cost, quality, and relationships.',
+    context: `You manage operations at Cornerstone Manufacturing. Your supplier of 8 years, Pacific Materials, just notified you of a 22% price increase effective next month, citing raw material inflation.\n\nAt current pricing, your profit margin disappears entirely. You have to act. Three paths exist:\n\n1. Accept the increase and raise your own prices to customers\n2. Negotiate with Pacific Materials for a smaller increase\n3. Switch to a new supplier, Inland Supply Co., whose prices are 15% below Pacific's current rates — but you have no relationship history with them and lead times are unknown`,
+    options: [
+      'Accept the 22% increase and pass costs to customers',
+      'Negotiate with Pacific Materials for a smaller increase',
+      'Switch entirely to Inland Supply Co. for lower costs'
+    ],
+    outcomes: {
+      0: { type:'mixed', title:'Price increase accepted — customer backlash begins', text:'You maintain supply chain stability but your retail prices rise 18%. Three of your 12 major customers put you on review. Within 6 months, two switch to competitors. Revenue drops 14%. The stable supply chain was not worth the customer loss.' },
+      1: { type:'positive', title:'Negotiation succeeds — balanced outcome', text:'After two weeks of negotiation, Pacific Materials agrees to a 9% increase phased over 6 months. You absorb half through efficiency gains and pass half to customers as a modest price adjustment. Customers accept the explanation. The relationship is preserved and strengthened.' },
+      2: { type:'negative', title:'Supplier switch creates operational chaos', text:'Inland Supply Co. has quality inconsistencies on 3 of your first 8 orders. Lead times average 6 days longer than Pacific. A production delay causes you to miss a critical customer deadline. The cost savings are wiped out by expediting fees and a penalty clause. You return to Pacific at a worse negotiating position.' }
+    },
+    goalHint: 'Think about what you are actually trying to protect — is it cost, quality, customer relationships, or all three? Be specific.',
+    criteriaExamples: ['Cost impact stays below X%', 'Supply chain reliability maintained', 'Customer relationships protected', 'Decision implementable within 30 days'],
+    prosConsOptions: ['Accept increase', 'Negotiate', 'Switch suppliers']
+  },
+  {
+    id: 'hire',
+    icon: '👥',
+    title: 'The Hire vs. Promote',
+    difficulty: 'High',
+    diffColor: '#8A2A2A', diffBg: '#F8ECEC',
+    stakes: 'Your top employee just left, creating a critical vacancy. Do you promote internally or hire external talent? Both paths have serious risks.',
+    preview: 'Loyalty vs. fresh skills — your decision shapes team culture for years.',
+    context: `You manage the marketing department at Horizon Brands. Your Marketing Director, Sarah, resigned last week for a competing offer. The role is critical — this person manages a team of 11 and owns your largest client relationships.\n\nTwo paths are clear:\n\n1. Promote Marcus, your Senior Manager, who has 5 years of company history, deep client relationships, but limited experience with digital strategy — the direction leadership wants to go\n2. Hire externally for a candidate with proven digital marketing leadership, fresh perspective, but zero company history and unknown cultural fit\n\nYour team is watching closely. Several members have hinted they expect Marcus to be promoted.`,
+    options: [
+      'Promote Marcus to Marketing Director immediately',
+      'Hire externally for proven digital marketing expertise',
+      'Promote Marcus with a 90-day external digital strategy consultant'
+    ],
+    outcomes: {
+      0: { type:'mixed', title:'Marcus promoted — digital gap becomes a problem', text:'Team morale is high initially. Marcus is respected and transitions smoothly into client relationships. However, 4 months in, leadership flags that digital campaign performance is lagging competitors. Marcus is stretched trying to lead and learn a new discipline simultaneously. You have a loyalty win but a capability problem.' },
+      1: { type:'mixed', title:'External hire creates culture friction', text:'Your new director brings impressive credentials and immediately proposes a new campaign strategy. But 3 of your 11 team members, including two who expected Marcus to be promoted, begin updating their resumes. One quits within 60 days. The fresh strategy shows early results, but the team disruption costs you momentum.' },
+      2: { type:'positive', title:'Hybrid approach wins on all dimensions', text:'Marcus accepts the promotion with genuine enthusiasm for growing his digital skills. The consultant upskills him over 90 days while Marcus handles the team and client relationships he knows well. By month 4, Marcus is leading digital strategy independently. Team morale stays high. Leadership is satisfied.' }
+    },
+    goalHint: 'Are you optimizing for short-term stability, long-term capability, team morale, or all three? Conflicts between these are where decisions get hard.',
+    criteriaExamples: ['Team morale maintained', 'Digital capability addressed within 90 days', 'Client relationships uninterrupted', 'Implementable within current budget'],
+    prosConsOptions: ['Promote Marcus', 'Hire externally', 'Promote + consultant']
+  },
+  {
+    id: 'pivot',
+    icon: '📉',
+    title: 'The Pivot Decision',
+    difficulty: 'High',
+    diffColor: '#8A2A2A', diffBg: '#F8ECEC',
+    stakes: 'Sales are down 30% for two consecutive quarters. Leadership is demanding action. Your team is nervous. Three fundamentally different strategies are on the table.',
+    preview: 'Double down, pivot, or cut costs and wait — the wrong choice could end the company.',
+    context: `You are the General Manager of Crestline Products. After two strong years, revenue has dropped 30% over the last two quarters. Market research suggests consumer preferences are shifting toward a product feature set your current product lacks.\n\nYour team has proposed three responses:\n\n1. Double down on current product — invest in marketing to win back customers and trust the product\n2. Pivot the product — invest engineering resources into building the features customers are now demanding\n3. Cut costs aggressively, reduce headcount by 15%, and wait for market conditions to improve before making strategic moves\n\nThe board wants your recommendation within the week.`,
+    options: [
+      'Double down on current product with increased marketing',
+      'Pivot product to meet new customer feature demands',
+      'Cut costs 15%, reduce headcount, and wait for conditions to improve'
+    ],
+    outcomes: {
+      0: { type:'negative', title:'Doubling down fails to reverse the trend', text:'Marketing spend increases 40% over 3 months. Awareness goes up but conversion stays flat — customers have already decided the product does not meet their needs. You spend $380K to discover what the research already told you. Board confidence drops significantly.' },
+      1: { type:'positive', title:'Pivot delivers — but execution requires patience', text:'The pivot is difficult. Engineering timelines slip 6 weeks. Your sales team has to manage customer expectations through a difficult period. But at month 7, you launch the updated product and initial response is strong. By month 10, revenue returns to pre-decline levels. The pivot worked, but required conviction through the hard middle.' },
+      2: { type:'negative', title:'Cost cuts damage your ability to recover', text:'Headcount reductions save $1.2M but eliminate institutional knowledge and demoralize remaining staff. When you eventually decide to pivot 5 months later, you lack the engineering capacity to execute quickly. Competitors have filled the gap. Recovery takes 2+ years instead of one.' }
+    },
+    goalHint: 'Are you solving for survival, recovery, or competitive repositioning? These require different decisions. Be precise about what winning looks like.',
+    criteriaExamples: ['Sustainable without additional capital raise', 'Addresses root cause of revenue decline', 'Implementable within current headcount', 'Shows measurable progress within 6 months'],
+    prosConsOptions: ['Double down', 'Pivot product', 'Cut costs and wait']
+  },
+  {
+    id: 'ethics',
+    icon: '⚖️',
+    title: 'The Ethics Call',
+    difficulty: 'Complex',
+    diffColor: '#5C2A8A', diffBg: '#F2ECF8',
+    stakes: 'You discover a trusted colleague has been falsifying expense reports. The amounts are small but the pattern is clear. How you handle this defines your leadership integrity.',
+    preview: 'Loyalty vs. ethics — there is no version of this that is easy.',
+    context: `You manage a regional sales team at Summit Financial. While reviewing quarterly reports, you notice that Alex, a 7-year company veteran and your highest performing rep, has submitted expense reports with anomalies — restaurant receipts that appear duplicated across different clients, mileage claims that do not match route distances.\n\nThe total over 4 months appears to be approximately $2,400. Alex is well-liked, has a family, and his sales numbers are exceptional. But the pattern is unmistakably intentional.\n\nYou have three realistic options:\n\n1. Confront Alex privately and give them a chance to come clean and repay before involving HR\n2. Report directly to HR and let the formal process handle it\n3. Report to your own manager first and ask for guidance before taking action`,
+    options: [
+      'Confront Alex privately first — give them a chance to come clean',
+      'Report directly to HR and let the formal process handle it',
+      'Escalate to your own manager first and ask for guidance'
+    ],
+    outcomes: {
+      0: { type:'mixed', title:'Private confrontation — mixed outcome', text:'Alex admits to the expenses and is visibly ashamed. They offer to repay immediately. You feel like you handled it humanely. But two weeks later, HR contacts you — another manager flagged the same anomalies independently. Now you are in a difficult position for having not reported it through official channels when you knew. Your judgment is questioned.' },
+      1: { type:'positive', title:'Formal process followed — integrity preserved', text:'HR investigates professionally. Alex is placed on a performance improvement plan and required to repay the $2,400. The process is uncomfortable but handled with appropriate confidentiality. Your team never knows the details. Alex remains employed and is more careful going forward. You are known as a manager who does the right thing even when it is hard.' },
+      2: { type:'positive', title:'Manager guidance obtained — strong outcome', text:'Your manager confirms you should report to HR and thanks you for bringing it to them first. The formal process proceeds correctly. Your manager notes in your next review that your handling of the situation demonstrated exactly the kind of judgment that earns trust at higher levels. You are later offered a stretch assignment.' }
+    },
+    goalHint: 'What is your actual responsibility here — to Alex personally, to the company, or to the integrity of your team? The tension between loyalty and ethics is the core of this decision.',
+    criteriaExamples: ['Legally and ethically compliant', 'Follows company policy and HR process', 'Preserves team trust and confidentiality', 'Does not compromise your own integrity'],
+    prosConsOptions: ['Confront privately', 'Report to HR', 'Escalate to manager']
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let step = -1; // -1 = dilemma selection
+let selectedDilemma = null;
+let selectedOption = null;
+let criteriaChecks = {};
+let savedData = {
+  goal: '', criteria: ['','',''], options: ['','',''],
+  prosA:'', consA:'', prosB:'', consB:'', prosC:'', consC:'',
+  decisionJust: '', evaluationReflect: '', evaluationWhat: ''
+};
+
+// ─── HEADER / SIDEBAR ─────────────────────────────────────────────────────────
+function buildHeader() {
+  document.getElementById('decide-bar').innerHTML = DECIDE_STEPS.map((s,i) => `
+    <div class="db-step ${step === i ? 'active' : step > i ? 'done' : ''}" id="db-${i}">
+      <div class="db-letter">${s.letter}</div>
+      <div class="db-word">${s.word}</div>
+    </div>
+  `).join('');
+
+  const stepNames = ['D — Define', 'E — Establish', 'C — Choose', 'I — Identify', 'D — Decide', 'E — Evaluate'];
+  document.getElementById('h-step').textContent = step >= 0 ? stepNames[step] : 'Choose Dilemma';
+  document.getElementById('h-dilemma').textContent = selectedDilemma ? selectedDilemma.title.split(' ').slice(0,2).join(' ') : '—';
+}
+
+function buildSidebar() {
+  if (selectedDilemma) {
+    document.getElementById('sb-dilemma').innerHTML = `
+      <div class="dilemma-name">${selectedDilemma.icon} ${selectedDilemma.title}</div>
+      <div class="dilemma-stake">${selectedDilemma.stakes}</div>
+      <span class="dilemma-difficulty" style="background:${selectedDilemma.diffBg};color:${selectedDilemma.diffColor}">${selectedDilemma.difficulty}</span>
+    `;
+  }
+
+  document.getElementById('decide-progress').innerHTML = DECIDE_STEPS.map((s,i) => `
+    <div class="dp-row ${step === i ? 'active' : step > i ? 'done' : ''}" id="dp-${i}">
+      <div class="dp-letter-badge">${step > i ? '✓' : s.letter}</div>
+      <div class="dp-info">
+        <div class="dp-name">${s.name}</div>
+        <div class="dp-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const criteria = savedData.criteria.filter(c => c.trim());
+  if (criteria.length > 0) {
+    document.getElementById('criteria-memory').innerHTML = criteria.map((c,i) => `
+      <div class="criteria-chip"><strong>${i+1}.</strong> ${c}</div>
+    `).join('');
+  }
+}
+
+// ─── DILEMMA SELECTION ────────────────────────────────────────────────────────
+function renderDilemmaSelection() {
+  step = -1;
+  buildHeader();
+  buildSidebar();
+
+  document.getElementById('main').innerHTML = `
+    <div style="margin-bottom:.5rem">
+      <div style="font-family:var(--display);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem">Choose Your Business Dilemma</div>
+      <div style="font-family:var(--display);font-size:1.75rem;font-weight:700;letter-spacing:-0.5px;margin-bottom:.4rem">Apply the DECIDE Framework</div>
+      <div style="font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:560px">
+        Select a real business scenario. You will work through all six DECIDE steps — each one must be completed before the next unlocks. Your criteria from Step E will be carried forward and checked against your final decision.
+      </div>
+    </div>
+
+    <div class="dilemma-selector" id="dl-grid">
+      ${DILEMMAS.map(d => `
+        <div class="dl-card" id="dlc-${d.id}" onclick="selectDilemma('${d.id}')">
+          <span class="dl-difficulty-tag" style="background:${d.diffBg};color:${d.diffColor}">${d.difficulty}</span>
+          <div class="dl-icon">${d.icon}</div>
+          <div class="dl-title">${d.title}</div>
+          <div class="dl-stakes">${d.stakes}</div>
+          <div class="dl-preview">${d.preview}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="btn-row" id="start-btn-row" style="display:none">
+      <button class="btn btn-accent" onclick="startDecide()">Begin DECIDE Process →</button>
+    </div>
+  `;
+}
+
+function selectDilemma(id) {
+  selectedDilemma = DILEMMAS.find(d => d.id === id);
+  document.querySelectorAll('.dl-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`dlc-${id}`).classList.add('selected');
+  document.getElementById('start-btn-row').style.display = 'flex';
+  buildSidebar();
+}
+
+function startDecide() {
+  if (!selectedDilemma) return;
+  step = 0;
+  savedData = { goal:'', criteria:['','',''], options:['','',''], prosA:'', consA:'', prosB:'', consB:'', prosC:'', consC:'', decisionJust:'', evaluationReflect:'', evaluationWhat:'' };
+  selectedOption = null;
+  criteriaChecks = {};
+  renderStep();
+}
+
+// ─── RENDER STEP ──────────────────────────────────────────────────────────────
+function renderStep() {
+  buildHeader();
+  buildSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const sc = STEP_COLORS[step];
+  const st = DECIDE_STEPS[step];
+
+  switch(step) {
+    case 0: renderDefine(sc, st); break;
+    case 1: renderEstablish(sc, st); break;
+    case 2: renderChoose(sc, st); break;
+    case 3: renderIdentify(sc, st); break;
+    case 4: renderDecide(sc, st); break;
+    case 5: renderEvaluate(sc, st); break;
+  }
+}
+
+// ─── STEP 0: DEFINE ───────────────────────────────────────────────────────────
+function renderDefine(sc, st) {
+  document.getElementById('main').innerHTML = `
+    <div class="step-card">
+      <div class="step-header" style="border-bottom-color:${sc.color}20">
+        <div class="step-letter-big" style="color:${sc.color}">D</div>
+        <div class="step-title-area">
+          <div class="step-title">Define the Goal</div>
+          <div class="step-subtitle">What specific outcome are you trying to achieve? Be precise — a vague goal produces a vague decision.</div>
+        </div>
+        <span class="step-num-badge" style="background:${sc.light};color:${sc.color}">Step 1 of 6</span>
+      </div>
+      <div class="step-body">
+        <div class="step-instruction">
+          <strong>The Scenario:</strong> ${selectedDilemma.context.split('\n\n')[0]}
+          <br><br>
+          <strong>Your task:</strong> Write a clear goal statement that defines exactly what a successful outcome looks like. Do not describe options or solutions yet — only the goal. Include what you are protecting (revenue, relationships, quality, ethics) and any constraints you are working within.
+        </div>
+        <div class="field-group">
+          <div class="field-label">
+            Goal Statement
+            <span class="field-hint">Be specific — a good goal can be measured. Hint: ${selectedDilemma.goalHint}</span>
+          </div>
+          <textarea id="goal-input" placeholder="e.g. Maintain profitability and supply chain reliability while protecting customer relationships — without accepting cost increases that eliminate our margin..." rows="4">${savedData.goal}</textarea>
+        </div>
+
+        <div style="background:${sc.light};border:1px solid ${sc.color}30;border-radius:var(--radius-sm);padding:.85rem 1rem;font-size:.8rem;color:${sc.color};line-height:1.5;margin-top:.5rem">
+          📌 <strong>DECIDE Framework note:</strong> The Define step is the most important. A poorly defined goal leads to criteria that do not align with what you actually need, which leads to the wrong decision. Most business decision failures start here.
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="renderDilemmaSelection()">← Change Dilemma</button>
+          <button class="btn btn-primary" onclick="advanceStep(0)">Establish Criteria →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── STEP 1: ESTABLISH ────────────────────────────────────────────────────────
+function renderEstablish(sc, st) {
+  document.getElementById('main').innerHTML = `
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-letter-big" style="color:${sc.color}">E</div>
+        <div class="step-title-area">
+          <div class="step-title">Establish Criteria</div>
+          <div class="step-subtitle">What conditions must your solution meet? These become the measuring stick in Step 5 when you make your final decision.</div>
+        </div>
+        <span class="step-num-badge" style="background:${sc.light};color:${sc.color}">Step 2 of 6</span>
+      </div>
+      <div class="step-body">
+        <div class="step-instruction">
+          <strong>Your defined goal:</strong> "${savedData.goal}"
+          <br><br>
+          Now define 3 criteria — specific, measurable conditions that any acceptable solution must satisfy. In Step 5, you will check your chosen option against each of these criteria.
+          <br><br>
+          <strong>Examples for this dilemma:</strong> ${selectedDilemma.criteriaExamples.join(' · ')}
+        </div>
+
+        <div class="field-label" style="margin-bottom:.75rem">Your 3 Decision Criteria <span class="field-hint">— these will appear in your sidebar and Step 5</span></div>
+        <div class="criteria-builder">
+          ${[0,1,2].map(i => `
+            <div class="criteria-row">
+              <div class="criteria-num">${i+1}</div>
+              <input type="text" id="crit-${i}" placeholder="Criterion ${i+1}: e.g. Solution must be implementable within 30 days" value="${savedData.criteria[i]}">
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="field-group" style="margin-top:1rem">
+          <div class="field-label">Why these criteria? <span class="field-hint">Explain how they connect to your goal</span></div>
+          <textarea id="criteria-explain" placeholder="Explain why you chose these three specific criteria and how they connect to your goal statement above..." rows="3">${savedData.criteriaExplain||''}</textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goBack()">← Back</button>
+          <button class="btn btn-primary" onclick="advanceStep(1)">Choose Options →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── STEP 2: CHOOSE ───────────────────────────────────────────────────────────
+function renderChoose(sc, st) {
+  const opts = selectedDilemma.options;
+  document.getElementById('main').innerHTML = `
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-letter-big" style="color:${sc.color}">C</div>
+        <div class="step-title-area">
+          <div class="step-title">Choose Good Options</div>
+          <div class="step-subtitle">Identify the realistic alternatives. For this dilemma, the options are provided — describe each one in your own words to show you understand them.</div>
+        </div>
+        <span class="step-num-badge" style="background:${sc.light};color:${sc.color}">Step 3 of 6</span>
+      </div>
+      <div class="step-body">
+        <div class="step-instruction">
+          <strong>Your goal:</strong> "${savedData.goal}"
+          <br><br>
+          Below are the three options available to you. In your own words, describe what each option actually involves — what would you be committing to, and who would be affected?
+        </div>
+
+        <div class="options-grid">
+          ${opts.map((opt,i) => `
+            <div class="option-card">
+              <div class="option-label-row">
+                <span class="option-num" style="background:${sc.light};color:${sc.color}">Option ${i+1}</span>
+                <strong style="font-size:.82rem">${opt}</strong>
+              </div>
+              <textarea id="opt-desc-${i}" placeholder="Describe this option in your own words. What does it actually involve? What are the immediate actions required?" rows="3">${savedData.options[i]||''}</textarea>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goBack()">← Back</button>
+          <button class="btn btn-primary" onclick="advanceStep(2)">Identify Pros & Cons →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── STEP 3: IDENTIFY ─────────────────────────────────────────────────────────
+function renderIdentify(sc, st) {
+  const opts = selectedDilemma.prosConsOptions;
+  document.getElementById('main').innerHTML = `
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-letter-big" style="color:${sc.color}">I</div>
+        <div class="step-title-area">
+          <div class="step-title">Identify Pros & Cons</div>
+          <div class="step-subtitle">Objectively evaluate each option. A good DECIDE process is honest about downsides — not just optimistic about preferred choices.</div>
+        </div>
+        <span class="step-num-badge" style="background:${sc.light};color:${sc.color}">Step 4 of 6</span>
+      </div>
+      <div class="step-body">
+        <div class="step-instruction">
+          <strong>Your criteria:</strong> ${savedData.criteria.filter(c=>c).map((c,i)=>`(${i+1}) ${c}`).join(' · ')}
+          <br><br>
+          For each option, write at least 2 pros and 2 cons. Reference your criteria where relevant — a pro or con that connects to one of your criteria is especially important.
+        </div>
+
+        ${opts.map((opt,i) => `
+          <div style="margin-bottom:1.25rem">
+            <div style="font-family:var(--display);font-size:.78rem;font-weight:700;letter-spacing:.06em;margin-bottom:.5rem;color:var(--text-muted)">OPTION ${i+1}: ${opt.toUpperCase()}</div>
+            <div class="pros-cons-grid">
+              <div class="pc-column">
+                <div class="pc-header pros">✅ Pros / Advantages</div>
+                <textarea id="pros-${i}" placeholder="List pros — especially those that connect to your criteria..." rows="3">${savedData[`pros${String.fromCharCode(65+i)}`]||''}</textarea>
+              </div>
+              <div class="pc-column">
+                <div class="pc-header cons">❌ Cons / Risks</div>
+                <textarea id="cons-${i}" placeholder="List cons — be honest about risks and downsides..." rows="3">${savedData[`cons${String.fromCharCode(65+i)}`]||''}</textarea>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goBack()">← Back</button>
+          <button class="btn btn-primary" onclick="advanceStep(3)">Make Your Decision →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── STEP 4: DECIDE ───────────────────────────────────────────────────────────
+function renderDecide(sc, st) {
+  const opts = selectedDilemma.options;
+  const criteria = savedData.criteria.filter(c => c.trim());
+
+  // Build criteria check state
+  if (Object.keys(criteriaChecks).length === 0) {
+    opts.forEach((_,oi) => criteria.forEach((_,ci) => { criteriaChecks[`${oi}-${ci}`] = null; }));
+  }
+
+  document.getElementById('main').innerHTML = `
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-letter-big" style="color:${sc.color}">D</div>
+        <div class="step-title-area">
+          <div class="step-title">Decide the Most Logical Option</div>
+          <div class="step-subtitle">Apply your criteria objectively. Your decision must be consistent with the criteria you set in Step 2 — the AI will check this.</div>
+        </div>
+        <span class="step-num-badge" style="background:${sc.light};color:${sc.color}">Step 5 of 6</span>
+      </div>
+      <div class="step-body">
+        <div class="step-instruction">
+          <strong>Your goal:</strong> "${savedData.goal}"
+          <br><br>
+          First, check each option against each of your criteria. Then select the option you are committing to and justify it with specific reference to your criteria analysis.
+        </div>
+
+        <div style="font-family:var(--display);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.65rem">Criteria Check Matrix</div>
+        <div style="overflow-x:auto;margin-bottom:1.25rem">
+          <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:.5rem .75rem;background:var(--surface2);border:1px solid var(--border);font-family:var(--display);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)">Option</th>
+                ${criteria.map((c,i) => `<th style="text-align:center;padding:.5rem .6rem;background:var(--surface2);border:1px solid var(--border);font-size:.65rem;color:var(--text-muted);font-family:var(--display);letter-spacing:.06em;text-transform:uppercase">Criterion ${i+1}<br><span style="font-weight:400;font-family:var(--body);text-transform:none;letter-spacing:0;font-size:.6rem">${c}</span></th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${opts.map((opt,oi) => `
+                <tr>
+                  <td style="padding:.6rem .75rem;border:1px solid var(--border);font-weight:600;font-size:.78rem">${opt}</td>
+                  ${criteria.map((_,ci) => {
+                    const key = `${oi}-${ci}`;
+                    const val = criteriaChecks[key];
+                    return `<td style="padding:.4rem;border:1px solid var(--border);text-align:center">
+                      <div style="display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap">
+                        <button class="cc-check-btn ${val==='yes'?'yes':''}" onclick="setCheck(${oi},${ci},'yes')">✓ Yes</button>
+                        <button class="cc-check-btn ${val==='partial'?'partial':''}" onclick="setCheck(${oi},${ci},'partial')">~ Partial</button>
+                        <button class="cc-check-btn ${val==='no'?'no':''}" onclick="setCheck(${oi},${ci},'no')">✗ No</button>
+                      </div>
+                    </td>`;
+                  }).join('')}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="font-family:var(--display);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.65rem">Your Decision</div>
+        <div class="decision-options">
+          ${opts.map((opt,i) => `
+            <div class="decision-opt ${selectedOption === i ? 'selected' : ''}" onclick="selectOption(${i})" id="dopt-${i}">
+              <div class="decision-opt-num">${i+1}</div>
+              <div class="decision-opt-text">${opt}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Justify Your Decision <span class="field-hint">Reference your criteria analysis — explain why this option best satisfies your criteria</span></div>
+          <textarea id="decision-just" placeholder="Explain your decision with specific reference to each criterion. Why does this option best satisfy what you defined as success? Acknowledge trade-offs honestly." rows="4">${savedData.decisionJust||''}</textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goBack()">← Back</button>
+          <button class="btn btn-primary" onclick="advanceStep(4)">See Consequences & Evaluate →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setCheck(oi, ci, val) {
+  criteriaChecks[`${oi}-${ci}`] = val;
+  renderDecide(STEP_COLORS[4], DECIDE_STEPS[4]);
+}
+
+function selectOption(i) {
+  selectedOption = i;
+  document.querySelectorAll('.decision-opt').forEach((el,idx) => el.classList.toggle('selected', idx === i));
+  document.querySelectorAll('.decision-opt-num').forEach((el,idx) => {
+    el.style.background = idx === i ? 'var(--accent)' : 'var(--border)';
+    el.style.color = idx === i ? '#fff' : 'var(--text)';
+  });
+}
+
+// ─── STEP 5: EVALUATE ─────────────────────────────────────────────────────────
+function renderEvaluate(sc, st) {
+  const outcome = selectedDilemma.outcomes[selectedOption];
+  const outcomeStyle = outcome.type === 'positive' ? 'positive' : outcome.type === 'negative' ? 'negative' : 'mixed';
+  const outcomeIcon = outcome.type === 'positive' ? '✅' : outcome.type === 'negative' ? '❌' : '⚠️';
+
+  document.getElementById('main').innerHTML = `
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-letter-big" style="color:${sc.color}">E</div>
+        <div class="step-title-area">
+          <div class="step-title">Evaluate Results</div>
+          <div class="step-subtitle">Reflect on the outcome. Great decision-makers learn from every result — whether it went well or not.</div>
+        </div>
+        <span class="step-num-badge" style="background:${sc.light};color:${sc.color}">Step 6 of 6</span>
+      </div>
+      <div class="step-body">
+
+        <div class="eval-outcome ${outcomeStyle}">
+          <div class="eval-outcome-title">${outcomeIcon} ${outcome.title}</div>
+          <div class="eval-outcome-text">${outcome.text}</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Evaluate the Process <span class="field-hint">Did your criteria lead you to the right decision? Were there gaps in your analysis?</span></div>
+          <textarea id="eval-reflect" placeholder="Reflect on your DECIDE process. Did your criteria accurately predict what mattered? Were your pros/cons analysis honest? If you got a negative outcome, where did the reasoning break down?" rows="4">${savedData.evaluationReflect||''}</textarea>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">What Would You Do Differently? <span class="field-hint">Apply what you learned to future decisions</span></div>
+          <textarea id="eval-different" placeholder="If you could restart this decision, what would you define differently, which criteria would you change, and what pros/cons did you underweight?" rows="3">${savedData.evaluationWhat||''}</textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-outline" onclick="goBack()">← Back</button>
+          <button class="btn btn-accent" onclick="getFinalFeedback()">Get AI Analysis →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── ADVANCE / BACK ───────────────────────────────────────────────────────────
+function advanceStep(fromStep) {
+  // Save current step data
+  if (fromStep === 0) {
+    const goal = document.getElementById('goal-input')?.value.trim();
+    if (!goal || goal.length < 30) {
+      document.getElementById('goal-input').style.borderColor = 'var(--red)';
+      document.getElementById('goal-input').focus();
+      return;
+    }
+    savedData.goal = goal;
+  }
+  if (fromStep === 1) {
+    const criteria = [0,1,2].map(i => document.getElementById(`crit-${i}`)?.value.trim() || '');
+    if (criteria.filter(c=>c).length < 2) {
+      alert('Please enter at least 2 criteria before continuing.');
+      return;
+    }
+    savedData.criteria = criteria;
+    savedData.criteriaExplain = document.getElementById('criteria-explain')?.value.trim();
+  }
+  if (fromStep === 2) {
+    const opts = [0,1,2].map(i => document.getElementById(`opt-desc-${i}`)?.value.trim() || '');
+    if (opts.filter(o=>o.length > 10).length < 2) {
+      alert('Please describe at least 2 options before continuing.');
+      return;
+    }
+    savedData.options = opts;
+  }
+  if (fromStep === 3) {
+    const letters = ['A','B','C'];
+    [0,1,2].forEach(i => {
+      savedData[`pros${letters[i]}`] = document.getElementById(`pros-${i}`)?.value.trim() || '';
+      savedData[`cons${letters[i]}`] = document.getElementById(`cons-${i}`)?.value.trim() || '';
+    });
+    const filled = [0,1,2].some(i => savedData[`pros${letters[i]}`] && savedData[`cons${letters[i]}`]);
+    if (!filled) { alert('Please fill in pros and cons for at least one option.'); return; }
+  }
+  if (fromStep === 4) {
+    savedData.decisionJust = document.getElementById('decision-just')?.value.trim();
+    if (selectedOption === null) { alert('Please select one of the three options before continuing.'); return; }
+    if (!savedData.decisionJust || savedData.decisionJust.length < 40) {
+      document.getElementById('decision-just').style.borderColor = 'var(--red)';
+      document.getElementById('decision-just').focus();
+      return;
+    }
+    savedData.evaluationReflect = '';
+    savedData.evaluationWhat = '';
+  }
+
+  step++;
+  renderStep();
+}
+
+function goBack() {
+  if (step > 0) { step--; renderStep(); }
+  else { renderDilemmaSelection(); }
+}
+
+// ─── FINAL FEEDBACK ───────────────────────────────────────────────────────────
+async function getFinalFeedback() {
+  savedData.evaluationReflect = document.getElementById('eval-reflect')?.value.trim() || '';
+  savedData.evaluationWhat = document.getElementById('eval-different')?.value.trim() || '';
+
+  if (!savedData.evaluationReflect || savedData.evaluationReflect.length < 30) {
+    document.getElementById('eval-reflect').style.borderColor = 'var(--red)';
+    document.getElementById('eval-reflect').focus();
+    return;
+  }
+
+  buildHeader();
+  const opts = selectedDilemma.options;
+  const outcome = selectedDilemma.outcomes[selectedOption];
+  const letters = ['A','B','C'];
+
+  document.getElementById('main').innerHTML = `
+    <div class="final-card">
+      <div class="final-header">
+        <div class="final-icon">📊</div>
+        <div>
+          <div class="final-title">DECIDE Analysis — ${selectedDilemma.title}</div>
+          <div class="final-sub">Business Management · Strand 2 · Standard 4</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-family:var(--display);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35)">Decision Made</div>
+          <div style="font-family:var(--display);font-size:.85rem;font-weight:700;color:var(--accent);margin-top:.2rem">${opts[selectedOption]}</div>
+          <div style="font-size:.68rem;margin-top:.25rem;color:${outcome.type==='positive'?'#4CAF7D':outcome.type==='negative'?'#E05A4A':'#E09A40'}">${outcome.type === 'positive' ? '✅ Positive outcome' : outcome.type === 'negative' ? '❌ Negative outcome' : '⚠️ Mixed outcome'}</div>
+        </div>
+      </div>
+
+      <div class="final-body">
+        <div class="decide-summary">
+          ${DECIDE_STEPS.map((s,i) => `
+            <div class="ds-cell">
+              <div class="ds-letter" style="color:${STEP_COLORS[i].color}">${s.letter}</div>
+              <div class="ds-word">${s.word}</div>
+              <div class="ds-check" style="color:var(--green)">✓</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="score-row" id="score-row"></div>
+        <div class="fb-body" id="fb-body">
+          <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="renderDilemmaSelection()">🔄 Try Another Dilemma</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  `;
+
+  const criteriaCheckSummary = Object.entries(criteriaChecks).map(([key, val]) => {
+    const [oi, ci] = key.split('-').map(Number);
+    return `Option ${oi+1} vs Criterion ${ci+1} (${savedData.criteria[ci]}): ${val || 'not checked'}`;
+  }).join('\n');
+
+  const systemPrompt = `You are a demanding but fair business management professor reviewing a high school student's DECIDE framework application for Utah Business Management Strand 2, Standard 4. Hold work to real professional standards.
+
+SCORING — strict:
+- "Great" = step completed with depth, correct vocabulary, and genuine analytical thinking
+- "OK" = completed but superficial, missing key elements, or lacks connection between steps  
+- "Needs Work" = incomplete, vague, or shows fundamental misunderstanding of what that DECIDE step requires
+
+Start with EXACTLY:
+SCORES: Define (Goal):[Great/OK/Needs Work] | Establish (Criteria):[Great/OK/Needs Work] | Identify (Pros/Cons):[Great/OK/Needs Work] | Decide (Logic):[Great/OK/Needs Work] | Evaluate (Reflection):[Great/OK/Needs Work]
+
+Then 5 paragraphs of direct professional feedback:
+1. Evaluate the DEFINE step — was the goal specific, measurable, and complete? Did it identify what was being protected and the constraints? A vague goal here infects every downstream step.
+2. Evaluate the ESTABLISH step — were the 3 criteria specific enough to actually differentiate options? Were they relevant to the goal? Quote their actual criteria. Generic criteria like "cost-effective" without specifics are not useful.
+3. Evaluate the IDENTIFY step — was the pros/cons analysis honest and balanced? Did they acknowledge downsides of their preferred option? Good decision-makers do not just look for evidence that confirms their preference.
+4. Evaluate the DECIDE step — was their final decision logically consistent with their criteria? Did their criteria check matrix support their choice? This is the most important step — many students set good criteria and then ignore them when deciding. Quote their justification and check it against their own criteria.
+5. Evaluate the EVALUATE step — did their reflection show genuine learning? Did they identify where their analysis was weak?
+
+End with one specific challenge: identify the weakest link in their DECIDE chain and tell them exactly how to strengthen it with a concrete rewrite example. Students are preparing for real business careers. No markdown ** or ##.`;
+
+  const userPrompt = `Student DECIDE Framework Analysis:
+Dilemma: ${selectedDilemma.title}
+Outcome: ${outcome.type} — ${outcome.title}
+
+DEFINE — Goal statement: "${savedData.goal}"
+
+ESTABLISH — Criteria set:
+1. ${savedData.criteria[0] || 'Not provided'}
+2. ${savedData.criteria[1] || 'Not provided'}
+3. ${savedData.criteria[2] || 'Not provided'}
+Explanation: "${savedData.criteriaExplain || 'Not provided'}"
+
+CHOOSE — Option descriptions:
+Option 1 (${opts[0]}): "${savedData.options[0] || 'Not described'}"
+Option 2 (${opts[1]}): "${savedData.options[1] || 'Not described'}"
+Option 3 (${opts[2]}): "${savedData.options[2] || 'Not described'}"
+
+IDENTIFY — Pros/Cons:
+Option 1 — Pros: "${savedData.prosA}" | Cons: "${savedData.consA}"
+Option 2 — Pros: "${savedData.prosB}" | Cons: "${savedData.consB}"
+Option 3 — Pros: "${savedData.prosC}" | Cons: "${savedData.consC}"
+
+DECIDE — Criteria check matrix:
+${criteriaCheckSummary}
+Final choice: Option ${selectedOption + 1} — "${opts[selectedOption]}"
+Justification: "${savedData.decisionJust}"
+
+EVALUATE:
+Reflection: "${savedData.evaluationReflect}"
+What they would do differently: "${savedData.evaluationWhat}"`;
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: systemPrompt + '\n\n' + userPrompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'Could not generate feedback. Please try again.';
+    const sm = text.match(/SCORES:(.+)/);
+    let main = text;
+    if (sm) {
+      main = main.replace(sm[0], '').trim();
+      document.getElementById('score-row').innerHTML = sm[1].split('|').map(p => {
+        const [lbl, rat] = p.split(':').map(s => s.trim());
+        const cls = rat === 'Great' ? 'great' : rat === 'OK' ? 'ok' : 'needs';
+        return `<span class="sc ${cls}">${lbl}: ${rat}</span>`;
+      }).join('');
+    }
+    document.getElementById('fb-body').textContent = main;
+  } catch(err) {
+    document.getElementById('fb-body').textContent = 'Connection error: ' + err.message;
+  }
+}
+
+renderDilemmaSelection();
+</script>
+</body>
+</html>
