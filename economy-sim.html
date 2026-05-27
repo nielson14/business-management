@@ -268,7 +268,11 @@ const PHASES = [
     conditions:['High Consumer Demand','Rising Employment','Low Interest Rates','GDP Growing'],
     news:{ headline:'Economy Booming — Consumer Spending at 5-Year High', body:'Retail sales jumped 8% last quarter as consumer confidence reaches its highest level in five years. Analysts predict continued growth.' },
     event:{ type:'Market Opportunity', title:'Well-funded competitor enters your market', desc:'A startup just launched a rival product with heavy VC backing and aggressive pricing. How do you respond?' },
-    eventOptions:['Lower my price to compete on price','Hold premium position and invest in quality','Increase marketing spend to strengthen brand'],
+    eventOptions:{
+      market:['Lower my price to compete directly on price','Hold my premium position and invest in quality differentiation','Increase marketing spend to strengthen brand loyalty'],
+      mixed:['Apply for a government export subsidy to offset the competitor's advantage','Adjust pricing within the government-allowed range to stay competitive','Lobby for an import tariff to protect the domestic market'],
+      command:['Report the competitor to the central planning bureau for market disruption','Request an increased production quota from the government to match output','Accept the government-assigned market share and focus on meeting the quota']
+    },
     // Supply/demand base (0-100 scale, higher demand = curve shifted right)
     supplyBase:60, demandBase:82,
     // Phase-specific slider defaults and constraints
@@ -291,7 +295,11 @@ const PHASES = [
     conditions:['Rising Inflation','Tight Labor Market','Resource Scarcity','High Competition'],
     news:{ headline:'Inflation Hits 6.2% — Input Costs Surge 18%', body:'The Fed signals rate hikes. Raw material costs are up 18% year-over-year. Every producer is feeling the squeeze on margins.' },
     event:{ type:'Supply Shock', title:'Raw material tariff raises your costs 30%', desc:'A new government tariff on imported materials just increased your cost per unit by 30%. How do you protect your margin?' },
-    eventOptions:['Pass the cost increase to customers (raise price)','Absorb the cost to keep customers (hold price, accept lower margin)','Find domestic suppliers (slower, one-time cost, long-term savings)'],
+    eventOptions:{
+      market:['Pass the full cost increase to customers by raising price','Absorb the cost to retain customers, accepting a lower margin','Switch to domestic suppliers — slower transition but long-term savings'],
+      mixed:['Apply for a government cost-offset subsidy for affected producers','Split the cost — raise price partially and absorb the rest','Negotiate with the government to reduce the tariff on your material category'],
+      command:['Submit a cost-increase report to the planning bureau and await new pricing directives','Continue at the government-set price and request a budget subsidy to cover losses','Request permission to substitute government-approved alternative materials']
+    },
     supplyBase:75, demandBase:85,
     sliders:{
       price:{ default:45, min:5, max:100 },
@@ -311,7 +319,11 @@ const PHASES = [
     conditions:['Falling Consumer Demand','Rising Unemployment','Credit Tightening','GDP Shrinking'],
     news:{ headline:'Recession Confirmed — Retail Bankruptcies Up 34%', body:'GDP has contracted for a second consecutive quarter. Consumer spending dropped 12% and retail bankruptcies are rising sharply across the country.' },
     event:{ type:'Crisis Decision', title:'Your largest client cancels a $200K contract', desc:'Your biggest account just cut spending due to their own downturn. You have a serious revenue gap to fill or costs to cut.' },
-    eventOptions:['Cut workforce immediately to reduce expenses','Find new smaller clients to replace lost revenue','Offer a discount to retain the client at lower margin'],
+    eventOptions:{
+      market:['Cut workforce immediately to reduce expenses and survive the shortfall','Aggressively pursue new smaller clients to replace the lost revenue','Offer the client a steep discount to retain them at a lower margin'],
+      mixed:['Apply for a government business stabilization grant for recession-affected companies','Reduce employee hours rather than laying off — government subsidizes partial wages','Pivot to fulfilling government infrastructure contracts opened during the recession'],
+      command:['Submit a revised output plan to the central authority reflecting lower demand','Request that the government reallocate your workers to a higher-demand sector','Wait for the government to issue new demand directives and adjust quota accordingly']
+    },
     supplyBase:65, demandBase:42,
     sliders:{
       price:{ default:22, min:5, max:100 },
@@ -331,7 +343,11 @@ const PHASES = [
     conditions:['14% Unemployment','Deflation Risk','Credit Freeze','Survival Mode'],
     news:{ headline:'Trough Reached — Early Recovery Signs Emerging', body:'Unemployment peaks at 14% but housing starts are ticking up and consumer sentiment improved slightly last month. Recovery may be near.' },
     event:{ type:'Survival Decision', title:'Your bank calls in your outstanding business loan', desc:'Lenders are pulling credit. You must act immediately — liquidate inventory, seek an angel investor, or apply for an SBA emergency loan.' },
-    eventOptions:['Liquidate inventory at a loss to pay the loan','Seek an angel investor (give up equity)','Apply for SBA emergency loan (takes time, carries interest)'],
+    eventOptions:{
+      market:['Liquidate inventory at a steep loss to immediately pay off the loan','Seek an angel investor — give up partial equity in exchange for emergency capital','Apply for an SBA emergency loan — takes time but preserves full ownership'],
+      mixed:['Apply for a government-backed emergency business rescue loan at reduced interest','Negotiate with the government-regulated bank for a mandated repayment extension','Accept a partial government bailout in exchange for temporary oversight of operations'],
+      command:['Report the financial crisis to the state planning authority and request emergency funds','Request a government debt forgiveness directive — standard in command economies during downturns','Have the state absorb the business debt in exchange for converting to full state ownership']
+    },
     supplyBase:48, demandBase:22,
     sliders:{
       price:{ default:12, min:5, max:100 },
@@ -675,10 +691,10 @@ function renderPhase() {
         <div class="event-title">${phase.event.title}</div>
         <div class="event-desc">${phase.event.desc}</div>
         <div class="event-response">
-          <label>How do you respond to this event?</label>
+          <label>How do you respond to this event? <span style="color:var(--text-dim);font-weight:400;text-transform:none;letter-spacing:0">(options reflect your ${sys} economy)</span></label>
           <select id="event-response">
             <option value="">Select your response…</option>
-            ${phase.eventOptions.map((o,i)=>`<option value="${i}">${o}</option>`).join('')}
+            ${phase.eventOptions[sys].map((o,i)=>`<option value="${i}">${o}</option>`).join('')}
           </select>
         </div>
       </div>
@@ -807,7 +823,7 @@ function submitPhase() {
     system: sys,
     price: out.finalPrice, production: out.effectiveProd, workers,
     eventTitle: phase.event.title,
-    eventResponse: phase.eventOptions[parseInt(eventResp)] || 'Not selected',
+    eventResponse: phase.eventOptions[sys][parseInt(eventResp)] || 'Not selected',
     justification: just,
     revenue: out.revenue, expenses: out.expenses, profit: out.profit,
     unitsSold: out.unitsSold, unsold: out.unsold,
