@@ -1149,7 +1149,7 @@ Then 4-5 paragraphs of direct professional feedback:
 4. Evaluate their manager profile — ${optimal}/5 optimal choices. Are they over-relying on one style? A manager who uses laissez-faire in crises or autocratic with burned-out teams will consistently fail. Address their specific pattern.
 5. What makes an effective manager — adaptability. Reference the two scenarios where they got it right vs wrong specifically.
 
-End with one hard challenge: pick their worst decision and ask them to rewrite it correctly using the right theory vocabulary. Students are preparing for real careers. No markdown ** or ##.`;
+End with a hard rewrite challenge — pick their single worst decision, name the scenario, and give them a specific rewrite assignment using the correct theory vocabulary. Keep the challenge concise but demanding. Students are preparing for real careers. No markdown ** or ##.`;
 
   const userPrompt = `Student Leadership Simulation Results:
 Optimal decisions: ${optimal}/5
@@ -1164,7 +1164,7 @@ ${decisionSummary}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1100,
+        max_tokens: 1500,
         messages: [{ role: 'user', content: systemPrompt + '\n\n' + userPrompt }]
       })
     });
