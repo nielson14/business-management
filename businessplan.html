@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Plan Builder – Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#EEEBE4;--surface3:#E4E0D8;
+  --border:#D8D4CC;--text:#1A1916;--text-muted:#6E6A62;--text-dim:#AAA69E;
+  --ink:#1A1916;
+  --s1:#2C5F8A;--s1l:#EAF2FA;--s1m:rgba(44,95,138,.2);
+  --s2:#5C2C8A;--s2l:#F0EAF8;--s2m:rgba(92,44,138,.2);
+  --s3:#2C8A5C;--s3l:#EAF8F0;--s3m:rgba(44,138,92,.2);
+  --s4:#8A5C2C;--s4l:#F8F2EA;--s4m:rgba(138,92,44,.2);
+  --s5:#8A2C2C;--s5l:#F8EAEA;--s5m:rgba(138,44,44,.2);
+  --s6:#2C7A8A;--s6l:#EAF6F8;--s6m:rgba(44,122,138,.2);
+  --green:#2A6A3A;--greenl:#EEF6F0;
+  --red:#8A2C2C;--redl:#F8EAEA;
+  --amber:#8A6C2A;--amberl:#F8F2EA;
+  --radius:10px;--radius-sm:6px;
+  --serif:'Instrument Serif',serif;--sans:'Inter',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── HEADER ── */
+header{background:var(--ink);color:#F5F3EE;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;}
+.hbrand{padding:1rem 1.75rem;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;flex-shrink:0;}
+.hbrand h1{font-family:var(--serif);font-size:1.3rem;font-style:italic;line-height:1;color:#F5F3EE;}
+.hbrand .sub{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(245,243,238,.35);margin-top:.3rem;}
+.htabs{display:flex;flex:1;overflow-x:auto;}
+.htab{display:flex;align-items:center;gap:.5rem;padding:.75rem 1.1rem;border-right:1px solid rgba(255,255,255,.06);font-size:.68rem;font-weight:500;color:rgba(245,243,238,.3);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.htab:hover{color:rgba(245,243,238,.6);}
+.htab.active{color:#F5F3EE;background:rgba(255,255,255,.06);}
+.htab.done{color:rgba(80,180,120,.7);}
+.htab-num{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;flex-shrink:0;}
+.hright{padding:.75rem 1.5rem;border-left:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:1.25rem;flex-shrink:0;}
+.hstat{text-align:right;}
+.hstat-label{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,238,.3);}
+.hstat-val{font-family:var(--serif);font-size:1rem;font-style:italic;color:#D4A840;}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 58px);}
+.sidebar{background:var(--ink);color:#F5F3EE;padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;border-right:1px solid rgba(255,255,255,.06);}
+.sb-label{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,243,238,.25);margin-bottom:.6rem;}
+.main{padding:2rem;overflow-y:auto;}
+
+/* ── SIDEBAR ELEMENTS ── */
+.biz-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.85rem;}
+.biz-name{font-family:var(--serif);font-size:1rem;font-style:italic;color:#F5F3EE;margin-bottom:.2rem;}
+.biz-type{font-size:.65rem;color:rgba(245,243,238,.35);}
+.progress-list{display:flex;flex-direction:column;gap:.3rem;}
+.pl-row{display:flex;align-items:center;gap:.6rem;padding:.45rem .55rem;border-radius:var(--radius-sm);border:1px solid transparent;transition:all .2s;}
+.pl-row.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);}
+.pl-row.done{opacity:.55;}
+.pl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pl-name{font-size:.72rem;font-weight:500;color:rgba(245,243,238,.4);transition:color .2s;}
+.pl-row.active .pl-name{color:#F5F3EE;}
+.pl-check{margin-left:auto;font-size:.7rem;color:rgba(80,180,120,.8);}
+.plan-preview{display:flex;flex-direction:column;gap:.35rem;}
+.pp-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);padding:.5rem .65rem;}
+.pp-label{font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,243,238,.25);margin-bottom:.2rem;}
+.pp-val{font-size:.68rem;color:rgba(245,243,238,.6);line-height:1.4;font-style:italic;}
+.pp-val.empty{color:rgba(245,243,238,.2);}
+
+/* ── SECTION CARDS ── */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sc-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;}
+.sc-num{font-family:var(--serif);font-size:3rem;font-style:italic;line-height:1;flex-shrink:0;width:52px;}
+.sc-title{font-family:var(--serif);font-size:1.5rem;font-style:italic;line-height:1.1;margin-bottom:.3rem;}
+.sc-subtitle{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+.sc-badge{font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .6rem;border-radius:2px;margin-left:auto;flex-shrink:0;}
+.sc-body{padding:1.5rem;}
+
+/* ── FORM ── */
+label,.field-label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem;}
+.field-hint{font-size:.62rem;color:var(--text-dim);font-weight:400;letter-spacing:0;text-transform:none;display:block;margin-top:.2rem;}
+textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem .9rem;font-family:var(--sans);font-size:.86rem;color:var(--text);resize:vertical;min-height:85px;outline:none;line-height:1.65;transition:border-color .15s;}
+textarea:focus{border-color:var(--s1);box-shadow:0 0 0 3px rgba(44,95,138,.1);}
+textarea::placeholder{color:var(--text-dim);}
+input[type=text],input[type=number],select{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.6rem .85rem;font-family:var(--sans);font-size:.86rem;color:var(--text);outline:none;transition:border-color .15s;}
+input:focus,select:focus{border-color:var(--s1);box-shadow:0 0 0 3px rgba(44,95,138,.1);}
+input::placeholder{color:var(--text-dim);}
+select option{background:var(--surface);}
+.field-group{margin-bottom:1rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.divider{height:1px;background:var(--border);margin:1.5rem 0;}
+.section-label{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.85rem;display:flex;align-items:center;gap:.65rem;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── BUSINESS SELECTOR ── */
+.biz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem;}
+.biz-option{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem;cursor:pointer;transition:all .15s;text-align:center;}
+.biz-option:hover{border-color:var(--s1);transform:translateY(-1px);}
+.biz-option.selected{border-color:var(--s1);background:var(--s1l);}
+.biz-emoji{font-size:1.75rem;margin-bottom:.4rem;}
+.biz-opt-name{font-size:.8rem;font-weight:600;margin-bottom:.2rem;}
+.biz-opt-desc{font-size:.65rem;color:var(--text-muted);line-height:1.3;}
+.custom-biz-row{display:flex;gap:.75rem;margin-top:.75rem;}
+
+/* ── SWOT GRID ── */
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+.swot-cell{border-radius:var(--radius-sm);overflow:hidden;}
+.swot-cell-header{padding:.5rem .75rem;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.swot-cell textarea{border-radius:0;border:none;border-top:1px solid rgba(0,0,0,.08);min-height:100px;}
+.swot-s .swot-cell-header{background:#EEF6F0;color:#2A6A3A;}
+.swot-w .swot-cell-header{background:#F8EAEA;color:#8A2C2C;}
+.swot-o .swot-cell-header{background:#EAF2FA;color:#2C5F8A;}
+.swot-t .swot-cell-header{background:#F8F2EA;color:#8A6C2A;}
+.swot-cell textarea{background:var(--surface);}
+.swot-cell textarea:focus{outline:none;box-shadow:inset 0 0 0 2px rgba(44,95,138,.2);}
+
+/* ── OWNERSHIP CARDS ── */
+.ownership-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1rem;}
+.own-card{padding:.75rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.own-card:hover{border-color:var(--s2);}
+.own-card.selected{border-color:var(--s2);background:var(--s2l);}
+.own-name{font-size:.8rem;font-weight:700;margin-bottom:.2rem;}
+.own-card.selected .own-name{color:var(--s2);}
+.own-tag{font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:.15rem .4rem;border-radius:2px;display:inline-block;margin-bottom:.35rem;}
+.own-desc{font-size:.62rem;color:var(--text-muted);line-height:1.35;}
+
+/* ── ORG CHART ── */
+.org-chart{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;}
+.org-row{display:flex;justify-content:center;margin-bottom:.75rem;}
+.org-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.5rem .85rem;text-align:center;position:relative;}
+.org-box.top{border-color:var(--s2);background:var(--s2l);}
+.org-box input{border:none;background:transparent;text-align:center;font-family:var(--sans);font-size:.78rem;font-weight:600;color:var(--text);width:130px;outline:none;}
+.org-box .role-label{font-size:.58rem;color:var(--text-muted);display:block;}
+.org-connector{width:2px;height:20px;background:var(--border);margin:0 auto;}
+.org-h-line{display:flex;align-items:flex-start;justify-content:center;gap:0;margin-bottom:.5rem;}
+.org-branch{display:flex;flex-direction:column;align-items:center;flex:1;}
+.org-h-bar{width:100%;height:2px;background:var(--border);}
+
+/* ── FINANCIAL CALCULATOR ── */
+.fin-calc{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.25rem;margin-bottom:1rem;}
+.fin-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem;padding:.5rem .65rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);}
+.fin-label{flex:1;font-size:.8rem;font-weight:500;}
+.fin-input{width:120px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.35rem .6rem;font-family:var(--sans);font-size:.85rem;text-align:right;background:var(--surface);color:var(--text);outline:none;}
+.fin-input:focus{border-color:var(--s5);}
+.fin-unit{font-size:.72rem;color:var(--text-muted);width:40px;flex-shrink:0;}
+.fin-result{background:var(--ink);color:#F5F3EE;border-radius:var(--radius-sm);padding:1rem 1.25rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:.75rem;}
+.fin-res-item{text-align:center;}
+.fin-res-label{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,238,.4);margin-bottom:.3rem;}
+.fin-res-val{font-family:var(--serif);font-size:1.3rem;font-style:italic;}
+.fin-res-val.pos{color:#4CAF7D;}
+.fin-res-val.neg{color:#E05A4A;}
+.fin-res-val.neu{color:#D4A840;}
+
+/* ── FINANCING CHIPS ── */
+.fin-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem;}
+.fin-chip{padding:.3rem .75rem;border:1.5px solid var(--border);border-radius:100px;font-size:.72rem;cursor:pointer;background:var(--surface2);color:var(--text-muted);transition:all .15s;user-select:none;}
+.fin-chip:hover{border-color:var(--s5);}
+.fin-chip.sel{background:var(--s5l);border-color:var(--s5);color:var(--s5);font-weight:600;}
+
+/* ── 4Ps GRID ── */
+.four-p-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+.four-p-cell{border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.four-p-header{padding:.5rem .75rem;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:.4rem;}
+.four-p-cell textarea{border:none;border-top:1px solid var(--border);border-radius:0;min-height:80px;}
+
+/* ── PEST ── */
+.pest-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+.pest-cell{border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.pest-header{padding:.45rem .75rem;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.pest-cell textarea{border:none;border-top:1px solid var(--border);border-radius:0;min-height:75px;}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--sans);font-size:.86rem;font-weight:600;padding:.65rem 1.5rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--ink);color:#F5F3EE;}
+.btn-primary:hover{background:#333;transform:translateY(-1px);}
+.btn-primary:disabled{background:var(--border);color:var(--text-dim);cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--text-muted);}
+.btn-green{background:#2A6A3A;color:#fff;}
+.btn-green:hover{background:#1E5229;transform:translateY(-1px);}
+.btn-row{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;margin-top:1.25rem;}
+
+/* ── INSTRUCTION BOX ── */
+.inst-box{padding:.85rem 1rem;border-radius:var(--radius-sm);font-size:.8rem;line-height:1.6;margin-bottom:1.25rem;border-left:3px solid;}
+
+/* ── FEEDBACK ── */
+.feedback-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.fb-header{background:var(--ink);color:#F5F3EE;padding:1.25rem 1.75rem;display:flex;align-items:center;gap:1rem;}
+.fb-icon{font-size:1.75rem;}
+.fb-title{font-family:var(--serif);font-size:1.3rem;font-style:italic;}
+.fb-sub{font-size:.62rem;color:rgba(245,243,238,.4);letter-spacing:.08em;text-transform:uppercase;}
+.fb-body{padding:1.75rem;font-size:.88rem;line-height:1.85;color:var(--text);white-space:pre-wrap;min-height:80px;}
+.score-row{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+.sc{font-size:.67rem;font-weight:700;padding:.27rem .8rem;border-radius:100px;letter-spacing:.03em;}
+.sc.great{background:var(--greenl);color:var(--green);border:1px solid rgba(42,106,58,.25);}
+.sc.ok{background:var(--amberl);color:var(--amber);border:1px solid rgba(138,108,42,.25);}
+.sc.needs{background:var(--redl);color:var(--red);border:1px solid rgba(138,44,44,.25);}
+
+/* ── PLAN REVIEW ── */
+.plan-section-review{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:.75rem;}
+.psr-title{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.psr-content{font-size:.82rem;color:var(--text);line-height:1.6;}
+
+.typing-dot{display:inline-block;width:6px;height:6px;background:var(--s1);border-radius:50%;animation:blink 1.2s infinite;margin:0 2px;vertical-align:middle;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .grid-2,.grid-3,.biz-grid,.ownership-grid,.four-p-grid,.pest-grid,.swot-grid,.fin-result{grid-template-columns:1fr;}
+  .htabs{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbrand">
+    <h1>Business Plan Builder</h1>
+    <div class="sub">Business Management · Strands 2, 5, 6</div>
+  </div>
+  <div class="htabs" id="htabs"></div>
+  <div class="hright">
+    <div class="hstat"><div class="hstat-label">Section</div><div class="hstat-val" id="h-section">Setup</div></div>
+    <div class="hstat"><div class="hstat-label">Business</div><div class="hstat-val" id="h-biz">—</div></div>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="sidebar">
+    <div>
+      <div class="sb-label">Your Business</div>
+      <div class="biz-card" id="sb-biz"><div class="biz-name" style="color:rgba(245,243,238,.3);font-style:italic">Not yet selected</div><div class="biz-type">Choose a business to begin</div></div>
+    </div>
+    <div>
+      <div class="sb-label">Plan Sections</div>
+      <div class="progress-list" id="progress-list"></div>
+    </div>
+    <div>
+      <div class="sb-label">Plan Preview</div>
+      <div class="plan-preview" id="plan-preview">
+        <div class="pp-item"><div class="pp-label">Mission</div><div class="pp-val empty" id="pp-mission">Not yet written</div></div>
+        <div class="pp-item"><div class="pp-label">Ownership</div><div class="pp-val empty" id="pp-ownership">Not yet selected</div></div>
+        <div class="pp-item"><div class="pp-label">Break-Even</div><div class="pp-val empty" id="pp-breakeven">Not yet calculated</div></div>
+        <div class="pp-item"><div class="pp-label">Financing</div><div class="pp-val empty" id="pp-financing">Not yet selected</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+const WORKER_URL="https://digitalmarketing.robert-nielson14.workers.dev";
+
+const SECTIONS=[
+  {id:'exec',name:'Executive Summary',color:'var(--s1)',light:'var(--s1l)'},
+  {id:'desc',name:'Business Description',color:'var(--s2)',light:'var(--s2l)'},
+  {id:'market',name:'Market Analysis',color:'var(--s3)',light:'var(--s3l)'},
+  {id:'product',name:'Products & Services',color:'var(--s4)',light:'var(--s4l)'},
+  {id:'finance',name:'Financial Plan',color:'var(--s5)',light:'var(--s5l)'},
+  {id:'ops',name:'Operations Plan',color:'var(--s6)',light:'var(--s6l)'},
+];
+
+const BUSINESSES=[
+  {id:'cafe',emoji:'☕',name:'The Daily Grind',desc:'Specialty coffee shop + coworking space in a college town',industry:'Food & Beverage',hint:'Focus on the community aspect — your differentiator is space, not just coffee.'},
+  {id:'app',emoji:'📱',name:'FitTrack Pro',desc:'Mobile fitness tracking app with AI-powered coaching',industry:'Technology / SaaS',hint:'Your revenue model (subscription vs freemium) is the most critical decision.'},
+  {id:'clothing',emoji:'👗',name:'ThreadGood',desc:'Sustainable clothing brand selling online + pop-up events',industry:'E-Commerce / Retail',hint:'Your supply chain and cost structure will make or break the financial plan.'},
+  {id:'tutoring',emoji:'📚',name:'Apex Tutoring',desc:'Online tutoring platform for high school STEM subjects',industry:'Education Services',hint:'Customer acquisition cost vs lifetime value is your core business math.'},
+  {id:'food',emoji:'🚚',name:'Sabroso Street',desc:'Food truck specializing in fusion street tacos',industry:'Food Service',hint:'Location strategy and event booking are your most important operational decisions.'},
+  {id:'custom',emoji:'✏️',name:'My Own Business',desc:'Enter your own business idea',industry:'Custom',hint:'The more specific your business concept, the stronger your plan will be.'},
+];
+
+const OWNERSHIP_TYPES=[
+  {id:'sole',name:'Sole Proprietorship',tag:'Simplest',tagColor:'#2A6A3A',tagBg:'#EEF6F0',desc:'One owner, full control, unlimited personal liability. Easiest to start.'},
+  {id:'partnership',name:'Partnership',tag:'Shared',tagColor:'#2C5F8A',tagBg:'#EAF2FA',desc:'Two or more owners share profits, decisions, and liability.'},
+  {id:'llc',name:'LLC',tag:'Popular',tagColor:'#5C2C8A',tagBg:'#F0EAF8',desc:'Limited liability protection with flexible tax treatment. Most popular for small business.'},
+  {id:'scorp',name:'S-Corporation',tag:'Tax Benefits',tagColor:'#8A6C2A',tagBg:'#F8F2EA',desc:'Avoids double taxation. Shareholders pay taxes on personal returns.'},
+  {id:'ccorp',name:'C-Corporation',tag:'Scale',tagColor:'#8A2C2C',tagBg:'#F8EAEA',desc:'Separate legal entity. Can have unlimited shareholders. Best for raising investment.'},
+  {id:'franchise',name:'Franchise',tag:'Established Brand',tagColor:'#2C7A8A',tagBg:'#EAF6F8',desc:'Buy rights to operate under an established brand with proven systems.'},
+];
+
+const FINANCING_OPTIONS=['Personal Savings (Bootstrapping)','Angel Investor','Bank Loan','SBA Loan','Crowdfunding','Venture Capital','Friends & Family'];
+
+// ── STATE ──
+let step=-1;
+let selectedBiz=null;
+let customBizName='',customBizDesc='';
+let selectedOwnership=null;
+let selectedFinancing=[];
+let orgRoles=['CEO / Owner','Operations Manager','Marketing Manager','Sales Lead','Customer Service'];
+let swotData={s:'',w:'',o:'',t:''};
+let financialData={startupCost:0,monthlyRevenue:0,monthlyExpenses:0,unitPrice:0,unitCost:0,fixedCosts:0};
+let savedData={};
+
+// ── INIT ──
+function buildHeader(){
+  document.getElementById('htabs').innerHTML=SECTIONS.map((s,i)=>`
+    <div class="htab ${step===i?'active':step>i?'done':''}" id="ht-${i}">
+      <div class="htab-num">${step>i?'✓':i+1}</div>${s.name}
+    </div>`).join('');
+  document.getElementById('h-section').textContent=step>=0?SECTIONS[step].name:'Setup';
+  document.getElementById('h-biz').textContent=selectedBiz?(selectedBiz.id==='custom'?customBizName||'Custom':selectedBiz.name):'—';
+}
+
+function buildSidebar(){
+  if(selectedBiz){
+    const name=selectedBiz.id==='custom'?customBizName||'My Business':selectedBiz.name;
+    const type=selectedBiz.id==='custom'?customBizDesc||'Custom Business':selectedBiz.industry;
+    document.getElementById('sb-biz').innerHTML=`<div class="biz-name">${selectedBiz.emoji} ${name}</div><div class="biz-type">${type}</div>`;
+  }
+  document.getElementById('progress-list').innerHTML=SECTIONS.map((s,i)=>`
+    <div class="pl-row ${step===i?'active':step>i?'done':''}">
+      <div class="pl-dot" style="background:${s.color}"></div>
+      <div class="pl-name">${s.name}</div>
+      ${step>i?'<div class="pl-check">✓</div>':''}
+    </div>`).join('');
+
+  const m=document.getElementById('pp-mission');
+  if(savedData.mission){m.textContent=savedData.mission.substring(0,80)+(savedData.mission.length>80?'…':'');m.className='pp-val';}
+  const o=document.getElementById('pp-ownership');
+  if(selectedOwnership){o.textContent=OWNERSHIP_TYPES.find(t=>t.id===selectedOwnership)?.name||'—';o.className='pp-val';}
+  updateBreakevenPreview();
+  const f=document.getElementById('pp-financing');
+  if(selectedFinancing.length>0){f.textContent=selectedFinancing.join(', ');f.className='pp-val';}
+}
+
+function updateBreakevenPreview(){
+  const be=document.getElementById('pp-breakeven');
+  if(financialData.unitPrice>0&&financialData.unitCost>0&&financialData.fixedCosts>0){
+    const margin=financialData.unitPrice-financialData.unitCost;
+    if(margin>0){
+      const units=Math.ceil(financialData.fixedCosts/margin);
+      be.textContent=`${units.toLocaleString()} units/mo`;
+      be.className='pp-val';
+    }
+  }
+}
+
+// ── BUSINESS SELECTION ──
+function renderBizSelection(){
+  step=-1;buildHeader();buildSidebar();
+  document.getElementById('main').innerHTML=`
+    <div style="margin-bottom:1.5rem">
+      <div style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem">Business Plan Builder</div>
+      <div style="font-family:var(--serif);font-size:2rem;font-style:italic;margin-bottom:.4rem;letter-spacing:-.5px">Build Your Business Plan</div>
+      <div style="font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:560px">Choose a business scenario or enter your own idea. You will build a complete 6-section business plan — including mission and vision statements, SWOT analysis, financial projections, and more. At the end, a VC analyst reviews whether your plan is fundable.</div>
+    </div>
+
+    <div class="biz-grid" id="biz-grid">
+      ${BUSINESSES.map(b=>`
+        <div class="biz-option ${selectedBiz?.id===b.id?'selected':''}" onclick="selectBiz('${b.id}')" id="bo-${b.id}">
+          <div class="biz-emoji">${b.emoji}</div>
+          <div class="biz-opt-name">${b.name}</div>
+          <div class="biz-opt-desc">${b.desc}</div>
+        </div>`).join('')}
+    </div>
+
+    <div id="custom-fields" style="display:none;margin-bottom:1rem">
+      <div class="grid-2">
+        <div class="field-group"><label>Business Name</label><input type="text" id="custom-name" placeholder="e.g. Sunrise Landscaping" value="${customBizName}"></div>
+        <div class="field-group"><label>Business Description</label><input type="text" id="custom-desc" placeholder="What does your business do and who does it serve?" value="${customBizDesc}"></div>
+      </div>
+    </div>
+
+    <div id="biz-hint" style="display:none;padding:.75rem 1rem;background:var(--s1l);border:1px solid var(--s1m);border-radius:var(--radius-sm);font-size:.8rem;color:var(--s1);margin-bottom:1rem;"></div>
+
+    <div class="btn-row" id="start-row" style="display:none">
+      <button class="btn btn-primary" onclick="startPlan()">Build My Business Plan →</button>
+    </div>`;
+}
+
+function selectBiz(id){
+  selectedBiz=BUSINESSES.find(b=>b.id===id);
+  document.querySelectorAll('.biz-option').forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`bo-${id}`).classList.add('selected');
+  document.getElementById('custom-fields').style.display=id==='custom'?'block':'none';
+  const hint=document.getElementById('biz-hint');
+  hint.style.display='block';
+  hint.textContent='💡 '+selectedBiz.hint;
+  document.getElementById('start-row').style.display='flex';
+  buildSidebar();
+}
+
+function startPlan(){
+  if(!selectedBiz)return;
+  if(selectedBiz.id==='custom'){
+    customBizName=document.getElementById('custom-name')?.value.trim()||'My Business';
+    customBizDesc=document.getElementById('custom-desc')?.value.trim()||'Custom Business';
+  }
+  step=0;savedData={};selectedOwnership=null;selectedFinancing=[];
+  swotData={s:'',w:'',o:'',t:''};
+  financialData={startupCost:0,monthlyRevenue:0,monthlyExpenses:0,unitPrice:0,unitCost:0,fixedCosts:0};
+  renderSection();
+}
+
+// ── RENDER SECTION ──
+function renderSection(){
+  buildHeader();buildSidebar();
+  window.scrollTo({top:0,behavior:'smooth'});
+  switch(step){
+    case 0:renderExec();break;
+    case 1:renderDesc();break;
+    case 2:renderMarket();break;
+    case 3:renderProduct();break;
+    case 4:renderFinance();break;
+    case 5:renderOps();break;
+    default:renderFeedback();
+  }
+}
+
+function bizName(){return selectedBiz?.id==='custom'?customBizName:selectedBiz?.name||'Your Business';}
+
+// ── SECTION 1: EXECUTIVE SUMMARY ──
+function renderExec(){
+  const c=SECTIONS[0];
+  document.getElementById('main').innerHTML=`
+  <div class="section-card">
+    <div class="sc-header">
+      <div class="sc-num" style="color:${c.color}">1</div>
+      <div><div class="sc-title" style="color:${c.color}">Executive Summary</div><div class="sc-subtitle">The most important section — investors read this first and decide whether to continue. It must be compelling and concise.</div></div>
+      <span class="sc-badge" style="background:${c.light};color:${c.color}">Section 1 of 6</span>
+    </div>
+    <div class="sc-body">
+      <div class="inst-box" style="background:${c.light};border-color:${c.color};color:${c.color}">
+        <strong>Business:</strong> ${selectedBiz?.emoji} ${bizName()} — ${selectedBiz?.id==='custom'?customBizDesc:selectedBiz?.desc}<br>
+        <strong>Your task:</strong> Write a compelling executive summary. This is read first by investors — it must make them want to keep reading.
+      </div>
+
+      <div class="section-label">Elevator Pitch</div>
+      <div class="field-group"><label>One-Sentence Business Concept <span class="field-hint">What do you do, for whom, and why it matters — in one sentence</span></label>
+        <textarea id="elevator" placeholder="e.g. The Daily Grind is a specialty coffee shop and coworking space for remote workers and students in college towns who need a productive environment that feels less corporate than Starbucks and less isolating than home." rows="2">${savedData.elevator||''}</textarea></div>
+
+      <div class="section-label">Mission & Vision</div>
+      <div class="field-group"><label>Mission Statement <span class="field-hint">Short, specific, current-focused — what you do and for whom RIGHT NOW</span></label>
+        <textarea id="mission" placeholder="e.g. To serve exceptional specialty coffee and provide an inspiring workspace for students and remote professionals in college communities." rows="2">${savedData.mission||''}</textarea></div>
+      <div class="field-group"><label>Vision Statement <span class="field-hint">Broad, inspirational, long-term — where you are GOING in 10+ years</span></label>
+        <textarea id="vision" placeholder="e.g. To become the defining third place for the next generation of remote workers — a national network of community-driven coffee and coworking spaces." rows="2">${savedData.vision||''}</textarea></div>
+
+      <div class="section-label">Business Overview</div>
+      <div class="grid-2">
+        <div class="field-group"><label>Problem You Solve</label><textarea id="problem" placeholder="What specific pain point does your business address?" rows="3">${savedData.problem||''}</textarea></div>
+        <div class="field-group"><label>Your Solution</label><textarea id="solution" placeholder="How does your business solve that problem better than existing alternatives?" rows="3">${savedData.solution||''}</textarea></div>
+      </div>
+      <div class="field-group"><label>Why Now? <span class="field-hint">Why is this the right moment for this business to exist?</span></label>
+        <textarea id="whynow" placeholder="e.g. Remote work has permanently increased demand for third-place workspaces. The specialty coffee market is growing 12% annually while traditional coffee shops decline..." rows="2">${savedData.whynow||''}</textarea></div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="renderBizSelection()">← Change Business</button>
+        <button class="btn btn-primary" onclick="saveAndAdvance(0)">Business Description →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── SECTION 2: BUSINESS DESCRIPTION ──
+function renderDesc(){
+  const c=SECTIONS[1];
+  document.getElementById('main').innerHTML=`
+  <div class="section-card">
+    <div class="sc-header">
+      <div class="sc-num" style="color:${c.color}">2</div>
+      <div><div class="sc-title" style="color:${c.color}">Business Description</div><div class="sc-subtitle">Legal structure, organizational chart, and key personnel. How your business is structured legally and operationally.</div></div>
+      <span class="sc-badge" style="background:${c.light};color:${c.color}">Section 2 of 6</span>
+    </div>
+    <div class="sc-body">
+
+      <div class="section-label">Legal Ownership Structure</div>
+      <div class="ownership-grid">
+        ${OWNERSHIP_TYPES.map(o=>`
+          <div class="own-card ${selectedOwnership===o.id?'selected':''}" onclick="selectOwnership('${o.id}')" id="oc-${o.id}">
+            <div class="own-name">${o.name}</div>
+            <div><span class="own-tag" style="background:${o.tagBg};color:${o.tagColor}">${o.tag}</span></div>
+            <div class="own-desc">${o.desc}</div>
+          </div>`).join('')}
+      </div>
+      <div class="field-group"><label>Why did you choose this ownership structure? <span class="field-hint">Reference liability, taxes, profit distribution, and your growth plans</span></label>
+        <textarea id="ownership-why" placeholder="e.g. We chose LLC because it provides personal liability protection for the owners while allowing pass-through taxation — critical since we are self-funding initially and cannot afford double taxation..." rows="3">${savedData.ownershipWhy||''}</textarea></div>
+
+      <div class="divider"></div>
+      <div class="section-label">Organizational Structure</div>
+      <div class="inst-box" style="background:var(--s2l);border-color:var(--s2);color:var(--s2)">
+        Build your organizational chart below. Click any role title to edit it. This shows who answers to whom in your business.
+      </div>
+      <div class="org-chart" id="org-chart"></div>
+
+      <div class="field-group"><label>Key Personnel & Responsibilities</label>
+        <textarea id="key-personnel" placeholder="Describe the 2-3 most critical roles in your business and what qualifications you need. e.g. Operations Manager: Manages daily café operations, scheduling, and inventory. Requires 3+ years food service management experience..." rows="4">${savedData.keyPersonnel||''}</textarea></div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="saveAndAdvance(1)">Market Analysis →</button>
+      </div>
+    </div>
+  </div>`;
+  renderOrgChart();
+}
+
+function renderOrgChart(){
+  const el=document.getElementById('org-chart');
+  if(!el)return;
+  el.innerHTML=`
+    <div class="org-row"><div class="org-box top"><input id="org-0" value="${orgRoles[0]||'CEO / Owner'}" onchange="orgRoles[0]=this.value"><span class="role-label">Top Leadership</span></div></div>
+    <div class="org-connector"></div>
+    <div class="org-h-line">
+      ${[1,2,3].map(i=>`<div class="org-branch"><div class="org-h-bar"></div><div class="org-connector"></div><div class="org-box"><input id="org-${i}" value="${orgRoles[i]||'Manager '+(i)}" onchange="orgRoles[${i}]=this.value" style="width:110px"><span class="role-label">Department Head</span></div></div>`).join('')}
+    </div>`;
+}
+
+function selectOwnership(id){
+  selectedOwnership=id;
+  document.querySelectorAll('.own-card').forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`oc-${id}`).classList.add('selected');
+  buildSidebar();
+}
+
+// ── SECTION 3: MARKET ANALYSIS ──
+function renderMarket(){
+  const c=SECTIONS[2];
+  document.getElementById('main').innerHTML=`
+  <div class="section-card">
+    <div class="sc-header">
+      <div class="sc-num" style="color:${c.color}">3</div>
+      <div><div class="sc-title" style="color:${c.color}">Market Analysis</div><div class="sc-subtitle">Who is your customer, what is your market, and how do you compare to competitors?</div></div>
+      <span class="sc-badge" style="background:${c.light};color:${c.color}">Section 3 of 6</span>
+    </div>
+    <div class="sc-body">
+
+      <div class="section-label">Target Market & Segmentation</div>
+      <div class="grid-2">
+        <div class="field-group"><label>Demographics — Who? <span class="field-hint">Age, gender, income, education, occupation</span></label>
+          <textarea id="seg-demo" placeholder="e.g. Ages 18-35, college students and young professionals, $25k-$65k annual income, some college to bachelor's degree..." rows="3">${savedData.segDemo||''}</textarea></div>
+        <div class="field-group"><label>Geographics — Where? <span class="field-hint">Location, urban/suburban/rural, climate, region</span></label>
+          <textarea id="seg-geo" placeholder="e.g. College towns in the Mountain West region, urban neighborhoods with high foot traffic, within 1 mile of university campuses..." rows="3">${savedData.segGeo||''}</textarea></div>
+        <div class="field-group"><label>Psychographics — Why? <span class="field-hint">Lifestyle, values, attitudes, personality</span></label>
+          <textarea id="seg-psych" placeholder="e.g. Values community and authenticity over corporate chains, environmentally conscious, productivity-focused, appreciates quality over quantity..." rows="3">${savedData.segPsych||''}</textarea></div>
+        <div class="field-group"><label>Behavioral — How? <span class="field-hint">Shopping patterns, usage rate, benefits sought</span></label>
+          <textarea id="seg-behav" placeholder="e.g. Visits 3-5 times per week, spends 1-3 hours per visit, values fast WiFi and comfortable seating as much as coffee quality..." rows="3">${savedData.segBehav||''}</textarea></div>
+      </div>
+      <div class="field-group"><label>Market Size Estimate</label>
+        <textarea id="market-size" placeholder="e.g. Our target city has 45,000 college students and 12,000 remote workers. The specialty coffee market in this segment is approximately $8M annually. We believe we can capture 8-12% market share in year 3." rows="2">${savedData.marketSize||''}</textarea></div>
+
+      <div class="divider"></div>
+      <div class="section-label">SWOT Analysis</div>
+      <div class="inst-box" style="background:var(--s3l);border-color:var(--s3);color:var(--s3)">
+        Complete all four quadrants. Be honest — especially about Weaknesses and Threats. Investors are skeptical of plans that only show strengths.
+      </div>
+      <div class="swot-grid">
+        <div class="swot-cell swot-s"><div class="swot-cell-header">💪 Strengths — Internal Positives</div>
+          <textarea id="swot-s" placeholder="What does your business do well? What advantages do you have?" oninput="swotData.s=this.value">${swotData.s}</textarea></div>
+        <div class="swot-cell swot-w"><div class="swot-cell-header">⚠️ Weaknesses — Internal Negatives</div>
+          <textarea id="swot-w" placeholder="Where are you vulnerable? What do you lack?" oninput="swotData.w=this.value">${swotData.w}</textarea></div>
+        <div class="swot-cell swot-o"><div class="swot-cell-header">🌱 Opportunities — External Positives</div>
+          <textarea id="swot-o" placeholder="What market trends or gaps can you exploit?" oninput="swotData.o=this.value">${swotData.o}</textarea></div>
+        <div class="swot-cell swot-t"><div class="swot-cell-header">⚡ Threats — External Negatives</div>
+          <textarea id="swot-t" placeholder="What external factors could harm your business?" oninput="swotData.t=this.value">${swotData.t}</textarea></div>
+      </div>
+
+      <div class="section-label">Competitive Analysis</div>
+      <div class="field-group"><label>Who are your main competitors?</label>
+        <textarea id="competitors" placeholder="e.g. Starbucks (corporate chain, poor workspace environment), local coffee shops (no coworking focus), WeWork (too expensive, no café)..." rows="2">${savedData.competitors||''}</textarea></div>
+      <div class="field-group"><label>Your Competitive Advantage <span class="field-hint">Why will customers choose you over competitors?</span></label>
+        <textarea id="competitive-adv" placeholder="e.g. We are the only venue in a 5-mile radius that combines specialty coffee quality with dedicated coworking infrastructure at café prices..." rows="2">${savedData.competitiveAdv||''}</textarea></div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="saveAndAdvance(2)">Products & Services →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── SECTION 4: PRODUCTS & SERVICES ──
+function renderProduct(){
+  const c=SECTIONS[3];
+  document.getElementById('main').innerHTML=`
+  <div class="section-card">
+    <div class="sc-header">
+      <div class="sc-num" style="color:${c.color}">4</div>
+      <div><div class="sc-title" style="color:${c.color}">Products & Services</div><div class="sc-subtitle">What you sell, how you price it, and how you reach customers — the 4 Ps of the marketing mix.</div></div>
+      <span class="sc-badge" style="background:${c.light};color:${c.color}">Section 4 of 6</span>
+    </div>
+    <div class="sc-body">
+
+      <div class="section-label">What You Offer</div>
+      <div class="field-group"><label>Products & Services Description</label>
+        <textarea id="prod-desc" placeholder="Describe your product or service offering in detail. What exactly are you selling? What are the key features or options?" rows="3">${savedData.prodDesc||''}</textarea></div>
+      <div class="grid-2">
+        <div class="field-group"><label>What makes it unique? <span class="field-hint">Your value proposition</span></label>
+          <textarea id="unique" placeholder="What specific feature or benefit does your product offer that competitors do not?" rows="3">${savedData.unique||''}</textarea></div>
+        <div class="field-group"><label>Pricing Strategy <span class="field-hint">Premium, competitive, penetration, cost-plus?</span></label>
+          <textarea id="pricing-strategy" placeholder="e.g. We use a value-based pricing strategy — our coffee is priced 20% above Starbucks because our workspace justifies the premium..." rows="3">${savedData.pricingStrategy||''}</textarea></div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">The Marketing Mix — 4 Ps</div>
+      <div class="four-p-grid">
+        <div class="four-p-cell"><div class="four-p-header" style="background:var(--s4l);color:var(--s4)">📦 Product</div>
+          <textarea id="4p-product" placeholder="What exactly are you selling? Core product + any variations or add-ons." rows="3">${savedData.fpProduct||''}</textarea></div>
+        <div class="four-p-cell"><div class="four-p-header" style="background:var(--s3l);color:var(--s3)">💰 Price</div>
+          <textarea id="4p-price" placeholder="Specific price points. How does price relate to cost and competitors?" rows="3">${savedData.fpPrice||''}</textarea></div>
+        <div class="four-p-cell"><div class="four-p-header" style="background:var(--s1l);color:var(--s1)">📍 Place</div>
+          <textarea id="4p-place" placeholder="Where and how do customers access your product? Online, physical location, delivery?" rows="3">${savedData.fpPlace||''}</textarea></div>
+        <div class="four-p-cell"><div class="four-p-header" style="background:var(--s2l);color:var(--s2)">📣 Promotion</div>
+          <textarea id="4p-promo" placeholder="How will you reach and communicate with customers? Social media, ads, referrals?" rows="3">${savedData.fpPromo||''}</textarea></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="saveAndAdvance(3)">Financial Plan →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── SECTION 5: FINANCIAL PLAN ──
+function renderFinance(){
+  const c=SECTIONS[4];
+  const calcBreakeven=()=>{
+    const p=financialData.unitPrice,vc=financialData.unitCost,fc=financialData.fixedCosts;
+    if(p>vc&&p>0)return Math.ceil(fc/(p-vc));
+    return null;
+  };
+  const be=calcBreakeven();
+  const roi=financialData.monthlyRevenue>0&&financialData.startupCost>0?
+    Math.round((((financialData.monthlyRevenue-financialData.monthlyExpenses)*12-financialData.startupCost)/financialData.startupCost)*100):null;
+
+  document.getElementById('main').innerHTML=`
+  <div class="section-card">
+    <div class="sc-header">
+      <div class="sc-num" style="color:${c.color}">5</div>
+      <div><div class="sc-title" style="color:${c.color}">Financial Plan</div><div class="sc-subtitle">Startup costs, projected revenue, break-even analysis, and where the money comes from. Investors read this last — and most carefully.</div></div>
+      <span class="sc-badge" style="background:${c.light};color:${c.color}">Section 5 of 6</span>
+    </div>
+    <div class="sc-body">
+
+      <div class="section-label">Startup Costs & Revenue Projections</div>
+      <div class="fin-calc">
+        <div class="fin-row"><div class="fin-label">Total Startup Costs</div><input class="fin-input" type="number" id="fin-startup" value="${financialData.startupCost||''}" placeholder="0" oninput="financialData.startupCost=+this.value;refreshFinancials()"><div class="fin-unit">$</div></div>
+        <div class="fin-row"><div class="fin-label">Projected Monthly Revenue</div><input class="fin-input" type="number" id="fin-rev" value="${financialData.monthlyRevenue||''}" placeholder="0" oninput="financialData.monthlyRevenue=+this.value;refreshFinancials()"><div class="fin-unit">$/mo</div></div>
+        <div class="fin-row"><div class="fin-label">Projected Monthly Expenses</div><input class="fin-input" type="number" id="fin-exp" value="${financialData.monthlyExpenses||''}" placeholder="0" oninput="financialData.monthlyExpenses=+this.value;refreshFinancials()"><div class="fin-unit">$/mo</div></div>
+      </div>
+
+      <div class="section-label">Break-Even Analysis</div>
+      <div class="inst-box" style="background:var(--s5l);border-color:var(--s5);color:var(--s5)">
+        Break-Even Point = Fixed Costs ÷ (Unit Price − Unit Variable Cost). Enter your numbers below and the calculation updates live.
+      </div>
+      <div class="fin-calc">
+        <div class="fin-row"><div class="fin-label">Price per Unit / Transaction</div><input class="fin-input" type="number" id="fin-price" value="${financialData.unitPrice||''}" placeholder="0" oninput="financialData.unitPrice=+this.value;refreshFinancials()"><div class="fin-unit">$/unit</div></div>
+        <div class="fin-row"><div class="fin-label">Variable Cost per Unit</div><input class="fin-input" type="number" id="fin-vc" value="${financialData.unitCost||''}" placeholder="0" oninput="financialData.unitCost=+this.value;refreshFinancials()"><div class="fin-unit">$/unit</div></div>
+        <div class="fin-row"><div class="fin-label">Monthly Fixed Costs</div><input class="fin-input" type="number" id="fin-fc" value="${financialData.fixedCosts||''}" placeholder="0" oninput="financialData.fixedCosts=+this.value;refreshFinancials()"><div class="fin-unit">$/mo</div></div>
+        <div class="fin-result" id="fin-result">
+          <div class="fin-res-item"><div class="fin-res-label">Break-Even</div><div class="fin-res-val neu" id="fr-be">${be?be.toLocaleString()+' units':'—'}</div></div>
+          <div class="fin-res-item"><div class="fin-res-label">Monthly Profit</div><div class="fin-res-val ${financialData.monthlyRevenue-financialData.monthlyExpenses>0?'pos':financialData.monthlyRevenue-financialData.monthlyExpenses<0?'neg':'neu'}" id="fr-profit">${financialData.monthlyRevenue>0?'$'+(financialData.monthlyRevenue-financialData.monthlyExpenses).toLocaleString():'—'}</div></div>
+          <div class="fin-res-item"><div class="fin-res-label">Year 1 ROI</div><div class="fin-res-val ${roi&&roi>0?'pos':roi&&roi<0?'neg':'neu'}" id="fr-roi">${roi!==null?roi+'%':'—'}</div></div>
+        </div>
+      </div>
+
+      <div class="field-group"><label>Financial Assumptions & Narrative <span class="field-hint">Explain how you arrived at your revenue projections. Investors need to understand your assumptions.</span></label>
+        <textarea id="fin-narrative" placeholder="e.g. Revenue projection of $45,000/month is based on 300 daily customers at an average transaction of $7.50. This assumes 70% capacity utilization in year 1, growing to 90% by month 8 as brand awareness builds..." rows="4">${savedData.finNarrative||''}</textarea></div>
+
+      <div class="section-label">Sources of Financing</div>
+      <div class="fin-chips" id="fin-chips">
+        ${FINANCING_OPTIONS.map(f=>`<div class="fin-chip ${selectedFinancing.includes(f)?'sel':''}" onclick="toggleFinancing('${f}')">${f}</div>`).join('')}
+      </div>
+      <div class="field-group" style="margin-top:.85rem"><label>Financing Details <span class="field-hint">How much are you raising, from what source, and what are the terms?</span></label>
+        <textarea id="fin-details" placeholder="e.g. We are self-funding $40,000 from personal savings and seeking a $60,000 SBA loan at 6.5% over 7 years. This covers all startup costs with a 3-month cash buffer." rows="3">${savedData.finDetails||''}</textarea></div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="saveAndAdvance(4)">Operations Plan →</button>
+      </div>
+    </div>
+  </div>`;
+  updateBreakevenPreview();
+}
+
+function refreshFinancials(){
+  const p=financialData.unitPrice,vc=financialData.unitCost,fc=financialData.fixedCosts;
+  const be=(p>vc&&p>0)?Math.ceil(fc/(p-vc)):null;
+  const profit=financialData.monthlyRevenue-financialData.monthlyExpenses;
+  const roi=financialData.monthlyRevenue>0&&financialData.startupCost>0?
+    Math.round(((profit*12-financialData.startupCost)/financialData.startupCost)*100):null;
+  const bEl=document.getElementById('fr-be');
+  if(bEl)bEl.textContent=be?be.toLocaleString()+' units':'—';
+  const pEl=document.getElementById('fr-profit');
+  if(pEl){pEl.textContent=financialData.monthlyRevenue>0?'$'+profit.toLocaleString():'—';pEl.className='fin-res-val '+(profit>0?'pos':profit<0?'neg':'neu');}
+  const rEl=document.getElementById('fr-roi');
+  if(rEl){rEl.textContent=roi!==null?roi+'%':'—';rEl.className='fin-res-val '+(roi&&roi>0?'pos':roi&&roi<0?'neg':'neu');}
+  updateBreakevenPreview();
+}
+
+function toggleFinancing(f){
+  if(selectedFinancing.includes(f))selectedFinancing=selectedFinancing.filter(x=>x!==f);
+  else selectedFinancing.push(f);
+  document.querySelectorAll('.fin-chip').forEach(el=>{
+    el.classList.toggle('sel',selectedFinancing.includes(el.textContent));
+  });
+  buildSidebar();
+}
+
+// ── SECTION 6: OPERATIONS ──
+function renderOps(){
+  const c=SECTIONS[5];
+  document.getElementById('main').innerHTML=`
+  <div class="section-card">
+    <div class="sc-header">
+      <div class="sc-num" style="color:${c.color}">6</div>
+      <div><div class="sc-title" style="color:${c.color}">Operations Plan</div><div class="sc-subtitle">How the business actually runs — day-to-day processes, supply chain, and external factors you must plan for.</div></div>
+      <span class="sc-badge" style="background:${c.light};color:${c.color}">Section 6 of 6</span>
+    </div>
+    <div class="sc-body">
+
+      <div class="section-label">Daily Operations</div>
+      <div class="grid-2">
+        <div class="field-group"><label>Hours & Location</label>
+          <textarea id="hours" placeholder="e.g. Open Mon-Fri 6am-9pm, Sat-Sun 7am-8pm. Located at 234 University Ave — 2,800 sq ft ground floor with 45 café seats and 20 dedicated coworking desks." rows="3">${savedData.hours||''}</textarea></div>
+        <div class="field-group"><label>Key Operational Processes <span class="field-hint">The 3-4 most important recurring processes</span></label>
+          <textarea id="processes" placeholder="e.g. Inventory ordering (weekly), staff scheduling (bi-weekly), equipment maintenance (monthly), coworking membership billing (monthly)..." rows="3">${savedData.processes||''}</textarea></div>
+      </div>
+      <div class="field-group"><label>Supply Chain <span class="field-hint">Where do your inputs come from and how do they get to you?</span></label>
+        <textarea id="supply-chain" placeholder="e.g. Coffee beans sourced from two specialty roasters (one local, one regional for backup). Dairy from local farm. Coworking equipment purchased outright from commercial supplier. 2-week lead time on specialty items." rows="3">${savedData.supplyChain||''}</textarea></div>
+
+      <div class="divider"></div>
+      <div class="section-label">PEST Analysis — External Factors</div>
+      <div class="inst-box" style="background:var(--s6l);border-color:var(--s6);color:var(--s6)">
+        PEST analysis identifies Political, Economic, Socio-Cultural, and Technological factors outside your control that affect your business. These inform your strategic planning.
+      </div>
+      <div class="pest-grid">
+        <div class="pest-cell"><div class="pest-header" style="background:#F0EAF8;color:#5C2C8A">🏛️ Political</div>
+          <textarea id="pest-p" placeholder="Regulations, zoning, labor laws, tax policy that affect you..." rows="3">${savedData.pestP||''}</textarea></div>
+        <div class="pest-cell"><div class="pest-header" style="background:#EAF2FA;color:#2C5F8A">📈 Economic</div>
+          <textarea id="pest-e" placeholder="Inflation, interest rates, unemployment, consumer spending trends..." rows="3">${savedData.pestE||''}</textarea></div>
+        <div class="pest-cell"><div class="pest-header" style="background:#EAF8F0;color:#2A6A3A">👥 Socio-Cultural</div>
+          <textarea id="pest-s" placeholder="Demographics, lifestyle trends, cultural attitudes toward your product..." rows="3">${savedData.pestS||''}</textarea></div>
+        <div class="pest-cell"><div class="pest-header" style="background:#F8F2EA;color:#8A6C2A">💻 Technological</div>
+          <textarea id="pest-t" placeholder="Technology trends, digital tools, automation, or disruptions in your industry..." rows="3">${savedData.pestT||''}</textarea></div>
+      </div>
+
+      <div class="field-group"><label>Risk Mitigation Plan <span class="field-hint">What are your 2-3 biggest risks and how will you manage them?</span></label>
+        <textarea id="risks" placeholder="e.g. Risk 1: Slower-than-projected customer growth. Mitigation: Lower break-even by operating with 2 fewer staff in first 3 months. Risk 2: Key supplier disruption. Mitigation: Maintain 30-day inventory buffer and have backup supplier contracted..." rows="4">${savedData.risks||''}</textarea></div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goBack()">← Back</button>
+        <button class="btn btn-green" onclick="saveAndAdvance(5)">Get VC Analysis →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── SAVE & ADVANCE ──
+function saveAndAdvance(fromStep){
+  if(fromStep===0){
+    const fields=['elevator','mission','vision','problem','solution','whynow'];
+    for(const f of fields){
+      const el=document.getElementById(f);
+      if(!el?.value.trim()||el.value.trim().length<20){
+        el.style.borderColor='var(--red)';el.focus();
+        alert(`Please complete the "${f}" field before continuing.`);return;
+      }
+    }
+    savedData.elevator=document.getElementById('elevator').value.trim();
+    savedData.mission=document.getElementById('mission').value.trim();
+    savedData.vision=document.getElementById('vision').value.trim();
+    savedData.problem=document.getElementById('problem').value.trim();
+    savedData.solution=document.getElementById('solution').value.trim();
+    savedData.whynow=document.getElementById('whynow').value.trim();
+  }
+  if(fromStep===1){
+    if(!selectedOwnership){alert('Please select an ownership structure.');return;}
+    const ow=document.getElementById('ownership-why');
+    if(!ow?.value.trim()||ow.value.trim().length<30){ow.style.borderColor='var(--red)';ow.focus();alert('Please explain your ownership choice.');return;}
+    savedData.ownershipWhy=ow.value.trim();
+    savedData.keyPersonnel=document.getElementById('key-personnel')?.value.trim()||'';
+    [0,1,2,3].forEach(i=>{const el=document.getElementById(`org-${i}`);if(el)orgRoles[i]=el.value;});
+  }
+  if(fromStep===2){
+    const reqFields=[{id:'seg-demo',key:'segDemo'},{id:'seg-geo',key:'segGeo'},{id:'seg-psych',key:'segPsych'},{id:'seg-behav',key:'segBehav'},{id:'market-size',key:'marketSize'},{id:'competitive-adv',key:'competitiveAdv'},{id:'competitors',key:'competitors'}];
+    for(const {id,key} of reqFields){savedData[key]=document.getElementById(id)?.value.trim()||'';}
+    const swotFilled=['s','w','o','t'].map(k=>document.getElementById(`swot-${k}`)?.value.trim()||'');
+    ['s','w','o','t'].forEach((k,i)=>swotData[k]=swotFilled[i]);
+    if(!swotData.s&&!swotData.w){alert('Please complete at least the Strengths and Weaknesses in your SWOT analysis.');return;}
+  }
+  if(fromStep===3){
+    const fields=[{id:'prod-desc',key:'prodDesc'},{id:'unique',key:'unique'},{id:'pricing-strategy',key:'pricingStrategy'},{id:'4p-product',key:'fpProduct'},{id:'4p-price',key:'fpPrice'},{id:'4p-place',key:'fpPlace'},{id:'4p-promo',key:'fpPromo'}];
+    for(const {id,key} of fields){savedData[key]=document.getElementById(id)?.value.trim()||'';}
+    if(!savedData.prodDesc||savedData.prodDesc.length<20){document.getElementById('prod-desc').style.borderColor='var(--red)';alert('Please describe your products/services.');return;}
+  }
+  if(fromStep===4){
+    savedData.finNarrative=document.getElementById('fin-narrative')?.value.trim()||'';
+    savedData.finDetails=document.getElementById('fin-details')?.value.trim()||'';
+    if(financialData.startupCost===0){alert('Please enter your startup costs.');return;}
+    if(selectedFinancing.length===0){alert('Please select at least one financing source.');return;}
+    if(!savedData.finNarrative||savedData.finNarrative.length<30){document.getElementById('fin-narrative').style.borderColor='var(--red)';alert('Please explain your financial assumptions.');return;}
+  }
+  if(fromStep===5){
+    const fields=[{id:'hours',key:'hours'},{id:'processes',key:'processes'},{id:'supply-chain',key:'supplyChain'},{id:'pest-p',key:'pestP'},{id:'pest-e',key:'pestE'},{id:'pest-s',key:'pestS'},{id:'pest-t',key:'pestT'},{id:'risks',key:'risks'}];
+    for(const {id,key} of fields){savedData[key]=document.getElementById(id)?.value.trim()||'';}
+    if(!savedData.hours||!savedData.risks){alert('Please complete the hours/location and risk mitigation fields.');return;}
+  }
+  step++;renderSection();
+}
+
+function goBack(){if(step>0){step--;renderSection();}else{renderBizSelection();}}
+
+// ── FEEDBACK ──
+async function renderFeedback(){
+  buildHeader();
+  const biz=bizName();
+  const ownership=OWNERSHIP_TYPES.find(o=>o.id===selectedOwnership)?.name||'Not specified';
+  const be=financialData.unitPrice>financialData.unitCost&&financialData.unitPrice>0?
+    Math.ceil(financialData.fixedCosts/(financialData.unitPrice-financialData.unitCost)):null;
+  const profit=financialData.monthlyRevenue-financialData.monthlyExpenses;
+  const roi=financialData.startupCost>0?Math.round((profit*12-financialData.startupCost)/financialData.startupCost*100):null;
+
+  document.getElementById('main').innerHTML=`
+    <div class="feedback-card">
+      <div class="fb-header">
+        <div class="fb-icon">💼</div>
+        <div>
+          <div class="fb-title">${biz} — VC Investment Review</div>
+          <div class="fb-sub">Business Management · Strands 2, 5, 6 Analysis</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,243,238,.3)">Ownership Structure</div>
+          <div style="font-family:var(--serif);font-size:.9rem;font-style:italic;color:#D4A840;margin-top:.2rem">${ownership}</div>
+          <div style="font-size:.68rem;color:rgba(245,243,238,.4);margin-top:.25rem">Break-Even: ${be?be.toLocaleString()+' units/mo':'—'} · ROI: ${roi!==null?roi+'%':'—'}</div>
+        </div>
+      </div>
+      <div style="padding:1.5rem 1.75rem;border-bottom:1px solid var(--border)">
+        <div class="score-row" id="score-row"></div>
+        <div class="fb-body" id="fb-body"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+      </div>
+      <div style="padding:1.5rem 1.75rem">
+        <div style="font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem">Plan Summary</div>
+        <div class="plan-section-review"><div class="psr-title">📋 Executive Summary</div><div class="psr-content"><strong>Mission:</strong> ${savedData.mission||'—'}<br><strong>Vision:</strong> ${savedData.vision||'—'}</div></div>
+        <div class="plan-section-review"><div class="psr-title">⚖️ Legal Structure</div><div class="psr-content">${ownership} — ${savedData.ownershipWhy?.substring(0,150)||'—'}${savedData.ownershipWhy?.length>150?'…':''}</div></div>
+        <div class="plan-section-review"><div class="psr-title">📊 SWOT Highlights</div><div class="psr-content"><strong>S:</strong> ${swotData.s?.substring(0,80)||'—'} · <strong>W:</strong> ${swotData.w?.substring(0,80)||'—'}</div></div>
+        <div class="plan-section-review"><div class="psr-title">💰 Financials</div><div class="psr-content">Startup: $${financialData.startupCost?.toLocaleString()||0} · Monthly Revenue: $${financialData.monthlyRevenue?.toLocaleString()||0} · Profit: $${profit?.toLocaleString()||0}/mo · Break-Even: ${be?be.toLocaleString()+' units':'—'}</div></div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:.5rem">
+      <button class="btn btn-outline" onclick="renderBizSelection()">🔄 New Business Plan</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>`;
+
+  const systemPrompt=`You are a demanding but fair venture capital analyst reviewing a high school student's business plan for Utah Business Management (Strands 2, 5, 6). You evaluate plans the way a real investor would — with rigor, honesty, and specific reference to the numbers and decisions in the plan.
+
+SCORING — strict:
+- "Great" = investor-quality work. Specific, realistic, internally consistent, and well-reasoned.
+- "OK" = present but vague, unrealistic assumptions, or missing key elements a real plan needs.
+- "Needs Work" = missing, contradictory, or shows fundamental misunderstanding of the business concept.
+
+Start with EXACTLY:
+SCORES: Mission & Vision:[Great/OK/Needs Work] | Market Analysis:[Great/OK/Needs Work] | SWOT Analysis:[Great/OK/Needs Work] | Financial Plan:[Great/OK/Needs Work] | Operations Plan:[Great/OK/Needs Work]
+
+Then 5 paragraphs of direct VC-style feedback:
+1. Executive Summary & Mission/Vision — does the mission describe what they do NOW specifically? Does the vision describe where they are going long-term? Are they clearly differentiated? Would this elevator pitch make an investor want to keep reading?
+2. Market Analysis — is the target market specific and segmented using all four types (demographic, geographic, psychographic, behavioral)? Is the market size estimate realistic or invented? Is the SWOT analysis honest — especially the weaknesses and threats?
+3. Financial Plan — are the revenue projections realistic for this type of business? Does the break-even make sense given the cost structure? Is the ROI believable? Are the financing sources appropriate for this stage? Call out any numbers that seem invented or inconsistent.
+4. Legal Structure & Operations — did they choose the right ownership structure and justify it properly with reference to liability and taxes? Is the operations plan specific enough to actually run the business, or is it vague platitudes?
+5. Overall investment verdict — would you fund this? What is the single biggest gap between this plan and a fundable one? Be direct.
+
+End with one specific, actionable rewrite assignment: identify the weakest section and tell them exactly what to fix with a concrete example. No markdown ** or ##. Students are preparing for real business careers.`;
+
+  const userPrompt=`Business Plan Review:
+Business: ${biz} (${selectedBiz?.industry||'Custom'})
+Ownership: ${ownership}
+
+EXECUTIVE SUMMARY:
+Elevator Pitch: "${savedData.elevator}"
+Mission: "${savedData.mission}"
+Vision: "${savedData.vision}"
+Problem: "${savedData.problem}"
+Solution: "${savedData.solution}"
+Why Now: "${savedData.whynow}"
+
+BUSINESS DESCRIPTION:
+Ownership choice justification: "${savedData.ownershipWhy}"
+Key Personnel: "${savedData.keyPersonnel}"
+Org roles: ${orgRoles.join(', ')}
+
+MARKET ANALYSIS:
+Demographics: "${savedData.segDemo}"
+Geographics: "${savedData.segGeo}"
+Psychographics: "${savedData.segPsych}"
+Behavioral: "${savedData.segBehav}"
+Market Size: "${savedData.marketSize}"
+SWOT — Strengths: "${swotData.s}" | Weaknesses: "${swotData.w}" | Opportunities: "${swotData.o}" | Threats: "${swotData.t}"
+Competitors: "${savedData.competitors}"
+Competitive Advantage: "${savedData.competitiveAdv}"
+
+PRODUCTS & SERVICES:
+Description: "${savedData.prodDesc}"
+Unique Value: "${savedData.unique}"
+Pricing Strategy: "${savedData.pricingStrategy}"
+4Ps — Product: "${savedData.fpProduct}" | Price: "${savedData.fpPrice}" | Place: "${savedData.fpPlace}" | Promotion: "${savedData.fpPromo}"
+
+FINANCIAL PLAN:
+Startup Costs: $${financialData.startupCost?.toLocaleString()}
+Monthly Revenue: $${financialData.monthlyRevenue?.toLocaleString()}
+Monthly Expenses: $${financialData.monthlyExpenses?.toLocaleString()}
+Monthly Profit: $${profit?.toLocaleString()}
+Unit Price: $${financialData.unitPrice} | Unit Variable Cost: $${financialData.unitCost} | Monthly Fixed Costs: $${financialData.fixedCosts}
+Break-Even Point: ${be?be.toLocaleString()+' units/month':'Could not calculate'}
+Year 1 ROI: ${roi!==null?roi+'%':'Could not calculate'}
+Financing Sources: ${selectedFinancing.join(', ')||'Not specified'}
+Financial Narrative: "${savedData.finNarrative}"
+Financing Details: "${savedData.finDetails}"
+
+OPERATIONS:
+Hours & Location: "${savedData.hours}"
+Key Processes: "${savedData.processes}"
+Supply Chain: "${savedData.supplyChain}"
+PEST — Political: "${savedData.pestP}" | Economic: "${savedData.pestE}" | Socio-Cultural: "${savedData.pestS}" | Technological: "${savedData.pestT}"
+Risk Mitigation: "${savedData.risks}"`;
+
+  try{
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,
+        messages:[{role:'user',content:systemPrompt+'\n\n'+userPrompt}]})});
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Could not generate feedback. Please try again.';
+    const sm=text.match(/SCORES:(.+)/);
+    let main=text;
+    if(sm){
+      main=main.replace(sm[0],'').trim();
+      document.getElementById('score-row').innerHTML=sm[1].split('|').map(p=>{
+        const[lbl,rat]=p.split(':').map(s=>s.trim());
+        const cls=rat==='Great'?'great':rat==='OK'?'ok':'needs';
+        return`<span class="sc ${cls}">${lbl}: ${rat}</span>`;
+      }).join('');
+    }
+    document.getElementById('fb-body').textContent=main;
+  }catch(err){
+    document.getElementById('fb-body').textContent='Connection error: '+err.message;
+  }
+}
+
+renderBizSelection();
+</script>
+</body>
+</html>
