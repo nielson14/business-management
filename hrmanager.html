@@ -308,7 +308,7 @@ let empProfile={name:'Alex Rivera',role:'Not yet hired',status:'Candidate',salar
 let savedData={
   jobTitle:'',jobReqs:'',jobComp:'',jobDesc:'',jobBenefits:'',
   candidateRanks:{},screeningReason:'',
-  selectedCandidate:'alex',
+  selectedCandidate:'',
   selectedQuestions:[],illegalQuestionsAsked:0,
   offerSalary:'',offerBenefits:[],offerMessage:'',
   onboardWeek1:'',onboardWeek2:'',onboardMonth2:'',onboardGoals:'',onboardMentor:'',
@@ -386,7 +386,7 @@ function renderIntro(){
   </div>`;
 }
 
-function startSim(){stage=0;empProfile={name:'Alex Rivera',role:'Evaluating candidates',status:'Not yet hired',salary:null,startDate:null,rating:null};savedData={jobTitle:'',jobReqs:'',jobComp:'',jobDesc:'',jobBenefits:'',candidateRanks:{},screeningReason:'',selectedCandidate:'alex',selectedQuestions:[],illegalQuestionsAsked:0,offerSalary:'',offerBenefits:[],offerMessage:'',onboardWeek1:'',onboardWeek2:'',onboardMonth2:'',onboardGoals:'',onboardMentor:'',perfRatings:{},perfSummary:'',perfDecision:'',perfRaise:'',pipGoals:'',pipTimeline:'',finalDecision:'',finalProcess:'',finalReason:''};renderApp();}
+function startSim(){stage=0;empProfile={name:'Alex Rivera',role:'Evaluating candidates',status:'Not yet hired',salary:null,startDate:null,rating:null};savedData={jobTitle:'',jobReqs:'',jobComp:'',jobDesc:'',jobBenefits:'',candidateRanks:{},screeningReason:'',selectedCandidate:'',selectedQuestions:[],illegalQuestionsAsked:0,offerSalary:'',offerBenefits:[],offerMessage:'',onboardWeek1:'',onboardWeek2:'',onboardMonth2:'',onboardGoals:'',onboardMentor:'',perfRatings:{},perfSummary:'',perfDecision:'',perfRaise:'',pipGoals:'',pipTimeline:'',finalDecision:'',finalProcess:'',finalReason:''};renderApp();}
 
 // ── STAGE 1: JOB POSTING ──
 function renderPost(){
@@ -432,7 +432,10 @@ function savePost(){
   savedData.jobReqs=document.getElementById('jobReqs')?.value.trim();
   savedData.jobDesc=document.getElementById('jobDesc')?.value.trim();
   savedData.jobBenefits=document.getElementById('jobBenefits')?.value.trim();
-  if(!savedData.jobTitle||!savedData.jobReqs||!savedData.jobDesc){alert('Please complete the job title, requirements, and responsibilities before continuing.');return;}
+  if(!savedData.jobTitle||savedData.jobTitle.length<3){alert('Please enter a job title.');return;}
+  if(!savedData.jobReqs||savedData.jobReqs.length<30){document.getElementById('jobReqs').style.borderColor='var(--red)';alert('Please write detailed job requirements before continuing.');return;}
+  if(!savedData.jobDesc||savedData.jobDesc.length<30){document.getElementById('jobDesc').style.borderColor='var(--red)';alert('Please write the job responsibilities before continuing.');return;}
+  if(!savedData.jobComp){alert('Please enter a compensation range.');return;}
   stage=1;renderApp();
 }
 
@@ -684,7 +687,10 @@ function saveOnboard(){
   savedData.onboardMonth2=document.getElementById('onboardM2')?.value.trim();
   savedData.onboardMentor=document.getElementById('onboardMentor')?.value.trim();
   savedData.onboardGoals=document.getElementById('onboardGoals')?.value.trim();
-  if(!savedData.onboardWeek1||!savedData.onboardWeek2){alert('Please complete at least the Week 1 and Week 2 onboarding plans.');return;}
+  if(!savedData.onboardWeek1||savedData.onboardWeek1.length<30){document.getElementById('onboardW1').style.borderColor='var(--red)';alert('Please write a more detailed Week 1 onboarding plan.');return;}
+  if(!savedData.onboardWeek2||savedData.onboardWeek2.length<30){document.getElementById('onboardW2').style.borderColor='var(--red)';alert('Please write a more detailed Week 2 training plan.');return;}
+  if(!savedData.onboardMentor){alert('Please assign a mentor — this is a required part of a good onboarding plan.');return;}
+  if(!savedData.onboardGoals){alert('Please set 90-day success goals for the new hire.');return;}
   stage=4;renderApp();
 }
 
@@ -804,9 +810,14 @@ function saveAppraise(){
     savedData.pipGoals=document.getElementById('pipGoals')?.value.trim();
     savedData.pipTimeline=document.getElementById('pipTimeline')?.value.trim();
   }
-  if(Object.keys(savedData.perfRatings).length<PERF_CATEGORIES.length){alert('Please rate all performance categories.');return;}
-  if(!savedData.perfSummary||savedData.perfSummary.length<40){alert('Please write a more detailed performance summary.');return;}
+  if(Object.keys(savedData.perfRatings).length<PERF_CATEGORIES.length){alert('Please rate all 5 performance categories before continuing.');return;}
+  if(!savedData.perfSummary||savedData.perfSummary.length<40){document.getElementById('perfSummary').style.borderColor='var(--red)';alert('Please write a more detailed performance summary — this becomes part of the official employee record.');return;}
   if(!savedData.perfDecision){alert('Please select an overall rating decision.');return;}
+  if(!savedData.perfRaise){alert('Please select a compensation decision.');return;}
+  if(savedData.perfDecision==='pip'){
+    if(!savedData.pipGoals||savedData.pipGoals.length<20){document.getElementById('pipGoals').style.borderColor='var(--red)';alert('A PIP must include specific measurable goals. Please be more specific.');return;}
+    if(!savedData.pipTimeline||savedData.pipTimeline.length<20){document.getElementById('pipTimeline').style.borderColor='var(--red)';alert('Please specify the PIP timeline and review date.');return;}
+  }
   updatePerfUI();
   stage=5;renderApp();
 }
