@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lemonade Stand — Business Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --sky:#87CEEB;--sun:#FFD700;--grass:#4CAF50;--stand:#D2691E;
+  --bg:#FFF9F0;--surface:#FFFFFF;--surface2:#FFF3E0;--surface3:#FFE0B2;
+  --border:#F0D9B5;--text:#2D1B00;--text-muted:#8B6914;--text-dim:#C4A44A;
+  --lemon:#FFD700;--lemon-dark:#FFA000;
+  --green:#2E7D32;--greenl:#E8F5E9;
+  --red:#C62828;--redl:#FFEBEE;
+  --blue:#1565C0;--bluel:#E3F2FD;
+  --purple:#6A1B9A;--purplel:#F3E5F5;
+  --orange:#E65100;--orangel:#FFF3E0;
+  --radius:14px;--radius-sm:8px;
+  --display:'Fredoka',sans-serif;--body:'Nunito',sans-serif;
+}
+body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── SCENE ── */
+.scene{position:relative;height:200px;background:linear-gradient(180deg,#87CEEB 0%,#B0E2FF 60%,#4CAF50 60%,#388E3C 100%);overflow:hidden;flex-shrink:0;}
+.sun{position:absolute;top:18px;right:60px;font-size:3rem;transition:all .5s;}
+.cloud{position:absolute;font-size:2rem;opacity:.85;transition:all 1s;}
+.stand-img{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:5rem;filter:drop-shadow(2px 4px 6px rgba(0,0,0,.3));transition:all .4s;}
+.scene-label{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.75);border-radius:100px;padding:.2rem .85rem;font-size:.72rem;font-weight:700;color:var(--text-muted);white-space:nowrap;}
+.weather-overlay{position:absolute;inset:0;pointer-events:none;transition:all .5s;}
+.rain-drop{position:absolute;width:2px;height:12px;background:rgba(100,150,255,.5);border-radius:1px;animation:rain .6s linear infinite;}
+@keyframes rain{from{transform:translateY(-20px)}to{transform:translateY(210px)}}
+.customer-parade{position:absolute;bottom:44px;left:0;right:0;height:40px;overflow:hidden;}
+.customer{position:absolute;font-size:1.4rem;bottom:0;animation:walk 3s linear forwards;}
+@keyframes walk{from{left:110%}to{left:-10%}}
+
+/* ── HEADER ── */
+.game-header{background:var(--lemon-dark);color:#fff;padding:.75rem 1.5rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.game-title{font-family:var(--display);font-size:1.4rem;font-weight:600;color:#fff;display:flex;align-items:center;gap:.5rem;}
+.day-badge{background:rgba(255,255,255,.2);border-radius:100px;padding:.3rem .9rem;font-family:var(--display);font-size:.85rem;font-weight:600;white-space:nowrap;}
+.stat-pill{background:rgba(255,255,255,.15);border-radius:100px;padding:.3rem .85rem;font-size:.8rem;font-weight:700;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}
+.stat-pill.cash{background:rgba(255,255,255,.9);color:var(--lemon-dark);}
+.stat-pill .icon{font-size:.9rem;}
+.progress-wrap{flex:1;min-width:120px;height:8px;background:rgba(255,255,255,.2);border-radius:100px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:100px;background:rgba(255,255,255,.8);transition:width .4s ease;}
+
+/* ── MAIN LAYOUT ── */
+.game-body{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 58px - 200px);}
+.left-panel{background:var(--surface);border-right:2px solid var(--border);padding:1.25rem;display:flex;flex-direction:column;gap:1.25rem;overflow-y:auto;}
+.right-panel{padding:1.5rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.25rem;}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
+.card-title{font-family:var(--display);font-size:1rem;font-weight:600;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem;}
+
+/* ── WEATHER FORECAST ── */
+.forecast-row{display:flex;gap:.35rem;flex-wrap:wrap;}
+.fc-day{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.4rem .35rem;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);min-width:38px;}
+.fc-day.today{border-color:var(--lemon-dark);background:var(--orangel);}
+.fc-day.past{opacity:.45;}
+.fc-num{font-size:.6rem;font-weight:700;color:var(--text-muted);}
+.fc-icon{font-size:1rem;}
+.fc-temp{font-size:.58rem;color:var(--text-muted);}
+
+/* ── REPUTATION ── */
+.rep-bar-wrap{height:12px;background:var(--surface2);border-radius:100px;overflow:hidden;border:1px solid var(--border);}
+.rep-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#FF5722,#FFD700,#4CAF50);transition:width .5s ease;}
+.rep-stars{display:flex;gap:.15rem;font-size:1.1rem;}
+
+/* ── SUPPLY MARKET ── */
+.supply-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+.supply-item{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;text-align:center;position:relative;}
+.supply-emoji{font-size:1.75rem;margin-bottom:.25rem;}
+.supply-name{font-size:.72rem;font-weight:700;margin-bottom:.15rem;}
+.supply-price{font-size:.65rem;color:var(--text-muted);margin-bottom:.5rem;}
+.supply-controls{display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.qty-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:var(--surface);font-size:.9rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--text);}
+.qty-btn:hover{border-color:var(--lemon-dark);background:var(--orangel);}
+.qty-val{font-family:var(--display);font-size:1rem;font-weight:600;min-width:24px;text-align:center;}
+.supply-subtotal{font-size:.65rem;color:var(--text-muted);margin-top:.35rem;}
+.bulk-badge{position:absolute;top:4px;right:4px;font-size:.55rem;font-weight:700;background:var(--green);color:#fff;border-radius:100px;padding:.1rem .4rem;}
+
+/* ── DECISION SLIDERS ── */
+.slider-row{margin-bottom:1rem;}
+.slider-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.35rem;}
+.slider-label{font-size:.78rem;font-weight:700;color:var(--text);}
+.slider-val{font-family:var(--display);font-size:1rem;font-weight:600;color:var(--lemon-dark);}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;background:var(--surface2);border-radius:3px;outline:none;border:1px solid var(--border);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--lemon-dark);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+.slider-labels{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text-muted);margin-top:.2rem;}
+
+/* ── LOCATION PICKER ── */
+.location-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.loc-opt{padding:.6rem .5rem;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-align:center;}
+.loc-opt:hover{border-color:var(--lemon-dark);}
+.loc-opt.selected{border-color:var(--lemon-dark);background:var(--orangel);}
+.loc-emoji{font-size:1.2rem;}
+.loc-name{font-size:.7rem;font-weight:700;margin-top:.15rem;}
+.loc-bonus{font-size:.58rem;color:var(--text-muted);}
+
+/* ── COST PREVIEW ── */
+.cost-preview{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:.85rem;font-size:.82rem;}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;border-bottom:1px dashed var(--border);}
+.cost-row:last-child{border-bottom:none;font-weight:700;}
+.cost-label{color:var(--text-muted);}
+.cost-val{}
+.cost-val.danger{color:var(--red);font-weight:700;}
+.cost-val.ok{color:var(--green);font-weight:700;}
+
+/* ── MARKETING ── */
+.marketing-opts{display:flex;flex-direction:column;gap:.4rem;}
+.mkt-opt{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.mkt-opt:hover{border-color:var(--purple);}
+.mkt-opt.selected{border-color:var(--purple);background:var(--purplel);}
+.mkt-opt input[type=radio]{accent-color:var(--purple);width:14px;height:14px;flex-shrink:0;}
+.mkt-text{flex:1;}
+.mkt-name{font-size:.78rem;font-weight:700;}
+.mkt-name.selected-text{color:var(--purple);}
+.mkt-desc{font-size:.62rem;color:var(--text-muted);}
+.mkt-cost{font-size:.72rem;font-weight:700;color:var(--purple);}
+
+/* ── OPEN BUTTON ── */
+.open-btn{width:100%;padding:1rem;background:linear-gradient(135deg,var(--lemon-dark),#FF6F00);color:#fff;border:none;border-radius:var(--radius);font-family:var(--display);font-size:1.2rem;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(230,81,0,.3);}
+.open-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(230,81,0,.4);}
+.open-btn:disabled{background:#ccc;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ── DAY SUMMARY ── */
+.summary-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;animation:popIn .4s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.summary-header{padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;}
+.summary-day{font-family:var(--display);font-size:2.5rem;font-weight:600;line-height:1;flex-shrink:0;width:55px;}
+.summary-title{font-family:var(--display);font-size:1.3rem;font-weight:600;margin-bottom:.2rem;}
+.summary-sub{font-size:.78rem;color:var(--text-muted);}
+.summary-body{padding:1.25rem 1.5rem;border-top:2px solid var(--border);}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem;}
+.sum-box{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:.85rem;text-align:center;}
+.sum-icon{font-size:1.4rem;margin-bottom:.3rem;}
+.sum-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.2rem;}
+.sum-val{font-family:var(--display);font-size:1.3rem;font-weight:600;}
+.sum-val.pos{color:var(--green);}
+.sum-val.neg{color:var(--red);}
+.sum-val.neu{color:var(--lemon-dark);}
+
+.event-banner{padding:.75rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;font-size:.83rem;font-weight:600;display:flex;align-items:flex-start;gap:.6rem;line-height:1.45;}
+.competition-alert{background:var(--redl);border:2px solid var(--red);color:var(--red);}
+.event-good{background:var(--greenl);border:2px solid var(--green);color:var(--green);}
+.event-bad{background:var(--redl);border:2px solid var(--red);color:var(--red);}
+.event-neutral{background:var(--bluel);border:2px solid var(--blue);color:var(--blue);}
+
+.lesson-box{background:var(--purplel);border:2px solid var(--purple);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.8rem;color:var(--purple);line-height:1.5;margin-bottom:1rem;}
+
+/* ── FINAL REPORT ── */
+.final-report{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.fr-header{background:var(--lemon-dark);color:#fff;padding:1.5rem;text-align:center;}
+.fr-title{font-family:var(--display);font-size:2rem;font-weight:600;margin-bottom:.25rem;}
+.fr-sub{font-size:.8rem;opacity:.8;}
+.fr-body{padding:1.5rem;}
+.fr-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+.fr-stat{text-align:center;padding:1rem;background:var(--surface2);border-radius:var(--radius-sm);border:2px solid var(--border);}
+.fr-stat-val{font-family:var(--display);font-size:1.6rem;font-weight:600;margin-bottom:.2rem;}
+.fr-stat-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);}
+.income-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:1.25rem;}
+.income-table th{text-align:left;padding:.5rem .75rem;background:var(--surface2);border:1px solid var(--border);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);}
+.income-table td{padding:.55rem .75rem;border:1px solid var(--border);}
+.income-table tr.total td{font-weight:700;background:var(--surface2);}
+.income-table tr.profit-row td{font-weight:800;font-size:.9rem;}
+.income-table td.pos{color:var(--green);}
+.income-table td.neg{color:var(--red);}
+
+.day-chart{display:flex;align-items:flex-end;gap:3px;height:80px;padding:0 .5rem;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:1.25rem;}
+.day-bar{flex:1;border-radius:3px 3px 0 0;transition:height .6s ease;min-height:2px;position:relative;}
+.day-bar:hover::after{content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:.6rem;padding:.2rem .45rem;border-radius:4px;white-space:nowrap;margin-bottom:4px;}
+
+.fb-section{margin-top:1.25rem;padding-top:1.25rem;border-top:2px solid var(--border);}
+.fb-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.85rem;}
+.fb-text{font-size:.86rem;line-height:1.8;color:var(--text);white-space:pre-wrap;}
+.score-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
+.sc{font-size:.67rem;font-weight:700;padding:.25rem .75rem;border-radius:100px;}
+.sc.great{background:var(--greenl);color:var(--green);border:1px solid rgba(46,125,50,.25);}
+.sc.ok{background:var(--orangel);color:var(--orange);border:1px solid rgba(230,81,0,.25);}
+.sc.needs{background:var(--redl);color:var(--red);border:1px solid rgba(198,40,40,.25);}
+
+.typing-dot{display:inline-block;width:6px;height:6px;background:var(--lemon-dark);border-radius:50%;animation:blink 1.2s infinite;margin:0 2px;vertical-align:middle;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--body);font-size:.88rem;font-weight:700;padding:.65rem 1.4rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--lemon-dark);color:#fff;}
+.btn-primary:hover{background:#E65100;transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--text);border:2px solid var(--border);}
+.btn-outline:hover{border-color:var(--text-muted);}
+.btn-row{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1rem;}
+
+/* ── INTRO ── */
+.intro-screen{max-width:560px;margin:2rem auto;padding:2rem;}
+.intro-logo{font-size:4rem;text-align:center;margin-bottom:1rem;}
+.intro-title{font-family:var(--display);font-size:2.2rem;font-weight:600;text-align:center;margin-bottom:.5rem;color:var(--lemon-dark);}
+.intro-sub{text-align:center;color:var(--text-muted);margin-bottom:1.5rem;font-size:.9rem;line-height:1.65;}
+.intro-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.intro-card-title{font-family:var(--display);font-size:.95rem;font-weight:600;margin-bottom:.5rem;color:var(--lemon-dark);}
+.intro-rules{display:flex;flex-direction:column;gap:.35rem;font-size:.83rem;line-height:1.5;}
+.intro-rule{display:flex;align-items:flex-start;gap:.5rem;}
+.loan-options{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.75rem;}
+.loan-opt{padding:.85rem;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-align:center;}
+.loan-opt:hover{border-color:var(--lemon-dark);}
+.loan-opt.selected{border-color:var(--lemon-dark);background:var(--orangel);}
+.loan-opt-name{font-family:var(--display);font-size:.95rem;font-weight:600;margin-bottom:.25rem;}
+.loan-opt-desc{font-size:.68rem;color:var(--text-muted);line-height:1.4;}
+
+/* ── SETUP ── */
+.name-input{width:100%;padding:.75rem 1rem;font-family:var(--body);font-size:1rem;border:2px solid var(--border);border-radius:var(--radius-sm);outline:none;transition:border-color .15s;background:var(--surface);}
+.name-input:focus{border-color:var(--lemon-dark);}
+
+@media(max-width:768px){
+  .game-body{grid-template-columns:1fr;}
+  .summary-grid,.fr-stats,.supply-grid{grid-template-columns:1fr 1fr;}
+  .game-header{gap:.65rem;}
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+const WORKER_URL="https://digitalmarketing.robert-nielson14.workers.dev";
+
+// ── WEATHER SYSTEM ──
+const WEATHER_TYPES={
+  sunny:{icon:'☀️',name:'Sunny',temp:'85°F',demandMult:1.3,desc:'Perfect lemonade weather!',rain:false,bg:'linear-gradient(180deg,#87CEEB 0%,#B0E2FF 60%,#4CAF50 60%,#388E3C 100%)'},
+  hot:{icon:'🌡️',name:'Hot & Sunny',temp:'95°F',demandMult:1.6,desc:'Scorching hot — people are thirsty!',rain:false,bg:'linear-gradient(180deg,#FF8C00 0%,#FFD700 50%,#4CAF50 60%,#388E3C 100%)'},
+  cloudy:{icon:'⛅',name:'Partly Cloudy',temp:'72°F',demandMult:0.9,desc:'Mild day — decent traffic.',rain:false,bg:'linear-gradient(180deg,#9E9E9E 0%,#B0BEC5 55%,#4CAF50 60%,#388E3C 100%)'},
+  overcast:{icon:'☁️',name:'Overcast',temp:'65°F',demandMult:0.65,desc:'Gray skies — fewer customers out.',rain:false,bg:'linear-gradient(180deg,#607D8B 0%,#90A4AE 55%,#4CAF50 60%,#388E3C 100%)'},
+  rainy:{icon:'🌧️',name:'Rainy',temp:'58°F',demandMult:0.3,desc:'Rain keeps customers away.',rain:true,bg:'linear-gradient(180deg,#455A64 0%,#78909C 55%,#558B2F 60%,#33691E 100%)'},
+  windy:{icon:'💨',name:'Windy',temp:'70°F',demandMult:0.75,desc:'Wind makes signs hard to read.',rain:false,bg:'linear-gradient(180deg,#78909C 0%,#90A4AE 55%,#4CAF50 60%,#388E3C 100%)'},
+  perfect:{icon:'🌈',name:'Beautiful Day',temp:'78°F',demandMult:1.5,desc:'Gorgeous day — huge demand!',rain:false,bg:'linear-gradient(180deg,#64B5F6 0%,#81C784 55%,#4CAF50 60%,#388E3C 100%)'},
+};
+
+const WEATHER_SCHEDULE=['sunny','cloudy','hot','rainy','perfect','sunny','overcast','hot','windy','rainy','sunny','perfect','cloudy','hot'];
+
+// ── LOCATIONS ──
+const LOCATIONS=[
+  {id:'corner',emoji:'🏘️',name:'Neighborhood',bonus:'Loyal regulars',mult:1.0,desc:'Steady but small crowd'},
+  {id:'park',emoji:'🌳',name:'City Park',bonus:'+30% weekends',mult:1.2,desc:'Great foot traffic'},
+  {id:'school',emoji:'🏫',name:'Near School',bonus:'After school rush',mult:1.15,desc:'Big rush 3-4pm'},
+  {id:'beach',emoji:'🏖️',name:'Beach/Pool',bonus:'Hot weather bonus',mult:1.1,desc:'Amazing on hot days'},
+  {id:'market',emoji:'🛒',name:'Farmers Market',bonus:'Premium buyers',mult:1.25,desc:'Sat/Sun only — big sales'},
+  {id:'event',emoji:'🎪',name:'Event Venue',bonus:'Random events',mult:1.35,desc:'High risk, high reward'},
+];
+
+// ── RANDOM EVENTS ──
+const RANDOM_EVENTS=[
+  {day:3,type:'good',icon:'🎉',title:'Street Fair Nearby!',desc:'A block party doubles foot traffic today.',effect:{demandMult:1.8},lesson:'Unexpected demand spikes happen. Did you have enough supply?'},
+  {day:5,type:'bad',icon:'📋',title:'Health Permit Required',desc:'Inspector requires a $10 sanitation permit.',effect:{cashPenalty:10},lesson:'Regulatory compliance (Strand 7) costs money. Build permits into your startup budget.'},
+  {day:7,type:'neutral',icon:'☀️',title:'Heat Wave!',desc:'Temperatures spiked 15 degrees today.',effect:{demandBonus:0.4},lesson:'External factors you cannot control (PEST analysis) directly affect demand.'},
+  {day:9,type:'bad',icon:'🚚',title:'Supplier Shortage',desc:'Cup supplier is out of stock. Cups cost 2x today.',effect:{cupCostMult:2},lesson:'Supply chain disruptions are real. Did you buy extra yesterday?'},
+  {day:11,type:'good',icon:'📱',title:'Your Stand Goes Viral!',desc:'Someone posted about your lemonade. Traffic up 50%.',effect:{demandMult:1.5},lesson:'Word-of-mouth marketing (earned media) is free and powerful.'},
+  {day:13,type:'neutral',icon:'🎓',title:'Field Trip Passes By',desc:'A school bus stops — 40 potential customers.',effect:{demandBonus:0.35},lesson:'Location matters. Being in the right place at the right time is strategy, not luck.'},
+];
+
+// ── COMPETITION ──
+const COMPETITION_DAY=4;
+
+// ── SUPPLY PRICES ──
+const BASE_PRICES={lemons:0.5,sugar:0.3,cups:0.2,water:0.1};
+const BULK_DISCOUNT={lemons:{qty:20,price:0.35},sugar:{qty:30,price:0.22},cups:{qty:50,price:0.14}};
+
+// ── MARKETING OPTIONS ──
+const MARKETING=[
+  {id:'none',name:'No Marketing',desc:'Save your money',cost:0,demandBonus:0},
+  {id:'sign',name:'Sidewalk Sign',desc:'Hand-drawn sign — attracts passersby',cost:3,demandBonus:0.15},
+  {id:'social',name:'Social Media Post',desc:'Post online — reaches more people',cost:5,demandBonus:0.25},
+  {id:'flyers',name:'Flyers + Samples',desc:'Most effective — give free samples',cost:12,demandBonus:0.45},
+];
+
+// ── STATE ──
+let state={
+  day:1,cash:100,startingCash:100,loan:0,loanAmount:0,
+  standPurchased:false,
+  reputation:50,
+  hasCompetitor:false,
+  supplies:{lemons:0,sugar:0,cups:0,water:0},
+  location:'corner',
+  history:[],
+  playerName:'',
+  cupCostMult:1,
+};
+
+let dayDecisions={
+  lemons:10,sugar:10,cups:12,water:5,
+  price:0.75,recipe:50,location:'corner',marketing:'none',
+};
+
+// ── COMPUTED PRICES ──
+function getPrice(item){
+  const base=BASE_PRICES[item];
+  if(item==='cups')return base*state.cupCostMult;
+  return base;
+}
+
+function calcCostPreview(){
+  const {lemons,sugar,cups,water}=dayDecisions;
+  const lCost=lemons>=BULK_DISCOUNT.lemons.qty?lemons*BULK_DISCOUNT.lemons.price:lemons*getPrice('lemons');
+  const sCost=sugar>=BULK_DISCOUNT.sugar.qty?sugar*BULK_DISCOUNT.sugar.price:sugar*getPrice('sugar');
+  const cCost=cups>=BULK_DISCOUNT.cups.qty?cups*BULK_DISCOUNT.cups.price:cups*getPrice('cups');
+  const wCost=water*getPrice('water');
+  const mktCost=MARKETING.find(m=>m.id===dayDecisions.marketing)?.cost||0;
+  return{lCost,sCost,cCost,wCost,mktCost,total:lCost+sCost+cCost+wCost+mktCost};
+}
+
+function getSupplyCost(item,qty){
+  const bulk=BULK_DISCOUNT[item];
+  if(bulk&&qty>=bulk.qty)return qty*bulk.price;
+  return qty*getPrice(item);
+}
+
+// ── CUPS PER BATCH ──
+// 1 lemon + sugar(recipe) + 1 cup + water per 2 cups of lemonade
+function maxCupsFromSupplies(l,s,c,w){
+  const recipe=dayDecisions.recipe/100;
+  const fromLemons=Math.floor(l*2);
+  const fromSugar=recipe>0?Math.floor(s/(recipe*0.5)):999;
+  const fromCups=c;
+  const fromWater=Math.floor(w*8);
+  return Math.min(fromLemons,fromSugar,fromCups,fromWater);
+}
+
+// ── DEMAND CALCULATION ──
+function calcDemand(day){
+  const weather=WEATHER_TYPES[WEATHER_SCHEDULE[day-1]];
+  const loc=LOCATIONS.find(l=>l.id===dayDecisions.location)||LOCATIONS[0];
+  const mkt=MARKETING.find(m=>m.id===dayDecisions.marketing)||MARKETING[0];
+  const event=RANDOM_EVENTS.find(e=>e.day===day);
+
+  let baseDemand=30;
+  // Weather
+  baseDemand*=weather.demandMult;
+  // Location
+  baseDemand*=loc.mult;
+  // Beach on hot day bonus
+  if(dayDecisions.location==='beach'&&(WEATHER_SCHEDULE[day-1]==='hot'||WEATHER_SCHEDULE[day-1]==='perfect'))baseDemand*=1.3;
+  // Market only weekends (days 6,7,13,14)
+  if(dayDecisions.location==='market'&&![6,7,13,14].includes(day))baseDemand*=0.4;
+  // Marketing
+  baseDemand*=(1+mkt.demandBonus);
+  // Reputation
+  baseDemand*=(0.7+(state.reputation/100)*0.6);
+  // Recipe — sweet spot is 40-60, too sweet or too tart loses customers
+  const recipeScore=1-Math.abs(dayDecisions.recipe-50)/100;
+  baseDemand*=(0.7+recipeScore*0.6);
+  // Price elasticity — higher price = fewer customers
+  const priceEffect=Math.max(0.2,1.5-(dayDecisions.price*0.8));
+  baseDemand*=priceEffect;
+  // Competition
+  if(state.hasCompetitor&&day>=COMPETITION_DAY)baseDemand*=0.82;
+  // Event bonuses
+  if(event?.effect?.demandMult)baseDemand*=event.effect.demandMult;
+  if(event?.effect?.demandBonus)baseDemand*=(1+event.effect.demandBonus);
+  // Day 1 grace
+  if(day===1)baseDemand=Math.max(baseDemand,15);
+
+  return Math.max(1,Math.round(baseDemand+(Math.random()-0.5)*8));
+}
+
+// ── RENDER INTRO ──
+function renderIntro(){
+  document.getElementById('app').innerHTML=`
+  <div class="intro-screen">
+    <div class="intro-logo">🍋</div>
+    <div class="intro-title">Lemonade Stand</div>
+    <div class="intro-sub">Run your own lemonade stand for 14 days. Buy supplies, set your price, choose your location, and build a profitable business. Every decision matters.</div>
+
+    <div class="intro-card">
+      <div class="intro-card-title">🎮 How It Works</div>
+      <div class="intro-rules">
+        <div class="intro-rule"><span>💰</span><span>You start with <strong>$100</strong>. Buy a stand for <strong>$20</strong>, then buy supplies each day.</span></div>
+        <div class="intro-rule"><span>📦</span><span>Each day: buy lemons, sugar, cups & water → set your price → choose location → open for business.</span></div>
+        <div class="intro-rule"><span>🌤️</span><span>Weather, location, recipe, price, and reputation all affect how many customers show up.</span></div>
+        <div class="intro-rule"><span>📈</span><span>Build reputation by selling quality lemonade at fair prices. Reputation brings more customers.</span></div>
+        <div class="intro-rule"><span>🏆</span><span>After 14 days, get a full income statement and AI business advisor review.</span></div>
+      </div>
+    </div>
+
+    <div class="intro-card">
+      <div class="intro-card-title">💸 Financing Decision</div>
+      <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:.5rem">Do you want to take out a loan to start with more cash? You must repay it with interest by Day 14.</div>
+      <div class="loan-options">
+        <div class="loan-opt selected" id="loan-none" onclick="selectLoan('none')">
+          <div class="loan-opt-name">🐢 Bootstrap</div>
+          <div class="loan-opt-desc">Start with $100 only. No debt, no interest. Harder but you keep all profit.</div>
+        </div>
+        <div class="loan-opt" id="loan-50" onclick="selectLoan('50')">
+          <div class="loan-opt-name">🚀 Take $50 Loan</div>
+          <div class="loan-opt-desc">Start with $150. Repay $55 (10% interest) by Day 14. More buying power.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="intro-card">
+      <div class="intro-card-title">👤 Your Name</div>
+      <input class="name-input" id="player-name" placeholder="Enter your name (optional)" maxlength="30">
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;padding:1rem;font-size:1.1rem;border-radius:var(--radius);margin-top:.5rem" onclick="startGame()">🍋 Start My Lemonade Stand!</button>
+  </div>`;
+}
+
+let selectedLoan='none';
+function selectLoan(opt){
+  selectedLoan=opt;
+  document.querySelectorAll('.loan-opt').forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`loan-${opt}`).classList.add('selected');
+}
+
+function startGame(){
+  state.playerName=document.getElementById('player-name')?.value.trim()||'Student';
+  if(selectedLoan==='50'){state.cash=150;state.loan=55;state.loanAmount=50;state.startingCash=150;}
+  else{state.cash=100;state.loan=0;state.loanAmount=0;state.startingCash=100;}
+  state.standPurchased=false;
+  renderStandPurchase();
+}
+
+// ── BUY STAND ──
+function renderStandPurchase(){
+  document.getElementById('app').innerHTML=`
+  <div class="intro-screen">
+    <div style="text-align:center;font-size:3rem;margin-bottom:1rem">🏪</div>
+    <div style="font-family:var(--display);font-size:1.6rem;font-weight:600;text-align:center;color:var(--lemon-dark);margin-bottom:.5rem">Buy Your Stand</div>
+    <div style="text-align:center;color:var(--text-muted);margin-bottom:1.5rem;font-size:.88rem">Every business needs startup equipment. Your lemonade stand costs <strong>$20</strong>.</div>
+
+    <div class="intro-card" style="text-align:center">
+      <div style="font-size:5rem;margin-bottom:.75rem">🍋🏪</div>
+      <div style="font-family:var(--display);font-size:1.2rem;font-weight:600;margin-bottom:.35rem">Classic Lemonade Stand</div>
+      <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">Includes: folding table, umbrella, sign, pitcher, and basic supplies. One-time purchase.</div>
+      <div style="font-family:var(--display);font-size:2rem;font-weight:600;color:var(--lemon-dark);margin-bottom:1rem">$20.00</div>
+      <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:1rem">Your cash: <strong>$${state.cash.toFixed(2)}</strong> → After purchase: <strong>$${(state.cash-20).toFixed(2)}</strong></div>
+      <button class="btn btn-primary" style="padding:.85rem 2rem;font-size:1rem" onclick="buyStand()">💰 Purchase Stand ($20)</button>
+    </div>
+
+    <div style="font-size:.78rem;color:var(--text-muted);text-align:center;margin-top:.75rem">
+      💡 <strong>Business concept:</strong> This is your startup cost — a one-time expense before you earn any revenue. Real businesses always have startup costs before they open.
+    </div>
+  </div>`;
+}
+
+function buyStand(){
+  if(state.cash<20){alert('Not enough cash!');return;}
+  state.cash-=20;
+  state.standPurchased=true;
+  renderGameDay();
+}
+
+// ── MAIN GAME DAY ──
+function renderGameDay(){
+  if(state.day>14){renderFinalReport();return;}
+
+  const weather=WEATHER_TYPES[WEATHER_SCHEDULE[state.day-1]];
+  const tomorrowWeather=state.day<14?WEATHER_TYPES[WEATHER_SCHEDULE[state.day]]:null;
+  const event=RANDOM_EVENTS.find(e=>e.day===state.day);
+  const costs=calcCostPreview();
+  const maxCups=maxCupsFromSupplies(dayDecisions.lemons,dayDecisions.sugar,dayDecisions.cups,dayDecisions.water);
+  const cashAfter=state.cash-costs.total;
+  const repStars=Math.round((state.reputation/100)*5);
+
+  document.getElementById('app').innerHTML=`
+  <!-- HEADER -->
+  <div class="game-header">
+    <div class="game-title">🍋 <span>Lemonade Stand</span></div>
+    <div class="day-badge">Day ${state.day} of 14</div>
+    <div class="stat-pill cash"><span class="icon">💰</span>${state.playerName}'s Cash: $${state.cash.toFixed(2)}</div>
+    ${state.loan>0?`<div class="stat-pill" style="background:rgba(255,80,80,.8)"><span class="icon">💳</span>Loan Due: $${state.loan.toFixed(2)}</div>`:''}
+    <div class="stat-pill"><span class="icon">⭐</span>Rep: ${repStars}/5</div>
+    <div class="progress-wrap"><div class="progress-fill" style="width:${((state.day-1)/14)*100}%"></div></div>
+  </div>
+
+  <!-- SCENE -->
+  <div class="scene" id="scene" style="background:${weather.bg}">
+    <div class="sun" id="scene-sun">${weather.rain?'':weather.icon==='🌡️'?'☀️':weather.icon==='🌈'?'🌈':'☀️'}</div>
+    <div class="cloud" style="top:25px;left:80px">${weather.rain||weather.icon==='☁️'||weather.icon==='⛅'?'☁️':''}</div>
+    <div class="cloud" style="top:40px;left:200px">${weather.icon==='⛅'||weather.icon==='☁️'?'☁️':''}</div>
+    <div class="stand-img">🍋🏪</div>
+    ${state.hasCompetitor?`<div style="position:absolute;bottom:40px;right:80px;font-size:2.5rem;opacity:.8" title="Competitor stand!">🥤🏪</div>`:''}
+    <div class="scene-label">${weather.icon} ${weather.name} — ${weather.temp} — ${weather.desc}</div>
+    ${weather.rain?generateRain():''}
+  </div>
+
+  <!-- GAME BODY -->
+  <div class="game-body">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+      <div>
+        <div class="card-title">📅 14-Day Forecast</div>
+        <div class="forecast-row">
+          ${WEATHER_SCHEDULE.map((w,i)=>{
+            const d=i+1;
+            const wt=WEATHER_TYPES[w];
+            return`<div class="fc-day ${d===state.day?'today':d<state.day?'past':''}">
+              <div class="fc-num">${d}</div>
+              <div class="fc-icon">${wt.icon}</div>
+              <div class="fc-temp">${wt.temp.replace('°F','°')}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div>
+        <div class="card-title">⭐ Reputation</div>
+        <div class="rep-stars">${'⭐'.repeat(repStars)}${'☆'.repeat(5-repStars)}</div>
+        <div class="rep-bar-wrap" style="margin-top:.5rem"><div class="rep-bar-fill" style="width:${state.reputation}%"></div></div>
+        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.35rem">Higher reputation = more customers each day</div>
+      </div>
+
+      <div>
+        <div class="card-title">📊 Previous Days</div>
+        ${state.history.length===0?`<div style="font-size:.75rem;color:var(--text-dim)">No history yet</div>`:`
+        <div style="display:flex;flex-direction:column;gap:.3rem">
+          ${state.history.slice(-5).map(h=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:.72rem;padding:.3rem .5rem;background:var(--surface2);border-radius:var(--radius-sm)">
+              <span>Day ${h.day} ${WEATHER_TYPES[h.weatherKey].icon}</span>
+              <span style="color:${h.profit>=0?'var(--green)':'var(--red)'}; font-weight:700">${h.profit>=0?'+':''}$${h.profit.toFixed(2)}</span>
+            </div>`).join('')}
+        </div>`}
+      </div>
+
+      ${state.hasCompetitor?`
+      <div style="background:var(--redl);border:2px solid var(--red);border-radius:var(--radius-sm);padding:.75rem">
+        <div style="font-size:.75rem;font-weight:700;color:var(--red);margin-bottom:.25rem">🥤 Competitor Active</div>
+        <div style="font-size:.65rem;color:var(--red)">A rival stand opened nearby. Customers have more choices — consider your price and quality carefully.</div>
+      </div>`:''}
+
+      ${event?`
+      <div class="event-banner ${event.type==='good'?'event-good':event.type==='bad'?'event-bad':'event-neutral'}">
+        <span>${event.icon}</span>
+        <div><strong>${event.title}</strong><br>${event.desc}</div>
+      </div>`:''}
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+
+      <!-- SUPPLY MARKET -->
+      <div class="card">
+        <div class="card-title">🛒 Buy Supplies — Day ${state.day}</div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:.85rem">Leftover supplies carry over. Buy bulk to save money! Each cup needs: 1 lemon, sugar (by recipe), 1 cup, water.</div>
+
+        <div class="supply-grid">
+          ${buildSupplyItem('lemons','🍋','Lemons','$'+BASE_PRICES.lemons+'/ea (bulk 20+: $0.35)','20+')}
+          ${buildSupplyItem('sugar','🍬','Sugar','$'+BASE_PRICES.sugar+'/bag (bulk 30+: $0.22)','30+')}
+          ${buildSupplyItem('cups','🥤','Cups','$'+getPrice('cups').toFixed(2)+'/cup (bulk 50+: $0.14)'+(state.cupCostMult>1?' ⚠️ Shortage!':''),'50+')}
+          ${buildSupplyItem('water','💧','Water','$'+BASE_PRICES.water+'/jug',null)}
+        </div>
+
+        <div style="margin-top:.75rem;padding:.6rem .85rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.78rem;display:flex;align-items:center;justify-content:space-between">
+          <span>🧪 Max cups you can make today: <strong>${maxCups}</strong></span>
+          <span style="color:var(--text-muted)">Carry-over stock: 🍋${state.supplies.lemons} 🍬${state.supplies.sugar} 🥤${state.supplies.cups} 💧${state.supplies.water}</span>
+        </div>
+      </div>
+
+      <!-- DECISIONS -->
+      <div class="card">
+        <div class="card-title">⚙️ Today's Strategy</div>
+
+        <!-- PRICE -->
+        <div class="slider-row">
+          <div class="slider-header">
+            <span class="slider-label">💵 Price per Cup</span>
+            <span class="slider-val">$<span id="price-val">${dayDecisions.price.toFixed(2)}</span></span>
+          </div>
+          <input type="range" id="price-slider" min="0.25" max="3.00" step="0.05" value="${dayDecisions.price}" oninput="dayDecisions.price=+this.value;document.getElementById('price-val').textContent=(+this.value).toFixed(2);updateCostPreview()">
+          <div class="slider-labels"><span>$0.25 (very cheap)</span><span>$1.50 (fair)</span><span>$3.00 (premium)</span></div>
+        </div>
+
+        <!-- RECIPE -->
+        <div class="slider-row">
+          <div class="slider-header">
+            <span class="slider-label">🍋 Recipe — Sweetness</span>
+            <span class="slider-val" id="recipe-label">${getRecipeLabel(dayDecisions.recipe)}</span>
+          </div>
+          <input type="range" id="recipe-slider" min="0" max="100" step="5" value="${dayDecisions.recipe}" oninput="dayDecisions.recipe=+this.value;document.getElementById('recipe-label').textContent=getRecipeLabel(+this.value);updateCostPreview()">
+          <div class="slider-labels"><span>Very Tart</span><span>Perfect Balance</span><span>Very Sweet</span></div>
+        </div>
+
+        <!-- LOCATION -->
+        <div style="margin-bottom:1rem">
+          <div class="card-title" style="margin-bottom:.5rem;font-size:.85rem">📍 Location</div>
+          <div class="location-grid">
+            ${LOCATIONS.map(l=>`
+              <div class="loc-opt ${dayDecisions.location===l.id?'selected':''}" onclick="selectLocation('${l.id}')">
+                <div class="loc-emoji">${l.emoji}</div>
+                <div class="loc-name">${l.name}</div>
+                <div class="loc-bonus">${l.bonus}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- MARKETING -->
+        <div style="margin-bottom:1rem">
+          <div class="card-title" style="margin-bottom:.5rem;font-size:.85rem">📣 Marketing</div>
+          <div class="marketing-opts">
+            ${MARKETING.map(m=>`
+              <div class="mkt-opt ${dayDecisions.marketing===m.id?'selected':''}" onclick="selectMarketing('${m.id}')">
+                <input type="radio" ${dayDecisions.marketing===m.id?'checked':''} readonly>
+                <div class="mkt-text">
+                  <div class="mkt-name ${dayDecisions.marketing===m.id?'selected-text':''}">${m.name}</div>
+                  <div class="mkt-desc">${m.desc}</div>
+                </div>
+                <div class="mkt-cost">${m.cost>0?'$'+m.cost+'/day':'Free'}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- COST PREVIEW -->
+        <div class="cost-preview" id="cost-preview"></div>
+
+        <button class="open-btn" style="margin-top:1rem" onclick="openForBusiness()" ${state.cash<calcCostPreview().total?'disabled':''}>
+          🍋 Open for Business — Day ${state.day}!
+        </button>
+        ${state.cash<calcCostPreview().total?`<div style="color:var(--red);font-size:.75rem;text-align:center;margin-top:.5rem">⚠️ Not enough cash! Reduce your supply order.</div>`:''}
+      </div>
+
+    </div>
+  </div>`;
+
+  updateCostPreview();
+}
+
+function buildSupplyItem(id,emoji,name,priceDesc,bulkLabel){
+  const qty=dayDecisions[id];
+  const isBulk=bulkLabel&&qty>=parseInt(bulkLabel);
+  return`<div class="supply-item">
+    ${isBulk?`<div class="bulk-badge">BULK!</div>`:''}
+    <div class="supply-emoji">${emoji}</div>
+    <div class="supply-name">${name}</div>
+    <div class="supply-price">${priceDesc}</div>
+    <div class="supply-controls">
+      <button class="qty-btn" onclick="changeQty('${id}',-1)">−</button>
+      <div class="qty-val" id="qty-${id}">${qty}</div>
+      <button class="qty-btn" onclick="changeQty('${id}',1)">+</button>
+      <button class="qty-btn" style="font-size:.65rem;width:34px;border-radius:var(--radius-sm)" onclick="changeQty('${id}',5)">+5</button>
+    </div>
+    <div class="supply-subtotal" id="sub-${id}">$${getSupplyCost(id,qty).toFixed(2)}</div>
+  </div>`;
+}
+
+function changeQty(item,delta){
+  dayDecisions[item]=Math.max(0,dayDecisions[item]+delta);
+  const el=document.getElementById(`qty-${item}`);
+  if(el)el.textContent=dayDecisions[item];
+  const subEl=document.getElementById(`sub-${item}`);
+  if(subEl)subEl.textContent='$'+getSupplyCost(item,dayDecisions[item]).toFixed(2);
+  updateCostPreview();
+  // Refresh bulk badges
+  ['lemons','sugar','cups','water'].forEach(id=>{
+    const bulk=BULK_DISCOUNT[id];
+    if(!bulk)return;
+    const cell=document.getElementById(`qty-${id}`)?.closest('.supply-item');
+    if(!cell)return;
+    const badge=cell.querySelector('.bulk-badge');
+    if(dayDecisions[id]>=bulk.qty){if(!badge){const b=document.createElement('div');b.className='bulk-badge';b.textContent='BULK!';cell.prepend(b);}}
+    else{if(badge)badge.remove();}
+  });
+}
+
+function updateCostPreview(){
+  const costs=calcCostPreview();
+  const cashAfter=state.cash-costs.total;
+  const maxCups=maxCupsFromSupplies(dayDecisions.lemons,dayDecisions.sugar,dayDecisions.cups,dayDecisions.water);
+  const el=document.getElementById('cost-preview');
+  if(!el)return;
+  el.innerHTML=`
+    <div class="cost-row"><span class="cost-label">🍋 Lemons (${dayDecisions.lemons})</span><span>$${costs.lCost.toFixed(2)}</span></div>
+    <div class="cost-row"><span class="cost-label">🍬 Sugar (${dayDecisions.sugar})</span><span>$${costs.sCost.toFixed(2)}</span></div>
+    <div class="cost-row"><span class="cost-label">🥤 Cups (${dayDecisions.cups})</span><span>$${costs.cCost.toFixed(2)}</span></div>
+    <div class="cost-row"><span class="cost-label">💧 Water (${dayDecisions.water})</span><span>$${costs.wCost.toFixed(2)}</span></div>
+    ${costs.mktCost>0?`<div class="cost-row"><span class="cost-label">📣 Marketing</span><span>$${costs.mktCost.toFixed(2)}</span></div>`:''}
+    <div class="cost-row" style="margin-top:.35rem"><span class="cost-label"><strong>Total Cost</strong></span><span><strong>$${costs.total.toFixed(2)}</strong></span></div>
+    <div class="cost-row"><span class="cost-label">Cash after buying</span><span class="${cashAfter<0?'danger':'ok'}">$${cashAfter.toFixed(2)}</span></div>
+    <div class="cost-row"><span class="cost-label">Max cups possible</span><span><strong>${maxCups} cups</strong></span></div>
+    <div class="cost-row"><span class="cost-label">Est. Revenue (if sold out)</span><span style="color:var(--green)">$${(maxCups*dayDecisions.price).toFixed(2)}</span></div>`;
+
+  const openBtn=document.querySelector('.open-btn');
+  if(openBtn)openBtn.disabled=cashAfter<0;
+}
+
+function getRecipeLabel(val){
+  if(val<15)return'🍋 Very Tart';
+  if(val<35)return'🍋 Tart';
+  if(val<45)return'😊 Slightly Tart';
+  if(val<=55)return'✅ Perfect Balance';
+  if(val<=70)return'🍬 Sweet';
+  if(val<=85)return'🍬 Very Sweet';
+  return'🍭 Extremely Sweet';
+}
+
+function selectLocation(id){
+  dayDecisions.location=id;
+  document.querySelectorAll('.loc-opt').forEach(el=>el.classList.remove('selected'));
+  document.querySelectorAll('.loc-opt').forEach(el=>{if(el.onclick.toString().includes(`'${id}'`))el.classList.add('selected');});
+  updateCostPreview();
+}
+
+function selectMarketing(id){
+  dayDecisions.marketing=id;
+  document.querySelectorAll('.mkt-opt').forEach(el=>el.classList.remove('selected'));
+  document.querySelectorAll('.mkt-name').forEach(el=>el.classList.remove('selected-text'));
+  updateCostPreview();
+  renderGameDay(); // re-render to update radio states
+}
+
+function generateRain(){
+  let drops='';
+  for(let i=0;i<20;i++){
+    const left=Math.random()*100;
+    const delay=Math.random()*0.6;
+    drops+=`<div class="rain-drop" style="left:${left}%;animation-delay:${delay}s"></div>`;
+  }
+  return drops;
+}
+
+// ── OPEN FOR BUSINESS ──
+function openForBusiness(){
+  const costs=calcCostPreview();
+  if(state.cash<costs.total){alert('Not enough cash!');return;}
+
+  // Pay for supplies
+  state.cash-=costs.total;
+
+  // Add to carry-over stock
+  state.supplies.lemons+=dayDecisions.lemons;
+  state.supplies.sugar+=dayDecisions.sugar;
+  state.supplies.cups+=dayDecisions.cups;
+  state.supplies.water+=dayDecisions.water;
+
+  // Calculate what we can make
+  const maxCups=maxCupsFromSupplies(state.supplies.lemons,state.supplies.sugar,state.supplies.cups,state.supplies.water);
+
+  // Calculate demand
+  const demand=calcDemand(state.day);
+  const cupsSold=Math.min(maxCups,demand);
+  const cupsUnsold=maxCups-cupsSold;
+
+  // Revenue
+  const revenue=cupsSold*dayDecisions.price;
+
+  // Event cash penalty
+  const event=RANDOM_EVENTS.find(e=>e.day===state.day);
+  let penalty=0;
+  if(event?.effect?.cashPenalty){penalty=event.effect.cashPenalty;state.cash=Math.max(0,state.cash-penalty);}
+
+  // Total daily expenses = supply cost + marketing + penalty
+  const mktCost=MARKETING.find(m=>m.id===dayDecisions.marketing)?.cost||0;
+  const totalExpenses=costs.total+penalty;
+  const profit=revenue-totalExpenses;
+
+  state.cash+=revenue;
+
+  // Consume supplies
+  const lemons_used=Math.ceil(cupsSold/2);
+  const sugar_used=Math.ceil(cupsSold*(dayDecisions.recipe/100)*0.5);
+  const cups_used=cupsSold;
+  const water_used=Math.ceil(cupsSold/8);
+  state.supplies.lemons=Math.max(0,state.supplies.lemons-lemons_used);
+  state.supplies.sugar=Math.max(0,state.supplies.sugar-sugar_used);
+  state.supplies.cups=Math.max(0,state.supplies.cups-cups_used);
+  state.supplies.water=Math.max(0,state.supplies.water-water_used);
+
+  // Competition appears Day 4
+  if(state.day===COMPETITION_DAY-1)state.hasCompetitor=true;
+
+  // Cup shortage event reset
+  state.cupCostMult=1;
+  if(event?.effect?.cupCostMult)state.cupCostMult=event.effect.cupCostMult;
+
+  // Reputation update
+  const soldRatio=maxCups>0?cupsSold/maxCups:0;
+  const priceScore=dayDecisions.price<=1.50?1:dayDecisions.price<=2.00?0.7:0.4;
+  const recipeScore=Math.abs(dayDecisions.recipe-50)<20?1:Math.abs(dayDecisions.recipe-50)<40?0.7:0.4;
+  const repChange=Math.round((soldRatio*10+priceScore*5+recipeScore*5-7)*(1+Math.random()*0.3));
+  state.reputation=Math.max(10,Math.min(100,state.reputation+repChange));
+
+  // Save history
+  const weatherKey=WEATHER_SCHEDULE[state.day-1];
+  state.history.push({
+    day:state.day,weatherKey,
+    supplySpend:costs.total,mktCost,penalty,totalExpenses,
+    revenue,profit,
+    cupsMade:maxCups,cupsSold,cupsUnsold,
+    price:dayDecisions.price,recipe:dayDecisions.recipe,
+    location:dayDecisions.location,marketing:dayDecisions.marketing,
+    demand,reputation:state.reputation,
+  });
+
+  renderDaySummary(state.history[state.history.length-1]);
+}
+
+// ── DAY SUMMARY ──
+function renderDaySummary(h){
+  const weather=WEATHER_TYPES[h.weatherKey];
+  const profitColor=h.profit>=0?'pos':'neg';
+  const event=RANDOM_EVENTS.find(e=>e.day===h.day);
+
+  // Lesson logic
+  let lesson='';
+  if(h.cupsUnsold>h.cupsMade*0.4)lesson='💡 You made more cups than customers wanted today. Next time, buy fewer supplies when the weather looks poor — reducing waste is how you protect profit.';
+  else if(h.cupsSold===h.cupsMade&&h.demand>h.cupsMade*1.2)lesson='💡 You sold out! But demand was even higher than your supply. You could have made more money with more cups. This is scarcity — when demand exceeds supply, price can go up.';
+  else if(h.profit<0)lesson='💡 You lost money today. Your costs were higher than your revenue. Check whether your price is too low or your supply costs too high.';
+  else if(h.price>2&&h.cupsSold<h.demand*0.5)lesson='💡 High prices reduced your customer count significantly. This is price elasticity — as price goes up, quantity demanded goes down.';
+
+  const nextDay=state.day<14?WEATHER_TYPES[WEATHER_SCHEDULE[state.day]]:null;
+
+  document.getElementById('app').innerHTML=`
+  <div class="game-header">
+    <div class="game-title">🍋 Day ${h.day} — End of Day Summary</div>
+    <div class="stat-pill cash">💰 Cash: $${state.cash.toFixed(2)}</div>
+    ${state.loan>0?`<div class="stat-pill" style="background:rgba(255,80,80,.8)">💳 Loan Due: $${state.loan.toFixed(2)}</div>`:''}
+    <div class="stat-pill">⭐ Rep: ${Math.round((state.reputation/100)*5)}/5</div>
+  </div>
+
+  <div style="padding:1.5rem;max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:1.25rem;">
+
+  <div class="summary-card">
+    <div class="summary-header" style="background:${h.profit>=0?'var(--greenl)':'var(--redl)'}">
+      <div class="summary-day" style="color:${h.profit>=0?'var(--green)':'var(--red)'}">${h.day}</div>
+      <div>
+        <div class="summary-title">${weather.icon} ${weather.name} Day</div>
+        <div class="summary-sub">${dayDecisions.location} · $${h.price.toFixed(2)}/cup · ${getRecipeLabel(h.recipe)}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-family:var(--display);font-size:2rem;font-weight:600;color:${h.profit>=0?'var(--green)':'var(--red)'}">${h.profit>=0?'+':''}$${h.profit.toFixed(2)}</div>
+        <div style="font-size:.72rem;color:var(--text-muted)">Day Profit/Loss</div>
+      </div>
+    </div>
+    <div class="summary-body">
+      <div class="summary-grid">
+        <div class="sum-box"><div class="sum-icon">🥤</div><div class="sum-label">Cups Made</div><div class="sum-val neu">${h.cupsMade}</div></div>
+        <div class="sum-box"><div class="sum-icon">💚</div><div class="sum-label">Cups Sold</div><div class="sum-val pos">${h.cupsSold}</div></div>
+        <div class="sum-box"><div class="sum-icon">🗑️</div><div class="sum-label">Unsold</div><div class="sum-val ${h.cupsUnsold>0?'neg':'pos'}">${h.cupsUnsold}</div></div>
+        <div class="sum-box"><div class="sum-icon">👥</div><div class="sum-label">Customer Demand</div><div class="sum-val neu">${h.demand}</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;font-size:.83rem">
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:.85rem">
+          <div style="font-weight:700;margin-bottom:.5rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">💸 Expenses</div>
+          <div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px dashed var(--border)"><span>Supplies</span><span>$${h.supplySpend.toFixed(2)}</span></div>
+          ${h.mktCost>0?`<div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px dashed var(--border)"><span>Marketing</span><span>$${h.mktCost.toFixed(2)}</span></div>`:''}
+          ${h.penalty>0?`<div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px dashed var(--border);color:var(--red)"><span>⚠️ Penalty</span><span>$${h.penalty.toFixed(2)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between;padding:.3rem 0;font-weight:700"><span>Total</span><span>$${h.totalExpenses.toFixed(2)}</span></div>
+        </div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:.85rem">
+          <div style="font-weight:700;margin-bottom:.5rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">💰 Revenue & Profit</div>
+          <div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px dashed var(--border)"><span>${h.cupsSold} cups × $${h.price.toFixed(2)}</span><span>$${h.revenue.toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px dashed var(--border)"><span>Minus Expenses</span><span>($${h.totalExpenses.toFixed(2)})</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.3rem 0;font-weight:700;color:${h.profit>=0?'var(--green)':'var(--red)'}"><span>Net Profit/Loss</span><span>${h.profit>=0?'+':''}$${h.profit.toFixed(2)}</span></div>
+        </div>
+      </div>
+
+      ${event?`<div class="event-banner ${event.type==='good'?'event-good':event.type==='bad'?'event-bad':'event-neutral'}"><span>${event.icon}</span><div><strong>${event.title}</strong><br>${event.desc}<br><em style="font-size:.75rem;opacity:.8">${event.lesson}</em></div></div>`:''}
+      ${state.hasCompetitor&&h.day>=COMPETITION_DAY?`<div class="competition-alert event-banner"><span>🥤</span><div><strong>Competitor Impact</strong><br>A rival stand is taking some of your customers. Your pricing, quality, and location matter more now. Consider: should you lower price, improve quality, or move to a better spot?</div></div>`:''}
+      ${lesson?`<div class="lesson-box">📚 <strong>Business Lesson:</strong> ${lesson}</div>`:''}
+
+      ${nextDay?`<div style="background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:.82rem"><strong>Tomorrow's Forecast:</strong> ${nextDay.icon} ${nextDay.name} (${nextDay.temp}) — ${nextDay.desc} Plan your supplies accordingly!</div>`:''}
+
+    </div>
+  </div>
+
+  <div class="btn-row" style="justify-content:center">
+    ${state.day<14?`<button class="btn btn-primary" onclick="nextDay()" style="padding:.85rem 2rem;font-size:1rem">Day ${state.day+1} →</button>`
+    :`<button class="btn btn-primary" style="background:var(--green);padding:.85rem 2rem;font-size:1rem" onclick="nextDay()">🏆 See Final Results!</button>`}
+  </div>
+
+  </div>`;
+}
+
+function nextDay(){
+  state.day++;
+  // Reset daily state
+  dayDecisions={lemons:10,sugar:10,cups:12,water:5,price:dayDecisions.price,recipe:dayDecisions.recipe,location:dayDecisions.location,marketing:'none'};
+  if(state.day>14)renderFinalReport();
+  else renderGameDay();
+}
+
+// ── FINAL REPORT ──
+async function renderFinalReport(){
+  // Repay loan
+  if(state.loan>0){state.cash=Math.max(0,state.cash-state.loan);}
+
+  const totalRevenue=state.history.reduce((s,h)=>s+h.revenue,0);
+  const totalExpenses=state.history.reduce((s,h)=>s+h.totalExpenses,0);
+  const standCost=20;
+  const netProfit=totalRevenue-totalExpenses-standCost-(state.loanAmount>0?5:0);
+  const totalCupsSold=state.history.reduce((s,h)=>s+h.cupsSold,0);
+  const totalUnsold=state.history.reduce((s,h)=>s+h.cupsUnsold,0);
+  const bestDay=state.history.reduce((b,h)=>h.profit>b.profit?h:b,state.history[0]);
+  const worstDay=state.history.reduce((w,h)=>h.profit<w.profit?h:w,state.history[0]);
+  const avgPrice=(state.history.reduce((s,h)=>s+h.price,0)/state.history.length).toFixed(2);
+  const profitDays=state.history.filter(h=>h.profit>0).length;
+
+  const maxProfit=Math.max(...state.history.map(h=>h.profit));
+  const minProfit=Math.min(...state.history.map(h=>h.profit));
+
+  document.getElementById('app').innerHTML=`
+  <div class="game-header">
+    <div class="game-title">🍋 14-Day Final Report</div>
+    <div class="stat-pill cash">💰 Final Cash: $${state.cash.toFixed(2)}</div>
+    <div class="stat-pill">⭐ Final Rep: ${Math.round((state.reputation/100)*5)}/5</div>
+  </div>
+  <div style="padding:1.5rem;max-width:900px;margin:0 auto">
+  <div class="final-report">
+    <div class="fr-header">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🏆</div>
+      <div class="fr-title">${state.playerName}'s Lemonade Stand</div>
+      <div class="fr-sub">14-Day Business Simulation — Final Report</div>
+    </div>
+    <div class="fr-body">
+
+      <div class="fr-stats">
+        <div class="fr-stat"><div class="fr-stat-val" style="color:${netProfit>=0?'var(--green)':'var(--red)'}">${netProfit>=0?'+':''}$${netProfit.toFixed(2)}</div><div class="fr-stat-label">Net Profit/Loss</div></div>
+        <div class="fr-stat"><div class="fr-stat-val" style="color:var(--lemon-dark)">${totalCupsSold}</div><div class="fr-stat-label">Total Cups Sold</div></div>
+        <div class="fr-stat"><div class="fr-stat-val">${profitDays}/14</div><div class="fr-stat-label">Profitable Days</div></div>
+      </div>
+
+      <!-- Daily profit chart -->
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:.5rem">Daily Profit/Loss Chart</div>
+      <div class="day-chart">
+        ${state.history.map(h=>{
+          const range=Math.max(Math.abs(maxProfit),Math.abs(minProfit),1);
+          const pct=Math.abs(h.profit)/range*70;
+          const isPos=h.profit>=0;
+          return`<div class="day-bar" style="height:${Math.max(pct,3)}px;background:${isPos?'var(--green)':'var(--red)'};opacity:.85" data-tip="Day ${h.day}: ${h.profit>=0?'+':''}$${h.profit.toFixed(2)}"></div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--text-muted);margin-top:.2rem;margin-bottom:1.25rem">
+        ${state.history.map(h=>`<div style="flex:1;text-align:center">${h.day}</div>`).join('')}
+      </div>
+
+      <!-- Income statement -->
+      <table class="income-table">
+        <thead><tr><th>Income Statement — 14 Days</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Total Revenue (${totalCupsSold} cups × avg $${avgPrice})</td><td style="text-align:right" class="pos">$${totalRevenue.toFixed(2)}</td></tr>
+          <tr><td colspan="2" style="background:var(--surface2);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Expenses</td></tr>
+          <tr><td>Stand Purchase (startup cost)</td><td style="text-align:right">$${standCost.toFixed(2)}</td></tr>
+          <tr><td>Supply Costs (14 days)</td><td style="text-align:right">$${state.history.reduce((s,h)=>s+h.supplySpend,0).toFixed(2)}</td></tr>
+          <tr><td>Marketing Costs</td><td style="text-align:right">$${state.history.reduce((s,h)=>s+h.mktCost,0).toFixed(2)}</td></tr>
+          <tr><td>Penalties & Permits</td><td style="text-align:right">$${state.history.reduce((s,h)=>s+(h.penalty||0),0).toFixed(2)}</td></tr>
+          ${state.loanAmount>0?`<tr><td>Loan Interest ($${state.loanAmount} at 10%)</td><td style="text-align:right">$5.00</td></tr>`:''}
+          <tr class="total"><td>Total Expenses</td><td style="text-align:right" class="neg">$${(totalExpenses+standCost+(state.loanAmount>0?5:0)).toFixed(2)}</td></tr>
+          <tr class="profit-row"><td>Net Profit / Loss</td><td style="text-align:right" class="${netProfit>=0?'pos':'neg'}">${netProfit>=0?'+':''}$${netProfit.toFixed(2)}</td></tr>
+        </tbody>
+      </table>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;font-size:.8rem">
+        <div style="background:var(--greenl);border:2px solid var(--green);border-radius:var(--radius-sm);padding:.85rem">
+          <div style="font-weight:700;color:var(--green);margin-bottom:.35rem">🏆 Best Day</div>
+          Day ${bestDay.day} (${WEATHER_TYPES[bestDay.weatherKey].icon}): +$${bestDay.profit.toFixed(2)} — sold ${bestDay.cupsSold} cups at $${bestDay.price.toFixed(2)}
+        </div>
+        <div style="background:var(--redl);border:2px solid var(--red);border-radius:var(--radius-sm);padding:.85rem">
+          <div style="font-weight:700;color:var(--red);margin-bottom:.35rem">📉 Worst Day</div>
+          Day ${worstDay.day} (${WEATHER_TYPES[worstDay.weatherKey].icon}): $${worstDay.profit.toFixed(2)} — sold ${worstDay.cupsSold} cups at $${worstDay.price.toFixed(2)}
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;font-size:.78rem;text-align:center">
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:.75rem"><div style="font-weight:700;font-size:1rem;color:var(--lemon-dark)">${totalUnsold}</div><div style="color:var(--text-muted)">Cups Wasted</div></div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:.75rem"><div style="font-weight:700;font-size:1rem;color:var(--lemon-dark)">$${avgPrice}</div><div style="color:var(--text-muted)">Avg Price</div></div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:.75rem"><div style="font-weight:700;font-size:1rem;color:var(--lemon-dark)">${Math.round((state.reputation/100)*5)}/5</div><div style="color:var(--text-muted)">Final Reputation</div></div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:.75rem"><div style="font-weight:700;font-size:1rem;color:var(--lemon-dark)">${state.loanAmount>0?'Yes':'No'}</div><div style="color:var(--text-muted)">Took Loan</div></div>
+      </div>
+
+      <div class="fb-section">
+        <div class="fb-label">🏦 Business Advisor Analysis</div>
+        <div class="score-row" id="score-row"></div>
+        <div class="fb-text" id="fb-text"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row" style="justify-content:center;margin-top:1rem">
+    <button class="btn btn-outline" onclick="location.reload()">🔄 Play Again</button>
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
+  </div>
+  </div>`;
+
+  await getAIFeedback(totalRevenue,totalExpenses,netProfit,totalCupsSold,totalUnsold,bestDay,worstDay,avgPrice,profitDays,standCost);
+}
+
+async function getAIFeedback(totalRevenue,totalExpenses,netProfit,totalCupsSold,totalUnsold,bestDay,worstDay,avgPrice,profitDays,standCost){
+  const decisionSummary=state.history.map(h=>`Day ${h.day} (${WEATHER_TYPES[h.weatherKey].name}): price=$${h.price.toFixed(2)}, cups made=${h.cupsMade}, sold=${h.cupsSold}, unsold=${h.cupsUnsold}, profit=$${h.profit.toFixed(2)}, location=${h.location}, marketing=${h.marketing}`).join('\n');
+
+  const systemPrompt=`You are an encouraging but honest small business advisor reviewing a high school student's 14-day lemonade stand simulation for Utah Business Management. The simulation teaches Strand 1 (supply/demand, pricing, profit) and Strand 5 (revenue, expenses, income statements). Students are in grades 10-12.
+
+SCORING — be fair but demanding:
+- "Great" = demonstrated real business understanding through consistently good decisions
+- "OK" = made reasonable decisions but missed obvious opportunities
+- "Needs Work" = made decisions that show fundamental misunderstanding of profit, pricing, or supply management
+
+Start with EXACTLY:
+SCORES: Pricing Strategy:[Great/OK/Needs Work] | Supply Management:[Great/OK/Needs Work] | Weather Adaptation:[Great/OK/Needs Work] | Profit Maximization:[Great/OK/Needs Work] | Overall Business Acumen:[Great/OK/Needs Work]
+
+Then 4 paragraphs of specific, encouraging-but-honest feedback:
+1. Pricing — did they adapt price to weather and demand? Did they understand price elasticity (higher price = fewer customers)? Reference their actual average price and best/worst day.
+2. Supply management — did they buy too much (waste) or too little (missed sales)? ${totalUnsold} cups unsold total. Did they learn from early mistakes?
+3. Weather adaptation — did their decisions change on rainy vs hot days? Reference specific days.
+4. Overall — connect to real business concepts: revenue, expenses, profit, break-even, supply and demand, opportunity cost. What is the single most important lesson from their 14 days?
+
+Keep it conversational and specific. Reference their actual numbers. End with one piece of advice for running a real business based on what you observed. No markdown ** or ##.`;
+
+  const userPrompt=`Student: ${state.playerName}
+Game Result: ${netProfit>=0?'PROFIT':'LOSS'} of $${Math.abs(netProfit).toFixed(2)}
+Started with: $${state.startingCash} (${state.loanAmount>0?`took $${state.loanAmount} loan`:'bootstrapped'})
+Stand cost: $${standCost}
+Total Revenue: $${totalRevenue.toFixed(2)}
+Total Expenses: $${totalExpenses.toFixed(2)}
+Net Profit/Loss: ${netProfit>=0?'+':''}$${netProfit.toFixed(2)}
+Cups sold: ${totalCupsSold} | Cups wasted: ${totalUnsold}
+Profitable days: ${profitDays}/14
+Average price: $${avgPrice}
+Best day: Day ${bestDay.day} (+$${bestDay.profit.toFixed(2)})
+Worst day: Day ${worstDay.day} ($${worstDay.profit.toFixed(2)})
+Final reputation: ${Math.round((state.reputation/100)*5)}/5
+
+Daily decisions:
+${decisionSummary}`;
+
+  try{
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,
+        messages:[{role:'user',content:systemPrompt+'\n\n'+userPrompt}]})});
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Could not generate feedback.';
+    const sm=text.match(/SCORES:(.+)/);
+    let main=text;
+    if(sm){
+      main=main.replace(sm[0],'').trim();
+      document.getElementById('score-row').innerHTML=sm[1].split('|').map(p=>{
+        const[lbl,rat]=p.split(':').map(s=>s.trim());
+        const cls=rat==='Great'?'great':rat==='OK'?'ok':'needs';
+        return`<span class="sc ${cls}">${lbl}: ${rat}</span>`;
+      }).join('');
+    }
+    document.getElementById('fb-text').textContent=main;
+  }catch(err){
+    document.getElementById('fb-text').textContent='Could not load advisor feedback: '+err.message;
+  }
+}
+
+renderIntro();
+</script>
+</body>
+</html>
