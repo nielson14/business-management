@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethics & Compliance Simulator – Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F2F0EC;--surface:#FFFFFF;--surface2:#EDEAE4;--surface3:#E4E0D8;
+  --border:#D4D0C8;--text:#1C1A16;--text-muted:#6C6860;--text-dim:#ACA89E;
+  --ink:#1C1A16;
+  --green:#2E7D32;--greenl:#E8F5E9;--greenm:rgba(46,125,50,.2);
+  --red:#C62828;--redl:#FFEBEE;--redm:rgba(198,40,40,.2);
+  --amber:#E65100;--amberl:#FFF3E0;--amberm:rgba(230,81,0,.2);
+  --radius:12px;--radius-sm:7px;
+  --serif:'Lora',serif;--sans:'DM Sans',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:var(--ink);color:#F2F0EC;padding:0;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;}
+.hbrand{padding:1rem 1.75rem;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;flex-shrink:0;}
+.hbrand h1{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:#F2F0EC;}
+.hbrand .sub{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,240,236,.35);margin-top:.25rem;}
+.hscenarios{display:flex;flex:1;overflow:hidden;}
+.hsc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5rem .4rem;border-right:1px solid rgba(255,255,255,.06);font-size:.58rem;color:rgba(242,240,236,.25);cursor:default;transition:all .2s;gap:.15rem;min-width:0;}
+.hsc.active{background:rgba(255,255,255,.07);color:#F2F0EC;}
+.hsc.done{color:rgba(100,200,120,.7);}
+.hsc.wrong{color:rgba(239,154,154,.7);}
+.hsc-num{font-size:.65rem;font-weight:700;}
+.hsc-name{font-size:.55rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;}
+.hright{padding:.75rem 1.5rem;border-left:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:1.25rem;flex-shrink:0;}
+.hstat-label{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,240,236,.3);}
+.hstat-val{font-family:var(--serif);font-size:.95rem;font-weight:700;}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px);}
+.sidebar{background:var(--ink);color:#F2F0EC;padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;}
+.main{padding:1.75rem;overflow-y:auto;}
+.sb-label{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,240,236,.25);margin-bottom:.65rem;}
+.role-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.85rem;display:flex;align-items:center;gap:.75rem;}
+.role-avatar{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.role-title{font-size:.82rem;font-weight:600;color:#F2F0EC;}
+.role-company{font-size:.62rem;color:rgba(242,240,236,.4);}
+
+/* SCORECARD — shows scenario names only, no agency hints */
+.scorecard{display:flex;flex-direction:column;gap:.35rem;}
+.sc-row{display:flex;align-items:center;gap:.65rem;padding:.5rem .65rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.06);}
+.sc-row.correct-s{background:rgba(46,125,50,.15);border-color:rgba(46,125,50,.3);}
+.sc-row.wrong-s{background:rgba(198,40,40,.15);border-color:rgba(198,40,40,.3);}
+.sc-row.pending-s{background:rgba(255,255,255,.03);}
+.sc-row.active-s{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);}
+.sc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sc-scenario-name{font-size:.68rem;flex:1;}
+.sc-row.correct-s .sc-scenario-name{color:rgba(100,200,120,.8);}
+.sc-row.wrong-s .sc-scenario-name{color:rgba(239,154,154,.7);}
+.sc-row.pending-s .sc-scenario-name{color:rgba(242,240,236,.35);}
+.sc-row.active-s .sc-scenario-name{color:#F2F0EC;}
+.sc-status{font-size:.68rem;margin-left:auto;}
+
+/* SCENARIO */
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sc-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:1rem;}
+.sc-num-big{font-family:var(--serif);font-size:3rem;font-weight:700;line-height:1;flex-shrink:0;width:52px;}
+.sc-category{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:.35rem;}
+.sc-title{font-family:var(--serif);font-size:1.45rem;font-weight:700;line-height:1.2;margin-bottom:.35rem;}
+.sc-setting{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+.urgency-badge{font-size:.65rem;font-weight:700;padding:.28rem .75rem;border-radius:100px;letter-spacing:.04em;}
+.characters{padding:.85rem 1.5rem;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;gap:.75rem;flex-wrap:wrap;}
+.character-tag{display:flex;align-items:center;gap:.45rem;padding:.35rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:.72rem;}
+.char-name{font-weight:600;}
+.char-role{color:var(--text-muted);}
+.sc-body{padding:1.5rem;border-bottom:1px solid var(--border);}
+.sc-body-label{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:.65rem;}
+.sc-narrative{font-size:.88rem;line-height:1.75;color:var(--text);}
+.sc-quote{margin:1rem 0;padding:.85rem 1.1rem;border-left:3px solid;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--serif);font-size:.95rem;font-style:italic;}
+.key-fact{display:inline-flex;align-items:center;gap:.4rem;margin-top:.75rem;padding:.35rem .75rem;background:var(--surface2);border-radius:100px;font-size:.75rem;color:var(--text-muted);font-weight:500;}
+.decision-area{padding:1.5rem;}
+.decision-label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.85rem;}
+
+/* AGENCY GRID — no descriptions shown, just names */
+.agency-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.25rem;}
+.agency-opt{padding:.65rem .5rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-align:center;}
+.agency-opt:hover{border-color:var(--text-muted);background:var(--surface2);}
+.agency-opt.selected{border-width:2px;}
+.agency-icon{font-size:1.2rem;margin-bottom:.25rem;}
+.agency-abbr{font-size:.78rem;font-weight:700;margin-bottom:.1rem;}
+/* No agency-full description shown during selection */
+
+/* ACTION OPTIONS — randomized order */
+.action-opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem;}
+.action-opt{display:flex;align-items:flex-start;gap:.75rem;padding:.85rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.action-opt:hover{border-color:var(--text-muted);background:var(--surface2);}
+.action-opt.selected{border-color:var(--ink);background:var(--surface2);}
+.action-letter{width:26px;height:26px;min-width:26px;border-radius:50%;border:2px solid var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:.05rem;color:var(--text-muted);transition:all .15s;}
+.action-opt.selected .action-letter{background:var(--ink);border-color:var(--ink);color:#F2F0EC;}
+.action-text{flex:1;font-size:.85rem;line-height:1.5;}
+.reason-label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem;display:flex;justify-content:space-between;align-items:baseline;}
+.reason-hint{font-size:.62rem;color:var(--text-dim);font-weight:400;letter-spacing:0;text-transform:none;}
+textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem .9rem;font-family:var(--sans);font-size:.85rem;color:var(--text);resize:vertical;min-height:85px;outline:none;line-height:1.65;transition:border-color .15s;}
+textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(28,26,22,.08);}
+textarea::placeholder{color:var(--text-dim);}
+
+/* CONSEQUENCE */
+.consequence{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.25rem;animation:fadeUp .3s ease;}
+.con-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;}
+.con-icon{font-size:1.4rem;}
+.con-title{font-weight:700;font-size:.95rem;flex:1;}
+.con-correct{font-size:.7rem;padding:.22rem .65rem;border-radius:100px;font-weight:700;}
+.con-text{font-size:.84rem;line-height:1.7;color:var(--text-muted);margin-bottom:.85rem;}
+.con-law-box{padding:.75rem 1rem;border-radius:var(--radius-sm);font-size:.8rem;line-height:1.55;border-left:4px solid;}
+.con-law-title{font-weight:700;margin-bottom:.25rem;}
+
+/* Law reference revealed AFTER submission */
+.law-reveal{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;margin-top:.75rem;}
+.law-reveal-title{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:.5rem;}
+.law-item-small{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem .5rem;border-radius:var(--radius-sm);font-size:.72rem;margin-bottom:.3rem;background:var(--surface);}
+.law-badge-small{font-size:.6rem;font-weight:700;padding:.12rem .4rem;border-radius:3px;flex-shrink:0;margin-top:.05rem;}
+
+/* INTRO */
+.intro-screen{max-width:660px;margin:2.5rem auto;padding:2rem;}
+.intro-logo{text-align:center;font-size:3.5rem;margin-bottom:1rem;}
+.intro-title{font-family:var(--serif);font-size:2rem;font-weight:700;text-align:center;margin-bottom:.5rem;}
+.intro-sub{text-align:center;color:var(--text-muted);line-height:1.65;margin-bottom:1.75rem;font-size:.9rem;}
+.intro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.intro-card-title{font-family:var(--serif);font-size:.95rem;font-weight:700;margin-bottom:.65rem;}
+.law-preview-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;}
+.law-preview-item{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .65rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.78rem;}
+.law-preview-badge{font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:3px;flex-shrink:0;margin-top:.05rem;}
+
+/* FINAL REPORT */
+.final-report{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;}
+.fr-header{background:var(--ink);color:#F2F0EC;padding:1.5rem;display:flex;align-items:center;gap:1rem;}
+.fr-title{font-family:var(--serif);font-size:1.4rem;font-weight:700;}
+.fr-sub{font-size:.65rem;color:rgba(242,240,236,.4);letter-spacing:.08em;text-transform:uppercase;}
+.fr-score{font-family:var(--serif);font-size:2.5rem;font-weight:700;margin-left:auto;}
+.fr-body{padding:1.5rem;}
+.verdict-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.verdict-box{text-align:center;padding:1rem;border-radius:var(--radius-sm);border:1.5px solid transparent;}
+.verdict-val{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:.2rem;}
+.verdict-label{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.scenario-review{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
+.sr-row{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border-radius:var(--radius-sm);font-size:.82rem;border:1px solid transparent;}
+.sr-row.correct-row{background:var(--greenl);border-color:var(--greenm);}
+.sr-row.wrong-row{background:var(--redl);border-color:var(--redm);}
+.sr-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem;}
+.sr-content{flex:1;}
+.sr-title{font-weight:700;margin-bottom:.2rem;}
+.sr-detail{font-size:.75rem;color:var(--text-muted);line-height:1.4;}
+.feedback-section{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:.5rem;}
+.fb-label{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.85rem;}
+.score-row{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.1rem;}
+.sc{font-size:.67rem;font-weight:700;padding:.27rem .75rem;border-radius:100px;}
+.sc.great{background:var(--greenl);color:var(--green);border:1px solid var(--greenm);}
+.sc.ok{background:var(--amberl);color:var(--amber);border:1px solid var(--amberm);}
+.sc.needs{background:var(--redl);color:var(--red);border:1px solid var(--redm);}
+.fb-text{font-size:.87rem;line-height:1.85;color:var(--text);white-space:pre-wrap;}
+.typing-dot{display:inline-block;width:6px;height:6px;background:var(--ink);border-radius:50%;animation:blink 1.2s infinite;margin:0 2px;vertical-align:middle;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
+.btn{font-family:var(--sans);font-size:.86rem;font-weight:600;padding:.65rem 1.5rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--ink);color:#F2F0EC;}
+.btn-primary:hover{background:#333;transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-outline:hover{border-color:var(--text-muted);}
+.btn-row{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;margin-top:1.25rem;}
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .agency-grid{grid-template-columns:repeat(2,1fr);}
+  .verdict-grid,.law-preview-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const WORKER_URL="https://digitalmarketing.robert-nielson14.workers.dev";
+
+const AGENCIES=[
+  {id:'osha',name:'OSHA',full:'Occupational Safety & Health Administration',icon:'⛑️',color:'#B71C1C',bg:'#FFEBEE'},
+  {id:'eeoc',name:'EEOC',full:'Equal Employment Opportunity Commission',icon:'⚖️',color:'#0D47A1',bg:'#E3F2FD'},
+  {id:'ftc',name:'FTC',full:'Federal Trade Commission',icon:'🛡️',color:'#1B5E20',bg:'#E8F5E9'},
+  {id:'ada',name:'ADA',full:'Americans with Disabilities Act',icon:'♿',color:'#4A148C',bg:'#F3E5F5'},
+  {id:'flsa',name:'FLSA',full:'Fair Labor Standards Act',icon:'💰',color:'#004D40',bg:'#E0F2F1'},
+  {id:'hipaa',name:'HIPAA',full:'Health Insurance Portability & Accountability Act',icon:'🏥',color:'#1A237E',bg:'#E8EAF6'},
+  {id:'ethics',name:'Code of Ethics',full:'Company Code of Ethics / Whistleblower',icon:'📋',color:'#E65100',bg:'#FFF3E0'},
+  {id:'csr',name:'CSR / FTC',full:'Corporate Social Responsibility & FTC',icon:'🌱',color:'#33691E',bg:'#F1F8E9'},
+];
+
+// Each scenario has a correctAction index (0-3) into its actions array
+// Actions are stored in a fixed order internally but DISPLAYED in a shuffled order
+const SCENARIOS=[
+  {
+    id:1,agencyId:'osha',category:'Workplace Safety',urgency:'HIGH',urgencyColor:'#B71C1C',urgencyBg:'#FFEBEE',
+    title:'The Broken Scaffold',setting:'Apex Manufacturing — Warehouse & Production Floor',
+    characters:[{emoji:'👷',name:'Marcus Rivera',role:'Warehouse worker — 3 years'},{emoji:'👔',name:'Plant Manager Cho',role:'Your supervisor'},{emoji:'⚖️',name:'You',role:'HR Compliance Officer'}],
+    narrative:'Marcus Rivera has filed a formal complaint. The scaffolding on the production floor has a cracked support beam identified two weeks ago. Plant Manager Cho told the crew to keep using it because "the order is in the system and we\'re behind on orders."\n\nToday, Marcus slipped near the scaffold. He wasn\'t injured, but he is now threatening to report the issue externally if nothing changes in 48 hours.',
+    quote:'"I almost fell today. That scaffold should be shut down. If nobody fixes it in 48 hours, I\'m calling someone outside this company."',
+    keyFact:'⚠️ Repair request filed 14 days ago — scaffold still in active use',
+    actions:[
+      'Shut down the scaffold immediately, document the hazard, complete the repair, and file an internal incident report. Assure Marcus his complaint is legally protected.',
+      'Tell Marcus the repair order is already submitted and he should be patient.',
+      'Escalate to Plant Manager Cho and let him decide whether to shut it down.',
+      'Warn Marcus that going around internal channels could result in disciplinary action.',
+    ],
+    correctActionIndex:0,
+    consequence:{
+      correct:{icon:'✅',title:'OSHA Violation Prevented',text:'You correctly identified an OSHA violation under the General Duty Clause and acted immediately. Shutting down the scaffold protects Marcus and the company. Importantly, warning Marcus about disciplinary action for an external report would itself be illegal retaliation under OSHA.'},
+      wrong:{icon:'❌',title:'OSHA Violation Occurred',text:'OSHA\'s General Duty Clause requires employers to provide a workplace free from recognized hazards. Delaying action on a known hazard exposes the company to fines up to $15,625 per violation. Warning Marcus about disciplinary action for reporting would be illegal retaliation — a separate federal crime.'},
+      law:'OSHA General Duty Clause: Employers must provide a workplace free from recognized hazards likely to cause death or serious harm. Retaliating against employees who report safety concerns is a federal crime.',lawColor:'#B71C1C',
+    },
+    placeholder:'Which specific OSHA principle applies here? Why is warning Marcus about going external itself a violation? What must an employer do when a known hazard exists?',
+  },
+  {
+    id:2,agencyId:'eeoc',category:'Employment Discrimination',urgency:'CRITICAL',urgencyColor:'#0D47A1',urgencyBg:'#E3F2FD',
+    title:'The Overlooked Candidate',setting:'Horizon Financial Services — HR Department',
+    characters:[{emoji:'👩🏾‍💼',name:'Denise Okafor',role:'Candidate — 8 yrs experience, MBA'},{emoji:'👨‍💼',name:'Hiring Manager Webb',role:'Department Director'},{emoji:'⚖️',name:'You',role:'HR Compliance Officer'}],
+    narrative:'Denise Okafor, a Black woman with 8 years of experience and an MBA, was rated the top candidate by the interview panel — highest scores across all competencies.\n\nHiring Manager Webb chose the second-ranked candidate, a white male with fewer qualifications. When asked to document his reasoning, Webb wrote: "Culture fit and communication style." No specific examples were provided.\n\nDenise has contacted your department and mentioned she is consulting an attorney.',
+    quote:'"I was the most qualified candidate by every metric your own panel used. I deserve a real explanation."',
+    keyFact:'📋 Denise scored highest on all 6 interview rubric categories — panel documentation on file',
+    actions:[
+      'Send Denise a standard rejection letter citing a highly competitive candidate pool.',
+      'Conduct an internal investigation, require Webb to provide specific objective non-discriminatory reasons, and escalate to legal counsel if none exist.',
+      'Ask Webb to add more detailed notes to his documentation to justify the decision retroactively.',
+      'Offer Denise a lower-level position to avoid potential litigation.',
+    ],
+    correctActionIndex:1,
+    consequence:{
+      correct:{icon:'✅',title:'EEOC Compliance Procedures Followed',text:'You correctly identified potential Title VII discrimination and initiated a proper internal investigation. "Culture fit" without objective criteria is a documented proxy for racial bias. Requiring specific documented reasons forces accountability. Courts have repeatedly found this type of justification to be pretextual.'},
+      wrong:{icon:'❌',title:'EEOC Complaint Exposure Created',text:'Option A ignores a documented potential violation. Option C is illegal — retroactively fabricating documentation would significantly worsen legal exposure. Option D without proper process could be seen as admission of wrongdoing. The company now faces significant EEOC charge and Title VII lawsuit exposure.'},
+      law:'EEOC / Title VII: Prohibits employment discrimination based on race, color, religion, sex, or national origin. "Culture fit" without objective criteria has been found by courts to be a pretext for discrimination.',lawColor:'#0D47A1',
+    },
+    placeholder:'What does Title VII prohibit? Why is "culture fit" legally problematic as a hiring justification? What steps must HR take when a potential discrimination complaint is received?',
+  },
+  {
+    id:3,agencyId:'ethics',category:'Code of Ethics / Whistleblowing',urgency:'URGENT',urgencyColor:'#E65100',urgencyBg:'#FFF3E0',
+    title:'The Inflated Numbers',setting:'Crestline Technology — Finance Department',
+    characters:[{emoji:'👨‍💻',name:'Jordan Park',role:'Junior Financial Analyst — 18 months'},{emoji:'👩‍💼',name:'CFO Martinez',role:'Chief Financial Officer'},{emoji:'⚖️',name:'You',role:'HR Compliance Officer'}],
+    narrative:'Jordan Park comes to your office visibly distressed. He has discovered that CFO Martinez has been instructing the finance team to record sales as "closed" one quarter before they are finalized — inflating quarterly revenue numbers reported to the board and to investors.\n\nJordan tried to raise it with his manager, who told him to "not ask questions above his pay grade." He is now asking you what to do. Crestline is publicly traded.',
+    quote:'"This is fraud. I know it and my manager knows it. But if I say something, I lose my job. If I don\'t, I\'m part of it."',
+    keyFact:'📊 Crestline Technology is publicly traded — SEC reporting obligations apply',
+    actions:[
+      'Tell Jordan this is above your authority and he should consult a personal attorney.',
+      'Advise Jordan to document his concerns and submit through the normal chain of command.',
+      'Advise Jordan to speak directly with the CFO to clarify whether the practice is actually wrong.',
+      'Take Jordan\'s complaint seriously, escalate to the Audit Committee bypassing the CFO, and advise Jordan of his federal whistleblower protections.',
+    ],
+    correctActionIndex:3,
+    consequence:{
+      correct:{icon:'✅',title:'Whistleblower Protections Properly Applied',text:'You correctly recognized that normal chain-of-command reporting is compromised when a C-suite executive is involved. The Audit Committee is the correct internal escalation path. Jordan has federal whistleblower protections under the Sarbanes-Oxley Act — retaliating against him would create additional federal liability.'},
+      wrong:{icon:'❌',title:'Whistleblower Left Unprotected',text:'Option A abandons your compliance responsibility. Option B is dangerous — Jordan\'s manager already dismissed him and the CFO is the alleged wrongdoer. Option C is reckless — confronting the CFO committing alleged fraud could trigger immediate retaliation. This company faces SEC and Sarbanes-Oxley exposure requiring immediate documented escalation.'},
+      law:'SOX Whistleblower Protections: The Sarbanes-Oxley Act prohibits retaliation against employees who report fraud. Companies must have anonymous reporting channels. When the C-suite is involved, normal chain-of-command reporting is compromised.',lawColor:'#E65100',
+    },
+    placeholder:'What is the Sarbanes-Oxley Act and what does it require? Why is the normal chain of command inappropriate here? What specific whistleblower protections does Jordan have?',
+  },
+  {
+    id:4,agencyId:'eeoc',category:'Sexual Harassment / Employee Rights',urgency:'CRITICAL',urgencyColor:'#B71C1C',urgencyBg:'#FFEBEE',
+    title:'The Uncomfortable Manager',setting:'Summit Hospitality Group — Hotel Operations',
+    characters:[{emoji:'👩',name:'Priya Nair',role:'Front Desk Supervisor — 2 years'},{emoji:'👨‍💼',name:'Manager Collins',role:'General Manager — 11 years'},{emoji:'⚖️',name:'You',role:'HR Compliance Officer'}],
+    narrative:'Priya Nair comes to your HR office. Over four months, General Manager Collins has made repeated comments about her appearance at staff meetings, called her at home twice about non-urgent matters, and stood unusually close during meetings. She has asked him to stop twice verbally, but his behavior has not changed.\n\nPriya has started dreading work. She is unsure if this "counts" as harassment and fears that Collins — 11 years with the company — will find a way to get her fired if she reports it.',
+    quote:'"I don\'t know if what he\'s doing is actually illegal. I just know it makes me feel unsafe at work."',
+    keyFact:'🗓️ Ongoing 4 months — Priya has asked him to stop twice verbally',
+    actions:[
+      'Transfer Priya to a different department to remove her from the situation.',
+      'Informally speak to Collins and ask him to be more professional, without creating any documentation.',
+      'Tell Priya that since there was no physical contact it may not meet the legal definition and suggest she try to work it out directly.',
+      'Take a formal written statement, initiate a confidential investigation, place Collins on administrative leave during the investigation, and advise Priya of her rights.',
+    ],
+    correctActionIndex:3,
+    consequence:{
+      correct:{icon:'✅',title:'Hostile Work Environment Properly Addressed',text:'You correctly identified hostile work environment harassment under Title VII. It does not require physical contact — four months of unwanted behavior that Priya asked to stop twice meets the "severe or pervasive" standard. Placing Collins on leave during the investigation prevents retaliation while the process proceeds.'},
+      wrong:{icon:'❌',title:'EEOC Violation Created',text:'Option A transferring the victim is considered retaliation by the EEOC — the harasser, not the victim, should face consequences. Option B creates no paper trail and does not protect the company. Option C is factually wrong — physical contact is NOT required for hostile work environment harassment. All three options expose the company to severe liability.'},
+      law:'EEOC / Title VII — Hostile Work Environment: Sexual harassment includes creating a hostile environment through severe or pervasive conduct. Physical contact is NOT required. Employers who know and fail to act are liable. Transferring the victim instead of the harasser is retaliation.',lawColor:'#0D47A1',
+    },
+    placeholder:'What does "hostile work environment" mean under Title VII? Does physical contact need to occur? What are the employer\'s legal obligations once they become aware? Why is transferring Priya the wrong answer?',
+  },
+  {
+    id:5,agencyId:'ada',category:'Disability Accommodation',urgency:'URGENT',urgencyColor:'#4A148C',urgencyBg:'#F3E5F5',
+    title:'The Denied Accommodation',setting:'Vantage Analytics — Data Science Department',
+    characters:[{emoji:'👨‍💻',name:'Sam Chen',role:'Senior Data Scientist — top performer, 4 years'},{emoji:'👩‍💼',name:'Director Walsh',role:'Department Director'},{emoji:'⚖️',name:'You',role:'HR Compliance Officer'}],
+    narrative:'Sam Chen, a top-performing senior data scientist, has disclosed a diagnosis of severe anxiety disorder and ADHD. His doctor recommends two accommodations: permission to work from home two days per week and permission to use noise-canceling headphones in the open office.\n\nDirector Walsh denied both requests: "Everyone works the same hours in the same space. If I make an exception for you, everyone will want one. Besides, your performance reviews are excellent — you seem to be managing fine."',
+    quote:'"My doctor says I need these accommodations. My work is excellent. But my manager says no because it would be unfair to others."',
+    keyFact:'📈 Sam\'s last three performance reviews: Exceeds Expectations in all categories',
+    actions:[
+      'Offer Sam a leave of absence instead of the accommodations he requested.',
+      'Support Walsh\'s decision — consistent policies across the team are important.',
+      'Tell Sam that because his performance is excellent, the accommodations clearly are not necessary.',
+      'Inform Walsh the denial likely violates the ADA, initiate the required interactive process, and determine whether the accommodations constitute an undue hardship.',
+    ],
+    correctActionIndex:3,
+    consequence:{
+      correct:{icon:'✅',title:'ADA Interactive Process Initiated',text:'Walsh\'s denial likely violates the ADA. Employers must engage in an "interactive process" — they cannot simply say no. Walsh\'s argument that excellent performance means no accommodation is needed is legally backwards: good performance may be the result of coping strategies, not evidence that accommodation is unnecessary. Working from home two days and headphones are almost certainly not undue hardships for a data science role.'},
+      wrong:{icon:'❌',title:'ADA Violation Occurred',text:'Option A offering leave instead of the requested accommodation skips the required interactive process. Option B supporting Walsh creates direct ADA liability for the company. Option C misunderstands the law — excellent performance does not eliminate the right to accommodation. All three expose the company to an ADA complaint and potential lawsuit.'},
+      law:'ADA: Employers must provide reasonable accommodations for employees with disabilities unless it causes undue hardship. Employers must engage in an "interactive process." Consistent policy across teams is not a valid reason to deny accommodation.',lawColor:'#4A148C',
+    },
+    placeholder:'What does the ADA require regarding reasonable accommodation? What is the "interactive process"? Why is Walsh\'s "fairness to others" argument not a valid legal defense? What is an "undue hardship"?',
+  },
+  {
+    id:6,agencyId:'csr',category:'FTC / Corporate Social Responsibility',urgency:'HIGH',urgencyColor:'#1B5E20',urgencyBg:'#E8F5E9',
+    title:'The Misleading Claims',setting:'GreenLife Products — Marketing Department',
+    characters:[{emoji:'🌿',name:'Marketing Team',role:'Launched national campaign'},{emoji:'🏢',name:'EcoWave',role:'Competitor — filed FTC complaint'},{emoji:'⚖️',name:'You',role:'Ethics & Compliance Officer'}],
+    narrative:'GreenLife Products recently launched a campaign claiming their cleaning products are "100% natural," "completely biodegradable," and "zero environmental impact." Competitor EcoWave filed an FTC complaint alleging false claims.\n\nYour internal investigation finds: the products are 78% natural, biodegrade within 5 years (not "completely"), and manufacturing has documented carbon emissions. The marketing team\'s position: "Our products are still better than the competition — close enough."',
+    quote:'"Close enough isn\'t good enough when consumers are paying a premium based on specific environmental claims."',
+    keyFact:'🔍 FTC Green Guides prohibit unqualified environmental claims that cannot be substantiated',
+    actions:[
+      'Continue the campaign while legal prepares a defense — pulling it would look like an admission of guilt.',
+      'Immediately pull the misleading claims, cooperate fully with the FTC, correct all marketing materials with accurate qualified claims, and implement a review process.',
+      'Respond to the FTC that the claims are "substantially true" and ask them to consider the products\' overall environmental benefit.',
+      'Argue that competitors make similar claims and the industry standard supports the marketing language.',
+    ],
+    correctActionIndex:1,
+    consequence:{
+      correct:{icon:'✅',title:'FTC Compliance Restored',text:'The FTC Green Guides specifically prohibit unqualified environmental claims like "100% natural" unless fully substantiated. Consumers pay a premium for genuine eco-friendly products — false claims are illegal and violate corporate social responsibility obligations. Immediate correction and full FTC cooperation is the only legally sound response.'},
+      wrong:{icon:'❌',title:'FTC Deceptive Advertising Violation',text:'"Substantially true" is not the FTC standard. Continuing the campaign under investigation significantly increases liability. "Industry does it too" has never been an effective FTC defense. GreenLife now faces potential FTC consent orders and civil penalties up to $50,120 per violation per day.'},
+      law:'FTC Green Guides & Section 5: The FTC prohibits deceptive acts in commerce. Environmental claims must be accurate and not misleading. Unqualified terms like "100% natural" must be fully substantiated. CSR obligations also require honest communication with consumers.',lawColor:'#1B5E20',
+    },
+    placeholder:'What authority does the FTC have over advertising claims? What are the FTC Green Guides? How does this also relate to CSR? Why is "industry does it too" not a valid defense?',
+  },
+];
+
+// ── SHUFFLE UTILITY ──
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// Build shuffled display order for each scenario's actions, stored so we can check answers
+let shuffledActions={}; // scenarioIndex -> [{text, isCorrect, displayLetter}]
+function prepareShuffledActions(){
+  SCENARIOS.forEach((sc,idx)=>{
+    const items=sc.actions.map((text,i)=>({text,isCorrect:i===sc.correctActionIndex}));
+    const shuffled=shuffleArray(items);
+    shuffledActions[idx]=shuffled.map((item,i)=>({...item,displayLetter:String.fromCharCode(65+i)}));
+  });
+}
+prepareShuffledActions();
+
+// ── STATE ──
+let currentScenario=0;
+let selectedAgency=null;
+let selectedDisplayLetter=null;
+let decisions=[];
+let totalCorrect=0;
+
+// ── HELPERS ──
+function buildHeader(){
+  const el=document.getElementById('hscenarios');
+  if(!el)return;
+  el.innerHTML=SCENARIOS.map((s,i)=>{
+    const d=decisions[i];
+    const cls=d===undefined?(i===currentScenario?'active':''):(d.bothCorrect?'done':'wrong');
+    return`<div class="hsc ${cls}">
+      <div class="hsc-num">${d===undefined?(i===currentScenario?'→':i+1):(d.bothCorrect?'✓':'✗')}</div>
+      <div class="hsc-name">${s.category}</div>
+    </div>`;
+  }).join('');
+  const sv=document.getElementById('h-score');
+  if(sv)sv.textContent=totalCorrect+'/'+SCENARIOS.length;
+  const sc=document.getElementById('h-scenario');
+  if(sc)sc.textContent=currentScenario<SCENARIOS.length?'Scenario '+(currentScenario+1):'Complete';
+}
+
+function buildSidebar(){
+  const el=document.getElementById('sb-scorecard');
+  if(!el)return;
+  el.innerHTML=SCENARIOS.map((s,i)=>{
+    const d=decisions[i];
+    const isActive=i===currentScenario&&!d;
+    let cls='pending-s';
+    if(isActive)cls='active-s';
+    else if(d)cls=d.bothCorrect?'correct-s':'wrong-s';
+    return`<div class="sc-row ${cls}">
+      <div class="sc-dot" style="background:${d===undefined?'rgba(242,240,236,.2)':d.bothCorrect?'#4CAF50':'#EF5350'}"></div>
+      <span class="sc-scenario-name">${s.title}</span>
+      <span class="sc-status">${d===undefined?(isActive?'▶':'—'):(d.bothCorrect?'✓':'✗')}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── INTRO ──
+function renderIntro(){
+  document.getElementById('app').innerHTML=`
+  <div class="intro-screen">
+    <div class="intro-logo">⚖️</div>
+    <div class="intro-title">Ethics & Compliance Simulator</div>
+    <div class="intro-sub">You have been promoted to HR Compliance Officer. Six workplace situations are about to land on your desk. For each one, identify the correct law or agency — then choose the right course of action. Real legal consequences follow every decision.</div>
+    <div class="intro-card">
+      <div class="intro-card-title">📚 Laws & Agencies You Will Apply</div>
+      <div class="law-preview-grid">
+        ${AGENCIES.map(a=>`
+          <div class="law-preview-item">
+            <span class="law-preview-badge" style="background:${a.bg};color:${a.color}">${a.name}</span>
+            <div style="font-size:.76rem;font-weight:600">${a.full}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="intro-card">
+      <div class="intro-card-title">🎮 How It Works</div>
+      <div style="font-size:.83rem;color:var(--text-muted);line-height:1.7;display:flex;flex-direction:column;gap:.35rem">
+        <div>📋 Read each scenario carefully — every detail matters legally</div>
+        <div>⚖️ Step 1: Identify which law or agency applies (8 options, no descriptions shown)</div>
+        <div>🎯 Step 2: Choose the correct course of action (options are randomized every time)</div>
+        <div>✍️ Step 3: Explain your legal reasoning in writing</div>
+        <div>📊 See real legal consequences after each scenario, full AI review at the end</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:1rem;font-size:1rem;border-radius:var(--radius);margin-top:.5rem" onclick="startSim()">Begin as Compliance Officer →</button>
+  </div>`;
+}
+
+function startSim(){
+  prepareShuffledActions(); // re-shuffle on each new game
+  currentScenario=0;selectedAgency=null;selectedDisplayLetter=null;
+  decisions=[];totalCorrect=0;
+  renderScenario();
+}
+
+// ── RENDER SCENARIO ──
+function renderScenario(){
+  if(currentScenario>=SCENARIOS.length){renderFinalReport();return;}
+  const sc=SCENARIOS[currentScenario];
+  selectedAgency=null;selectedDisplayLetter=null;
+  const shuffled=shuffledActions[currentScenario];
+
+  document.getElementById('app').innerHTML=`
+  <header>
+    <div class="hbrand"><h1>Ethics & Compliance Simulator</h1><div class="sub">Business Management · Strand 7</div></div>
+    <div class="hscenarios" id="hscenarios"></div>
+    <div class="hright">
+      <div class="hstat"><div class="hstat-label">Score</div><div class="hstat-val" style="color:#81C784" id="h-score">0/${SCENARIOS.length}</div></div>
+      <div class="hstat"><div class="hstat-label">Current</div><div class="hstat-val" id="h-scenario">—</div></div>
+    </div>
+  </header>
+  <div class="layout">
+    <div class="sidebar">
+      <div><div class="sb-label">Your Role</div>
+        <div class="role-card"><div class="role-avatar">⚖️</div><div><div class="role-title">HR Compliance Officer</div><div class="role-company">Protecting employees & the company</div></div></div>
+      </div>
+      <div><div class="sb-label">Progress</div><div class="scorecard" id="sb-scorecard"></div></div>
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.85rem">
+        <div class="sb-label" style="margin-bottom:.5rem">Strategy Tip</div>
+        <div style="font-size:.68rem;color:rgba(242,240,236,.5);line-height:1.6">Read every detail carefully. The wrong actions often seem reasonable at first — but create new legal violations. Law references appear after you submit each scenario.</div>
+      </div>
+    </div>
+    <div class="main" id="scenario-main">
+      <div class="scenario-card">
+        <div class="sc-header">
+          <div class="sc-num-big" style="color:${sc.urgencyColor}">${sc.id}</div>
+          <div style="flex:1">
+            <div class="sc-category" style="color:${sc.urgencyColor}">${sc.category}</div>
+            <div class="sc-title">${sc.title}</div>
+            <div class="sc-setting">📍 ${sc.setting}</div>
+          </div>
+          <span class="urgency-badge" style="background:${sc.urgencyBg};color:${sc.urgencyColor}">${sc.urgency}</span>
+        </div>
+        <div class="characters">
+          ${sc.characters.map(c=>`<div class="character-tag"><span>${c.emoji}</span><span class="char-name">${c.name}</span><span class="char-role">— ${c.role}</span></div>`).join('')}
+        </div>
+        <div class="sc-body">
+          <div class="sc-body-label">The Situation</div>
+          <div class="sc-narrative">${sc.narrative.replace(/\n\n/g,'</p><p style="margin-top:.75rem">').replace(/^/,'<p>').replace(/$/,'</p>')}</div>
+          <div class="sc-quote" style="border-color:${sc.urgencyColor};background:${sc.urgencyBg};color:${sc.urgencyColor}">${sc.quote}</div>
+          <span class="key-fact">${sc.keyFact}</span>
+        </div>
+        <div class="decision-area">
+          <div class="decision-label">Step 1 — Which law or agency applies?</div>
+          <div class="agency-grid">
+            ${AGENCIES.map(a=>`
+              <div class="agency-opt" id="ag-${a.id}" onclick="selectAgency('${a.id}')">
+                <div class="agency-icon">${a.icon}</div>
+                <div class="agency-abbr">${a.name}</div>
+              </div>`).join('')}
+          </div>
+          <div class="decision-label" style="margin-top:1.25rem">Step 2 — What is the correct course of action?</div>
+          <div class="action-opts">
+            ${shuffled.map(item=>`
+              <div class="action-opt" id="act-${item.displayLetter}" onclick="selectAction('${item.displayLetter}')">
+                <div class="action-letter">${item.displayLetter}</div>
+                <div class="action-text">${item.text}</div>
+              </div>`).join('')}
+          </div>
+          <div>
+            <div class="reason-label">
+              <span>Step 3 — Explain your legal reasoning</span>
+              <span class="reason-hint">Name the specific law and explain why it applies</span>
+            </div>
+            <textarea id="reasoning" placeholder="${sc.placeholder}"></textarea>
+          </div>
+          <div class="btn-row">
+            ${currentScenario>0?'<button class="btn btn-outline" onclick="goBack()">← Previous</button>':''}
+            <button class="btn btn-primary" onclick="submitScenario()">Submit Decision →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  buildHeader();buildSidebar();
+}
+
+function selectAgency(id){
+  selectedAgency=id;
+  AGENCIES.forEach(a=>{
+    const el=document.getElementById('ag-'+a.id);
+    if(!el)return;
+    const sel=a.id===id;
+    el.classList.toggle('selected',sel);
+    el.style.borderColor=sel?a.color:'';
+    el.style.background=sel?a.bg:'';
+    el.querySelector('.agency-abbr').style.color=sel?a.color:'';
+  });
+}
+
+function selectAction(letter){
+  selectedDisplayLetter=letter;
+  document.querySelectorAll('.action-opt').forEach(el=>{
+    const lid=el.id.replace('act-','');
+    el.classList.toggle('selected',lid===letter);
+    const lEl=el.querySelector('.action-letter');
+    if(lEl){lEl.style.background=lid===letter?'var(--ink)':'';lEl.style.borderColor=lid===letter?'var(--ink)':'var(--text-muted)';lEl.style.color=lid===letter?'#F2F0EC':'var(--text-muted)';}
+  });
+}
+
+function submitScenario(){
+  const sc=SCENARIOS[currentScenario];
+  const reasoning=document.getElementById('reasoning')?.value.trim();
+  if(!selectedAgency){alert('Please select which law or agency applies.');return;}
+  if(!selectedDisplayLetter){alert('Please select a course of action.');return;}
+  if(!reasoning||reasoning.length<30){document.getElementById('reasoning').style.borderColor='var(--red)';alert('Please explain your legal reasoning before submitting.');return;}
+
+  const agencyCorrect=selectedAgency===sc.agencyId;
+  const shuffled=shuffledActions[currentScenario];
+  const chosenItem=shuffled.find(item=>item.displayLetter===selectedDisplayLetter);
+  const actionCorrect=chosenItem?.isCorrect||false;
+  const bothCorrect=agencyCorrect&&actionCorrect;
+
+  if(bothCorrect)totalCorrect++;
+
+  const correctItem=shuffled.find(item=>item.isCorrect);
+  decisions[currentScenario]={
+    agencyChosen:selectedAgency,agencyCorrect,
+    actionChosen:selectedDisplayLetter,actionCorrect,
+    actionText:chosenItem?.text||'',
+    correctActionText:correctItem?.text||'',
+    correctActionLetter:correctItem?.displayLetter||'?',
+    reasoning,bothCorrect,
+    scenarioTitle:sc.title,category:sc.category,
+    correctAgencyId:sc.agencyId,
+  };
+
+  buildHeader();buildSidebar();
+
+  const con=sc.consequence;
+  const isCorrect=bothCorrect;
+  const chosenAgency=AGENCIES.find(a=>a.id===selectedAgency);
+  const correctAgency=AGENCIES.find(a=>a.id===sc.agencyId);
+
+  const conHTML=`
+  <div class="consequence">
+    <div class="con-header">
+      <div class="con-icon">${isCorrect?con.correct.icon:con.wrong.icon}</div>
+      <div class="con-title">${isCorrect?con.correct.title:con.wrong.title}</div>
+      <span class="con-correct" style="background:${isCorrect?'var(--greenl)':'var(--redl)'};color:${isCorrect?'var(--green)':'var(--red)'}">${isCorrect?'✓ Correct':'✗ Incorrect'}</span>
+    </div>
+    ${!agencyCorrect?`<div style="background:var(--redl);border-radius:var(--radius-sm);padding:.5rem .75rem;font-size:.78rem;color:var(--red);margin-bottom:.5rem">Agency: You chose <strong>${chosenAgency?.name}</strong> — Correct: <strong>${correctAgency?.name}</strong></div>`:''}
+    ${!actionCorrect?`<div style="background:var(--redl);border-radius:var(--radius-sm);padding:.5rem .75rem;font-size:.78rem;color:var(--red);margin-bottom:.5rem">Action: Correct answer was — "${correctItem?.text||''}"</div>`:''}
+    <div class="con-text">${isCorrect?con.correct.text:con.wrong.text}</div>
+    <div class="con-law-box" style="border-color:${con.lawColor};background:${con.lawColor}12">
+      <div class="con-law-title" style="color:${con.lawColor}">📋 The Law</div>${con.law}
+    </div>
+    <div class="law-reveal" style="margin-top:.85rem">
+      <div class="law-reveal-title">All Agencies — Reference</div>
+      ${AGENCIES.map(a=>`<div class="law-item-small"><span class="law-badge-small" style="background:${a.bg};color:${a.color}">${a.name}</span><span>${a.full}</span></div>`).join('')}
+    </div>
+    <div class="btn-row">
+      ${currentScenario<SCENARIOS.length-1
+        ?`<button class="btn btn-primary" onclick="nextScenario()">Next Scenario →</button>`
+        :`<button class="btn btn-primary" style="background:var(--green)" onclick="nextScenario()">See Final Report →</button>`}
+    </div>
+  </div>`;
+
+  const main=document.getElementById('scenario-main');
+  if(main){main.insertAdjacentHTML('beforeend',conHTML);document.querySelector('.consequence')?.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+function nextScenario(){currentScenario++;if(currentScenario>=SCENARIOS.length)renderFinalReport();else renderScenario();window.scrollTo({top:0,behavior:'smooth'});}
+function goBack(){if(currentScenario>0){if(decisions[currentScenario-1]?.bothCorrect)totalCorrect--;decisions.splice(currentScenario-1,1);currentScenario--;renderScenario();}}
+
+// ── FINAL REPORT ──
+async function renderFinalReport(){
+  buildHeader();
+  const total=SCENARIOS.length;
+  const correct=totalCorrect;
+  const agCorrect=decisions.filter(d=>d.agencyCorrect).length;
+  const actCorrect=decisions.filter(d=>d.actionCorrect).length;
+  let rating='',rc='',rb='';
+  if(correct>=5){rating='Outstanding Compliance Officer';rc='var(--green)';rb='var(--greenl)';}
+  else if(correct>=3){rating='Competent — Needs Development';rc='var(--amber)';rb='var(--amberl)';}
+  else{rating='Significant Training Required';rc='var(--red)';rb='var(--redl)';}
+
+  document.getElementById('app').innerHTML=`
+  <header>
+    <div class="hbrand"><h1>Ethics & Compliance Simulator</h1><div class="sub">Business Management · Strand 7</div></div>
+    <div class="hscenarios" id="hscenarios"></div>
+    <div class="hright">
+      <div class="hstat"><div class="hstat-label">Final Score</div><div class="hstat-val" style="color:#81C784" id="h-score">${correct}/${total}</div></div>
+      <div class="hstat"><div class="hstat-label">Status</div><div class="hstat-val" id="h-scenario">Complete</div></div>
+    </div>
+  </header>
+  <div class="layout">
+    <div class="sidebar">
+      <div><div class="sb-label">Final Scorecard</div><div class="scorecard" id="sb-scorecard"></div></div>
+      <div><div class="sb-label">Laws Covered</div>
+        <div style="display:flex;flex-direction:column;gap:.3rem">
+          ${AGENCIES.map(a=>`<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:.45rem .65rem"><div style="font-size:.7rem;font-weight:700;color:${a.color}">${a.icon} ${a.name}</div><div style="font-size:.6rem;color:rgba(242,240,236,.35);margin-top:.1rem">${a.full}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="final-report">
+        <div class="fr-header">
+          <div style="font-size:2rem">⚖️</div>
+          <div><div class="fr-title">Compliance Officer Report</div><div class="fr-sub">Business Management · Strand 7 · Ethics & Legal Regulations</div></div>
+          <div class="fr-score" style="color:${correct>=5?'#81C784':correct>=3?'#FFD54F':'#EF9A9A'}">${correct}/${total}</div>
+        </div>
+        <div class="fr-body">
+          <div style="text-align:center;padding:.85rem;border-radius:var(--radius-sm);margin-bottom:1.25rem;background:${rb}"><div style="font-family:var(--serif);font-size:1.1rem;font-weight:700;color:${rc}">${rating}</div></div>
+          <div class="verdict-grid">
+            <div class="verdict-box" style="background:var(--greenl);border-color:var(--greenm)"><div class="verdict-val" style="color:var(--green)">${correct}</div><div class="verdict-label" style="color:var(--green)">Fully Correct</div></div>
+            <div class="verdict-box" style="background:var(--bluel,#E3F2FD);border-color:rgba(13,71,161,.2)"><div class="verdict-val" style="color:#0D47A1">${agCorrect}</div><div class="verdict-label" style="color:#0D47A1">Right Agency</div></div>
+            <div class="verdict-box" style="background:var(--redl);border-color:var(--redm)"><div class="verdict-val" style="color:var(--red)">${total-correct}</div><div class="verdict-label" style="color:var(--red)">Incorrect</div></div>
+          </div>
+          <div class="scenario-review">
+            ${decisions.map((d,i)=>{
+              const sc=SCENARIOS[i];
+              const ca=AGENCIES.find(a=>a.id===d.agencyChosen);
+              const ra=AGENCIES.find(a=>a.id===d.correctAgencyId);
+              return`<div class="sr-row ${d.bothCorrect?'correct-row':'wrong-row'}">
+                <div class="sr-icon">${d.bothCorrect?'✅':'❌'}</div>
+                <div class="sr-content">
+                  <div class="sr-title">${sc.title}</div>
+                  <div class="sr-detail">Agency: ${d.agencyCorrect?'✓ '+ca?.name:'✗ You: '+ca?.name+' → Correct: '+ra?.name} · Action: ${d.actionCorrect?'✓ Correct choice':'✗ Incorrect choice'}</div>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="feedback-section">
+            <div class="fb-label">🏛️ Legal Compliance Advisor Review</div>
+            <div class="score-row" id="score-row"></div>
+            <div class="fb-text" id="fb-text"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:.75rem">
+        <button class="btn btn-outline" onclick="renderIntro()">🔄 Play Again</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
+      </div>
+    </div>
+  </div>`;
+  buildHeader();buildSidebar();
+  await getAIFeedback(correct,total,agCorrect,actCorrect);
+}
+
+async function getAIFeedback(correct,total,agCorrect,actCorrect){
+  const summary=decisions.map((d,i)=>{
+    const sc=SCENARIOS[i];
+    const ca=AGENCIES.find(a=>a.id===d.agencyChosen)?.name||d.agencyChosen;
+    const ra=AGENCIES.find(a=>a.id===d.correctAgencyId)?.name||d.correctAgencyId;
+    return`Scenario ${i+1} "${sc.title}" (${sc.category}):
+  Agency: ${ca} | Correct: ${ra} | ${d.agencyCorrect?'RIGHT':'WRONG'}
+  Action: ${d.actionCorrect?'CORRECT':'WRONG'} — chose: "${d.actionText.substring(0,80)}"
+  Reasoning: "${d.reasoning}"`;
+  }).join('\n\n');
+
+  const systemPrompt=`You are a demanding but fair legal compliance professor reviewing a high school student's ethics and compliance simulation for Utah Business Management Strand 7. Hold work to real professional standards.
+
+SCORING:
+- "Great" = correctly identified the law, chose the right action, AND explained specific legal principles accurately
+- "OK" = correct on identification but vague or incomplete legal reasoning
+- "Needs Work" = wrong law, wrong action, or reasoning showing fundamental misunderstanding
+
+Start with EXACTLY:
+SCORES: Agency Identification:[Great/OK/Needs Work] | Action Selection:[Great/OK/Needs Work] | Legal Reasoning:[Great/OK/Needs Work] | Employee Rights Knowledge:[Great/OK/Needs Work] | Overall Compliance Acumen:[Great/OK/Needs Work]
+
+Then 4 paragraphs of direct feedback referencing specific scenarios by name. Focus on:
+1. Which agencies they identified correctly vs incorrectly and why it matters
+2. Whether their action choices would actually protect employees and the company
+3. Quality of written legal reasoning — specific law names vs vague answers
+4. Which laws they understand vs need to study more
+
+End with a specific study challenge for the law they struggled with most. No markdown ** or ##.`;
+
+  const userPrompt=`Student score: ${correct}/${total} (Agency correct: ${agCorrect}, Action correct: ${actCorrect})\n\n${summary}`;
+
+  try{
+    const res=await fetch(WORKER_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1400,messages:[{role:'user',content:systemPrompt+'\n\n'+userPrompt}]})
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Could not generate feedback.';
+    const sm=text.match(/SCORES:(.+)/);
+    let main=text;
+    if(sm){
+      main=main.replace(sm[0],'').trim();
+      document.getElementById('score-row').innerHTML=sm[1].split('|').map(p=>{
+        const[lbl,rat]=p.split(':').map(s=>s.trim());
+        const cls=rat==='Great'?'great':rat==='OK'?'ok':'needs';
+        return`<span class="sc ${cls}">${lbl}: ${rat}</span>`;
+      }).join('');
+    }
+    document.getElementById('fb-text').textContent=main;
+  }catch(err){
+    document.getElementById('fb-text').textContent='Connection error: '+err.message+'\n\nPlease check your Cloudflare Worker is running and try again.';
+  }
+}
+
+renderIntro();
+</script>
+</body>
+</html>
