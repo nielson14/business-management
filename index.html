@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Management Simulations — Utah CTE</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F8F6F1;--surface:#FFFFFF;--surface2:#F2EFE9;--surface3:#E8E4DC;
+  --border:#DDD9D0;--text:#1A1714;--text-muted:#6A6560;--text-dim:#AAA69C;
+  --ink:#1A1714;
+  --blue:#1A5C9A;--bluel:#EBF3FB;
+  --green:#2A6A3C;--greenl:#EBF5EE;
+  --amber:#9A5A1A;--amberl:#FBF3E8;
+  --red:#9A1A2A;--redl:#FBE8EB;
+  --purple:#5A1A9A;--purplel:#F2EBFB;
+  --teal:#1A7A6A;--teall:#EBF8F5;
+  --gold:#B8860B;
+  --radius:14px;--radius-sm:8px;
+  --serif:'Fraunces',serif;--sans:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(248,246,241,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:60px;gap:2rem;}
+.nav-brand{font-family:var(--serif);font-size:1rem;font-weight:600;font-style:italic;color:var(--text);white-space:nowrap;}
+.nav-links{display:flex;gap:1.5rem;flex:1;}
+.nav-link{font-size:.8rem;font-weight:500;color:var(--text-muted);text-decoration:none;transition:color .15s;white-space:nowrap;}
+.nav-link:hover{color:var(--text);}
+.nav-cta{background:var(--ink);color:#fff;font-size:.8rem;font-weight:600;padding:.45rem 1.1rem;border-radius:var(--radius-sm);text-decoration:none;white-space:nowrap;transition:all .2s;}
+.nav-cta:hover{background:#333;transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{padding:5rem 2rem 4rem;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;}
+.hero-eyebrow{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:1rem;}
+.hero-title{font-family:var(--serif);font-size:3.2rem;font-weight:700;line-height:1.1;letter-spacing:-.5px;margin-bottom:1.25rem;}
+.hero-title em{font-style:italic;color:var(--blue);}
+.hero-desc{font-size:.95rem;color:var(--text-muted);line-height:1.8;margin-bottom:2rem;max-width:480px;}
+.hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;}
+.btn-primary{background:var(--ink);color:#fff;font-size:.88rem;font-weight:600;padding:.75rem 1.75rem;border-radius:var(--radius-sm);text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;}
+.btn-primary:hover{background:#333;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15);}
+.btn-outline{background:transparent;color:var(--text);font-size:.88rem;font-weight:600;padding:.75rem 1.75rem;border-radius:var(--radius-sm);text-decoration:none;border:1.5px solid var(--border);transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;}
+.btn-outline:hover{border-color:var(--text-muted);}
+
+/* HERO STATS */
+.hero-stats{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;display:flex;flex-direction:column;gap:1.25rem;}
+.hero-stat{display:flex;align-items:center;gap:1rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.hero-stat:last-child{padding-bottom:0;border-bottom:none;}
+.hs-icon{width:44px;height:44px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.hs-val{font-family:var(--serif);font-size:1.5rem;font-weight:700;line-height:1;}
+.hs-label{font-size:.72rem;color:var(--text-muted);margin-top:.15rem;}
+
+/* ── STRAND FILTER ── */
+.filter-section{max-width:1100px;margin:0 auto;padding:0 2rem 2rem;}
+.filter-label{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:.75rem;}
+.filter-chips{display:flex;gap:.5rem;flex-wrap:wrap;}
+.filter-chip{padding:.4rem .9rem;border:1.5px solid var(--border);border-radius:100px;font-size:.78rem;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text-muted);transition:all .15s;user-select:none;}
+.filter-chip:hover{border-color:var(--text-muted);color:var(--text);}
+.filter-chip.active{border-color:var(--ink);background:var(--ink);color:#fff;}
+
+/* ── SIM GRID ── */
+.sim-section{max-width:1100px;margin:0 auto;padding:0 2rem 5rem;}
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;}
+
+/* SIM CARD */
+.sim-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s;display:flex;flex-direction:column;text-decoration:none;color:var(--text);}
+.sim-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.1);border-color:var(--text-dim);}
+.sim-card.featured{grid-column:1/-1;flex-direction:row;}
+.sim-card-accent{height:4px;width:100%;flex-shrink:0;}
+.sim-card.featured .sim-card-accent{width:4px;height:auto;}
+.sim-card-body{padding:1.4rem;flex:1;display:flex;flex-direction:column;}
+.sim-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.75rem;}
+.sim-icon{font-size:1.75rem;line-height:1;}
+.sim-badges{display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-end;}
+.sim-badge{font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.18rem .5rem;border-radius:3px;}
+.sim-title{font-family:var(--serif);font-size:1.15rem;font-weight:700;font-style:italic;margin-bottom:.35rem;line-height:1.2;}
+.sim-card.featured .sim-title{font-size:1.5rem;}
+.sim-desc{font-size:.8rem;color:var(--text-muted);line-height:1.65;flex:1;margin-bottom:1rem;}
+.sim-card.featured .sim-desc{font-size:.85rem;}
+.sim-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.75rem;border-top:1px solid var(--border);}
+.sim-strands{font-size:.65rem;color:var(--text-dim);font-weight:500;}
+.sim-link{font-size:.78rem;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:.3rem;transition:gap .15s;}
+.sim-card:hover .sim-link{gap:.5rem;}
+.sim-concepts{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem;}
+.sim-concept{font-size:.65rem;padding:.18rem .55rem;border-radius:100px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);}
+.sim-card.hidden{display:none;}
+
+/* FEATURED CARD extras */
+.sim-card.featured .sim-card-body{padding:2rem;}
+.featured-left{flex:1;}
+.featured-right{display:flex;flex-direction:column;justify-content:center;gap:1rem;padding:2rem;border-left:1px solid var(--border);min-width:260px;background:var(--surface2);}
+.feat-stat{text-align:center;}
+.feat-stat-val{font-family:var(--serif);font-size:1.75rem;font-weight:700;line-height:1;margin-bottom:.2rem;}
+.feat-stat-label{font-size:.65rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);}
+
+/* ── TEACHER SECTION ── */
+.teacher-section{background:var(--ink);color:#F8F6F1;padding:5rem 2rem;}
+.teacher-inner{max-width:1100px;margin:0 auto;}
+.teacher-title{font-family:var(--serif);font-size:2rem;font-weight:700;font-style:italic;margin-bottom:.75rem;}
+.teacher-sub{font-size:.9rem;color:rgba(248,246,241,.55);line-height:1.65;max-width:560px;margin-bottom:3rem;}
+.teacher-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;}
+.teacher-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:1.25rem;}
+.tc-icon{font-size:1.5rem;margin-bottom:.65rem;}
+.tc-title{font-size:.88rem;font-weight:700;color:#F8F6F1;margin-bottom:.4rem;}
+.tc-text{font-size:.78rem;color:rgba(248,246,241,.5);line-height:1.6;}
+
+/* ── STRAND COVERAGE ── */
+.strand-section{max-width:1100px;margin:0 auto;padding:4rem 2rem;}
+.section-eyebrow{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:.65rem;}
+.section-title{font-family:var(--serif);font-size:2rem;font-weight:700;font-style:italic;margin-bottom:.5rem;}
+.section-sub{font-size:.88rem;color:var(--text-muted);line-height:1.65;max-width:500px;margin-bottom:2.5rem;}
+.strand-table{width:100%;border-collapse:collapse;}
+.strand-table th{text-align:left;padding:.65rem 1rem;background:var(--surface2);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);font-weight:600;border-bottom:2px solid var(--border);}
+.strand-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-size:.85rem;vertical-align:top;}
+.strand-table tr:last-child td{border-bottom:none;}
+.strand-table tr:hover td{background:var(--surface2);}
+.strand-num{font-weight:700;white-space:nowrap;}
+.strand-sims{display:flex;flex-wrap:wrap;gap:.35rem;}
+.strand-sim-tag{font-size:.65rem;font-weight:600;padding:.18rem .55rem;border-radius:3px;}
+.strand-weight{font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;}
+.weight-bar{height:6px;border-radius:3px;margin-top:.3rem;}
+
+/* ── FOOTER ── */
+footer{background:var(--surface2);border-top:1px solid var(--border);padding:2.5rem 2rem;text-align:center;}
+.footer-inner{max-width:1100px;margin:0 auto;}
+.footer-text{font-size:.8rem;color:var(--text-dim);line-height:1.65;}
+.footer-note{font-size:.72rem;color:var(--text-dim);margin-top:.5rem;}
+
+/* DIVIDER */
+.section-divider{max-width:1100px;margin:0 auto 0;padding:0 2rem;}
+.divider-line{height:1px;background:var(--border);}
+
+@media(max-width:768px){
+  .hero{grid-template-columns:1fr;gap:2rem;padding:3rem 1.25rem 2.5rem;}
+  .hero-stats{display:grid;grid-template-columns:1fr 1fr;}
+  .hero-stat{border-bottom:none;padding-bottom:0;}
+  .sim-card.featured{flex-direction:column;}
+  .featured-right{border-left:none;border-top:1px solid var(--border);}
+  nav{padding:0 1.25rem;}
+  .nav-links{display:none;}
+  .filter-section,.sim-section,.strand-section{padding-left:1.25rem;padding-right:1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Business Management Simulations</div>
+  <div class="nav-links">
+    <a class="nav-link" href="#simulations">Simulations</a>
+    <a class="nav-link" href="#strands">Strand Coverage</a>
+    <a class="nav-link" href="#teachers">For Teachers</a>
+  </div>
+  <a class="nav-cta" href="escape-room.html" target="_blank">🔐 Escape Room</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">Utah CTE · Business Management · Grades 10–12</div>
+    <h1 class="hero-title">Learn Business by<br><em>Running One</em></h1>
+    <p class="hero-desc">Eight AI-powered simulations covering every strand of Utah's Business Management curriculum. Students make real decisions, face real consequences, and get professional-grade feedback — no worksheets, no lectures.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#simulations">Browse Simulations ↓</a>
+      <a class="btn-outline" href="escape-room.html" target="_blank">🔐 Try the Escape Room</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hs-icon" style="background:#EBF3FB">🎮</div>
+      <div>
+        <div class="hs-val" style="color:var(--blue)">8</div>
+        <div class="hs-label">Interactive Simulations</div>
+      </div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-icon" style="background:#EBF5EE">📊</div>
+      <div>
+        <div class="hs-val" style="color:var(--green)">7</div>
+        <div class="hs-label">Strands Covered</div>
+      </div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-icon" style="background:#FBF3E8">🤖</div>
+      <div>
+        <div class="hs-val" style="color:var(--amber)">AI</div>
+        <div class="hs-label">Feedback on Every Submission</div>
+      </div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-icon" style="background:#F2EBFB">🔐</div>
+      <div>
+        <div class="hs-val" style="color:var(--purple)">50</div>
+        <div class="hs-label">Minute Final Escape Room</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILTER -->
+<section class="filter-section" id="simulations">
+  <div class="filter-label">Filter by Strand</div>
+  <div class="filter-chips">
+    <div class="filter-chip active" onclick="filterStrand('all',this)">All Simulations</div>
+    <div class="filter-chip" onclick="filterStrand('1',this)">Strand 1 — Business & Economy</div>
+    <div class="filter-chip" onclick="filterStrand('2',this)">Strand 2 — Decision Making</div>
+    <div class="filter-chip" onclick="filterStrand('3',this)">Strand 3 — Leadership</div>
+    <div class="filter-chip" onclick="filterStrand('4',this)">Strand 4 — HR Management</div>
+    <div class="filter-chip" onclick="filterStrand('5',this)">Strand 5 — Finance</div>
+    <div class="filter-chip" onclick="filterStrand('6',this)">Strand 6 — Business Plans</div>
+    <div class="filter-chip" onclick="filterStrand('7',this)">Strand 7 — Ethics</div>
+  </div>
+</section>
+
+<!-- SIM GRID -->
+<section class="sim-section">
+  <div class="sim-grid" id="sim-grid">
+
+    <!-- ESCAPE ROOM — FEATURED -->
+    <a class="sim-card featured" href="escape-room.html" target="_blank" data-strands="1,2,3,4,5,7">
+      <div class="sim-card-accent" style="background:linear-gradient(180deg,#4488FF,#00FF88,#AA44FF,#FFB800,#FF4466,#00CCFF)"></div>
+      <div class="sim-card-body featured-left">
+        <div class="sim-card-top">
+          <div class="sim-icon">🔐</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:#F2EBFB;color:#5A1A9A">Capstone</span>
+            <span class="sim-badge" style="background:#EBF3FB;color:#1A5C9A">All Strands</span>
+            <span class="sim-badge" style="background:#FBF3E8;color:#9A5A1A">50 Minutes</span>
+          </div>
+        </div>
+        <div class="sim-title">Apex Ventures Escape Room</div>
+        <p class="sim-desc">The ultimate final review. Students race against a 50-minute timer to crack 6 encrypted vaults — one for each major strand. Business cycles, DECIDE framework, leadership theories, employment law, financial statements, and ethics compliance. Wrong answers trigger time penalties. A class leaderboard tracks completion times across periods.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">Business Cycles</span>
+          <span class="sim-concept">DECIDE Framework</span>
+          <span class="sim-concept">Leadership Styles</span>
+          <span class="sim-concept">Employment Law</span>
+          <span class="sim-concept">Income Statement</span>
+          <span class="sim-concept">Break-Even Analysis</span>
+          <span class="sim-concept">OSHA · EEOC · ADA · FTC</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strands 1, 2, 3, 4, 5, 7 · Individual · 45–50 min</div>
+          <div class="sim-link">Launch Escape Room →</div>
+        </div>
+      </div>
+      <div class="featured-right">
+        <div class="feat-stat"><div class="feat-stat-val" style="color:#4488FF">6</div><div class="feat-stat-label">Encrypted Vaults</div></div>
+        <div class="feat-stat"><div class="feat-stat-val" style="color:#00FF88">50</div><div class="feat-stat-label">Minutes on Clock</div></div>
+        <div class="feat-stat"><div class="feat-stat-val" style="color:#FFB800">60s</div><div class="feat-stat-label">Wrong Answer Penalty</div></div>
+        <div class="feat-stat"><div class="feat-stat-val" style="color:#AA44FF">#1</div><div class="feat-stat-label">Class Leaderboard</div></div>
+      </div>
+    </a>
+
+    <!-- CARD: Business Economy -->
+    <a class="sim-card" href="business-economy-simulator.html" target="_blank" data-strands="1">
+      <div class="sim-card-accent" style="background:var(--blue)"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">📈</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--bluel);color:var(--blue)">Strand 1</span>
+          </div>
+        </div>
+        <div class="sim-title">Business Economy Simulator</div>
+        <p class="sim-desc">Students navigate a business through all four phases of the economic cycle — choosing an economic system that constrains their decisions, responding to random events, and managing price, production, and workers to maximize profit.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">Supply & Demand</span>
+          <span class="sim-concept">Business Cycles</span>
+          <span class="sim-concept">Economic Systems</span>
+          <span class="sim-concept">Profit & Loss</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strand 1 · Individual · 25–35 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: Lemonade Stand -->
+    <a class="sim-card" href="lemonade-stand.html" target="_blank" data-strands="1,5">
+      <div class="sim-card-accent" style="background:#FFD700"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">🍋</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--bluel);color:var(--blue)">Strand 1</span>
+            <span class="sim-badge" style="background:var(--redl);color:var(--red)">Strand 5</span>
+          </div>
+        </div>
+        <div class="sim-title">Lemonade Stand Game</div>
+        <p class="sim-desc">A 14-day business simulation where students buy supplies, set prices, choose locations, and manage marketing spend. Weather, competition, reputation, and random events make every day different. Ends with a full income statement.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">Revenue & Profit</span>
+          <span class="sim-concept">Price Elasticity</span>
+          <span class="sim-concept">Inventory Management</span>
+          <span class="sim-concept">Break-Even</span>
+          <span class="sim-concept">Income Statement</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strands 1, 5 · Individual · 30–40 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: DECIDE -->
+    <a class="sim-card" href="decide-simulator.html" target="_blank" data-strands="2">
+      <div class="sim-card-accent" style="background:var(--green)"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">⚖️</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--greenl);color:var(--green)">Strand 2</span>
+          </div>
+        </div>
+        <div class="sim-title">DECIDE Simulator</div>
+        <p class="sim-desc">Students work through the full DECIDE framework on one of four high-stakes business dilemmas — vendor switch, hire vs. promote, strategic pivot, or ethics call. Criteria set in Step 2 are carried forward and checked against the final decision in Step 5.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">DECIDE Framework</span>
+          <span class="sim-concept">Decision Criteria</span>
+          <span class="sim-concept">Pros & Cons Analysis</span>
+          <span class="sim-concept">Logical Consistency</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strand 2 · Individual · 30–40 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: Business Plan -->
+    <a class="sim-card" href="business-plan-builder.html" target="_blank" data-strands="2,5,6">
+      <div class="sim-card-accent" style="background:var(--amber)"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">📋</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--greenl);color:var(--green)">Strand 2</span>
+            <span class="sim-badge" style="background:var(--redl);color:var(--red)">Strand 5</span>
+            <span class="sim-badge" style="background:var(--amberl);color:var(--amber)">Strand 6</span>
+          </div>
+        </div>
+        <div class="sim-title">Business Plan Builder</div>
+        <p class="sim-desc">Students build a complete 6-section business plan for a chosen company scenario. Includes mission/vision statements, SWOT analysis, 4Ps marketing mix, a live break-even calculator, and a PEST analysis. AI feedback acts as a VC analyst evaluating fundability.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">SWOT Analysis</span>
+          <span class="sim-concept">Ownership Structures</span>
+          <span class="sim-concept">Mission & Vision</span>
+          <span class="sim-concept">Marketing Mix (4Ps)</span>
+          <span class="sim-concept">Financial Projections</span>
+          <span class="sim-concept">PEST Analysis</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strands 2, 5, 6 · Individual · 40–55 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: Leadership -->
+    <a class="sim-card" href="leadership-challenge-simulator.html" target="_blank" data-strands="3">
+      <div class="sim-card-accent" style="background:var(--purple)"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">👔</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--purplel);color:var(--purple)">Strand 3</span>
+          </div>
+        </div>
+        <div class="sim-title">Leadership Challenge Simulator</div>
+        <p class="sim-desc">Students face 5 escalating workplace crises as a new manager. For each, they select a leadership style (Autocratic, Democratic, Laissez-Faire), choose a motivation theory (Maslow, Theory X/Y/Z, Herzberg), and write a management response. Consequences reveal after each scenario.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">Leadership Styles</span>
+          <span class="sim-concept">Maslow's Hierarchy</span>
+          <span class="sim-concept">Theory X & Y</span>
+          <span class="sim-concept">Theory Z</span>
+          <span class="sim-concept">Herzberg's Two-Factor</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strand 3 · Individual · 35–45 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: HR -->
+    <a class="sim-card" href="hr-management-simulator.html" target="_blank" data-strands="4">
+      <div class="sim-card-accent" style="background:var(--teal)"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">🗂️</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--teall);color:var(--teal)">Strand 4</span>
+          </div>
+        </div>
+        <div class="sim-title">HR Management Simulator</div>
+        <p class="sim-desc">Students manage one employee through their entire lifecycle — writing a job posting, screening 4 candidates, selecting interview questions (some illegal), building a 30-day onboarding plan, conducting a performance appraisal, and making a legally defensible termination decision.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">Recruiting & Hiring</span>
+          <span class="sim-concept">EEOC Interview Law</span>
+          <span class="sim-concept">Onboarding</span>
+          <span class="sim-concept">Performance Appraisal</span>
+          <span class="sim-concept">PIP Process</span>
+          <span class="sim-concept">Termination Law</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strand 4 · Individual · 45–60 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: Financial Statements -->
+    <a class="sim-card" href="financial-statements-simulator.html" target="_blank" data-strands="5">
+      <div class="sim-card-accent" style="background:var(--red)"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">📊</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--redl);color:var(--red)">Strand 5</span>
+          </div>
+        </div>
+        <div class="sim-title">Financial Statements Simulator</div>
+        <p class="sim-desc">Students receive a raw data sheet of account balances and must build all three financial statements from scratch — Income Statement, Balance Sheet (must balance before advancing), and Cash Flow Statement — then answer 4 management analysis questions.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">Income Statement</span>
+          <span class="sim-concept">Balance Sheet</span>
+          <span class="sim-concept">Cash Flow Statement</span>
+          <span class="sim-concept">Financial Ratios</span>
+          <span class="sim-concept">ROI & Break-Even</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strand 5 · Individual · 40–55 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD: Ethics -->
+    <a class="sim-card" href="ethics-compliance-simulator.html" target="_blank" data-strands="7">
+      <div class="sim-card-accent" style="background:#8B6914"></div>
+      <div class="sim-card-body">
+        <div class="sim-card-top">
+          <div class="sim-icon">⚖️</div>
+          <div class="sim-badges">
+            <span class="sim-badge" style="background:var(--amberl);color:var(--amber)">Strand 7</span>
+          </div>
+        </div>
+        <div class="sim-title">Ethics & Compliance Simulator</div>
+        <p class="sim-desc">Students act as HR Compliance Officers facing 6 workplace scenarios. For each, they identify the applicable law or agency — without labels or hints — then choose the correct action and explain their legal reasoning. Actions are shuffled each play.</p>
+        <div class="sim-concepts">
+          <span class="sim-concept">OSHA</span>
+          <span class="sim-concept">EEOC / Title VII</span>
+          <span class="sim-concept">ADA</span>
+          <span class="sim-concept">FTC</span>
+          <span class="sim-concept">SOX Whistleblower</span>
+          <span class="sim-concept">Code of Ethics</span>
+        </div>
+        <div class="sim-footer">
+          <div class="sim-strands">Strand 7 · Individual · 30–40 min</div>
+          <div class="sim-link">Open →</div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider"><div class="divider-line"></div></div>
+
+<!-- STRAND COVERAGE -->
+<section class="strand-section" id="strands">
+  <div class="section-eyebrow">Curriculum Alignment</div>
+  <h2 class="section-title">Strand Coverage</h2>
+  <p class="section-sub">Every simulation is aligned to Utah CTE Business Management standards. Certification test weights shown for reference.</p>
+  <table class="strand-table">
+    <thead>
+      <tr>
+        <th style="width:160px">Strand</th>
+        <th>Topic</th>
+        <th>Simulations</th>
+        <th style="width:140px">Test Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${[
+        ['1','Business & Economy','Business Economy Simulator, Lemonade Stand','18%','var(--blue)'],
+        ['2','Decision Making & Planning','DECIDE Simulator, Business Plan Builder','26%','var(--green)'],
+        ['3','Leadership & Management','Leadership Challenge Simulator','15%','var(--purple)'],
+        ['4','Human Resources','HR Management Simulator','11%','var(--teal)'],
+        ['5','Financial Literacy','Lemonade Stand, Business Plan Builder, Financial Statements Simulator','17%','var(--red)'],
+        ['6','Entrepreneurship','Business Plan Builder','5%','var(--amber)'],
+        ['7','Ethics & Legal Regulations','Ethics & Compliance Simulator','9%','#8B6914'],
+      ].map(([num,topic,sims,weight,color])=>`
+        <tr>
+          <td><div class="strand-num">Strand ${num}</div></td>
+          <td>${topic}</td>
+          <td><div class="strand-sims">${sims.split(', ').map(s=>`<span class="strand-sim-tag" style="background:${color}15;color:${color}">${s}</span>`).join('')}</div></td>
+          <td>
+            <div class="strand-weight" style="color:${color}">${weight}</div>
+            <div class="weight-bar" style="background:${color}20;width:100%"><div style="background:${color};height:100%;border-radius:3px;width:${weight}"></div></div>
+          </td>
+        </tr>`).join('')}
+    </tbody>
+  </table>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider"><div class="divider-line"></div></div>
+
+<!-- TEACHER SECTION -->
+<section class="teacher-section" id="teachers">
+  <div class="teacher-inner">
+    <div class="teacher-title">For Teachers</div>
+    <p class="teacher-sub">Everything you need to know to use these simulations in your classroom — no setup required beyond sharing the link.</p>
+    <div class="teacher-grid">
+      <div class="teacher-card">
+        <div class="tc-icon">⚡</div>
+        <div class="tc-title">Zero Setup</div>
+        <div class="tc-text">Every simulation runs directly in the browser. No accounts, no logins, no software to install. Share the link and students start immediately.</div>
+      </div>
+      <div class="teacher-card">
+        <div class="tc-icon">🤖</div>
+        <div class="tc-title">AI Feedback Built In</div>
+        <div class="tc-text">Every simulation includes AI feedback that references each student's specific decisions by name — not generic encouragement. Students can't copy each other's feedback.</div>
+      </div>
+      <div class="teacher-card">
+        <div class="tc-icon">🏆</div>
+        <div class="tc-title">Escape Room Leaderboard</div>
+        <div class="tc-text">The escape room tracks class completion times in the browser. Use the "Clear Leaderboard" button between class periods. Students can compete across the day.</div>
+      </div>
+      <div class="teacher-card">
+        <div class="tc-icon">📝</div>
+        <div class="tc-title">Print to PDF</div>
+        <div class="tc-text">Every simulation has a Print / Save PDF button at the end. Students can submit their AI feedback report as a graded artifact directly from the browser.</div>
+      </div>
+      <div class="teacher-card">
+        <div class="tc-icon">🔀</div>
+        <div class="tc-title">Randomized Each Play</div>
+        <div class="tc-text">The Ethics simulator shuffles action orders each game. The escape room answer positions vary. Students can't share answers — they have to know the material.</div>
+      </div>
+      <div class="teacher-card">
+        <div class="tc-icon">📚</div>
+        <div class="tc-title">Recommended Sequence</div>
+        <div class="tc-text">Start with the Lemonade Stand (low stakes, fun). Build to Business Plan Builder and Financial Statements. Use the Escape Room as a final review before the cert exam.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-text">Business Management Simulation Suite · Utah CTE · Business Management · Grades 10–12</div>
+    <div class="footer-note">Built for classroom use. All simulations run locally in the browser — no student data is collected or stored externally.</div>
+  </div>
+</footer>
+
+<script>
+function filterStrand(strand, chipEl){
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  chipEl.classList.add('active');
+  document.querySelectorAll('.sim-card').forEach(card=>{
+    if(strand==='all'){
+      card.classList.remove('hidden');
+      return;
+    }
+    const strands = card.dataset.strands?.split(',') || [];
+    card.classList.toggle('hidden', !strands.includes(strand));
+  });
+}
+</script>
+</body>
+</html>
