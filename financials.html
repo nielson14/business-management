@@ -3,198 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Financial Statements Simulator – Business Management</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Ethics & Compliance Simulator – Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#F0EEE8;--surface:#FFFFFF;--surface2:#F5F3EE;--surface3:#EAE8E2;
-  --border:#D8D4CC;--text:#1A1916;--text-muted:#6A6560;--text-dim:#AAA89E;
-  --ink:#1A1916;
-  --green:#1B5E20;--greenl:#E8F5E9;--greenm:rgba(27,94,32,.2);
-  --red:#B71C1C;--redl:#FFEBEE;--redm:rgba(183,28,28,.2);
-  --blue:#0D47A1;--bluel:#E3F2FD;--bluem:rgba(13,71,161,.2);
+  --bg:#F2F0EC;--surface:#FFFFFF;--surface2:#EDEAE4;--surface3:#E4E0D8;
+  --border:#D4D0C8;--text:#1C1A16;--text-muted:#6C6860;--text-dim:#ACA89E;
+  --ink:#1C1A16;
+  --osha:#B71C1C;--oshal:#FFEBEE;
+  --eeoc:#0D47A1;--eeoal:#E3F2FD;
+  --ftc:#1B5E20;--ftcl:#E8F5E9;
+  --ada:#4A148C;--adal:#F3E5F5;
+  --ethics:#E65100;--ethicsl:#FFF3E0;
+  --hr:#004D40;--hrl:#E0F2F1;
+  --green:#2E7D32;--greenl:#E8F5E9;--greenm:rgba(46,125,50,.2);
+  --red:#C62828;--redl:#FFEBEE;--redm:rgba(198,40,40,.2);
   --amber:#E65100;--amberl:#FFF3E0;--amberm:rgba(230,81,0,.2);
-  --purple:#4A148C;--purplel:#F3E5F5;--purplem:rgba(74,20,140,.2);
-  --teal:#004D40;--teall:#E0F2F1;
-  --radius:10px;--radius-sm:6px;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  --radius:12px;--radius-sm:7px;
+  --serif:'Lora',serif;--sans:'DM Sans',sans-serif;
 }
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
 
 /* HEADER */
-header{background:var(--ink);color:#F0EEE8;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--green);}
+header{background:var(--ink);color:#F2F0EC;padding:0;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;}
 .hbrand{padding:1rem 1.75rem;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;flex-shrink:0;}
-.hbrand h1{font-family:var(--mono);font-size:1rem;font-weight:700;color:#F0EEE8;}
-.hbrand .sub{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,238,232,.35);margin-top:.25rem;}
-.hphases{display:flex;flex:1;}
-.hphase{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.6rem .5rem;border-right:1px solid rgba(255,255,255,.06);font-size:.65rem;color:rgba(240,238,232,.3);cursor:default;transition:all .2s;gap:.15rem;}
-.hphase.active{background:rgba(255,255,255,.06);color:#F0EEE8;}
-.hphase.done{color:rgba(100,200,120,.7);}
-.hphase-icon{font-size:1.1rem;}
-.hphase-name{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;}
+.hbrand h1{font-family:var(--serif);font-size:1.2rem;font-weight:700;color:#F2F0EC;letter-spacing:-.2px;}
+.hbrand .sub{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,240,236,.35);margin-top:.25rem;}
+.hscenarios{display:flex;flex:1;overflow:hidden;}
+.hsc{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.5rem .4rem;border-right:1px solid rgba(255,255,255,.06);font-size:.58rem;color:rgba(242,240,236,.25);cursor:default;transition:all .2s;gap:.15rem;min-width:0;}
+.hsc.active{background:rgba(255,255,255,.07);color:#F2F0EC;}
+.hsc.done{color:rgba(100,200,120,.7);}
+.hsc.wrong{color:rgba(239,154,154,.7);}
+.hsc-num{font-size:.65rem;font-weight:700;}
+.hsc-name{font-size:.55rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;}
 .hright{padding:.75rem 1.5rem;border-left:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:1.25rem;flex-shrink:0;}
-.hstat-label{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3);}
-.hstat-val{font-family:var(--mono);font-size:.9rem;font-weight:700;color:#FFD54F;}
+.hstat{text-align:center;}
+.hstat-label{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,240,236,.3);}
+.hstat-val{font-family:var(--serif);font-size:.95rem;font-weight:700;}
 
 /* LAYOUT */
-.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 65px);}
-.sidebar{background:var(--ink);color:#F0EEE8;padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;}
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px);}
+.sidebar{background:var(--ink);color:#F2F0EC;padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;}
 .main{padding:1.75rem;overflow-y:auto;}
-.sb-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,238,232,.25);margin-bottom:.65rem;}
+.sb-label{font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(242,240,236,.25);margin-bottom:.65rem;}
 
-/* SIDEBAR */
-.company-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.9rem;}
-.company-name{font-family:var(--mono);font-size:.9rem;font-weight:700;color:#F0EEE8;margin-bottom:.2rem;}
-.company-type{font-size:.65rem;color:rgba(240,238,232,.4);}
-.stmt-progress{display:flex;flex-direction:column;gap:.4rem;}
-.sp-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border-radius:var(--radius-sm);border:1px solid transparent;transition:all .2s;}
-.sp-row.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);}
-.sp-row.done{opacity:.55;}
-.sp-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.sp-name{font-family:var(--mono);font-size:.72rem;color:rgba(240,238,232,.4);transition:color .2s;}
-.sp-row.active .sp-name{color:#F0EEE8;}
-.sp-check{margin-left:auto;font-size:.7rem;color:rgba(100,200,120,.8);}
-.formula-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.75rem;}
-.formula-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3);margin-bottom:.5rem;}
-.formula-line{font-family:var(--mono);font-size:.68rem;color:rgba(240,238,232,.6);line-height:1.7;}
-.formula-line.hl{color:#FFD54F;}
-.key-numbers{display:flex;flex-direction:column;gap:.4rem;}
-.kn-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:.5rem .65rem;display:flex;justify-content:space-between;align-items:center;}
-.kn-label{font-size:.62rem;color:rgba(240,238,232,.4);}
-.kn-val{font-family:var(--mono);font-size:.78rem;font-weight:600;}
+/* COMPLIANCE SCORECARD */
+.scorecard{display:flex;flex-direction:column;gap:.35rem;}
+.sc-row{display:flex;align-items:center;gap:.65rem;padding:.5rem .65rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.06);}
+.sc-row.correct{background:rgba(46,125,50,.15);border-color:rgba(46,125,50,.3);}
+.sc-row.wrong{background:rgba(198,40,40,.15);border-color:rgba(198,40,40,.3);}
+.sc-row.pending{background:rgba(255,255,255,.03);}
+.sc-badge{font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:2px;letter-spacing:.04em;flex-shrink:0;}
+.sc-scenario{font-size:.68rem;color:rgba(242,240,236,.5);}
+.sc-row.correct .sc-scenario{color:rgba(100,200,120,.8);}
+.sc-row.wrong .sc-scenario{color:rgba(239,154,154,.7);}
+.sc-result{margin-left:auto;font-size:.7rem;}
 
-/* DATA SHEET — the source of truth students work from */
-.data-sheet{background:var(--surface);border:2px solid var(--blue);border-radius:var(--radius);margin-bottom:1.5rem;overflow:hidden;}
-.ds-header{background:var(--bluel);padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.65rem;}
-.ds-icon{font-size:1.25rem;}
-.ds-title{font-weight:700;font-size:.9rem;color:var(--blue);}
-.ds-subtitle{font-size:.73rem;color:var(--text-muted);}
-.ds-body{padding:1.1rem 1.25rem;}
-.ds-intro{font-size:.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:1rem;}
-.ds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.4rem;}
-.ds-item{display:flex;justify-content:space-between;align-items:center;padding:.4rem .65rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.8rem;}
-.ds-item-name{color:var(--text-muted);}
-.ds-item-val{font-family:var(--mono);font-weight:700;font-size:.78rem;color:var(--text);}
-.ds-item.used{opacity:.4;}
-.ds-note{font-size:.72rem;color:var(--blue);margin-top:.75rem;font-style:italic;}
+/* LAW REFERENCE */
+.law-ref{display:flex;flex-direction:column;gap:.35rem;}
+.law-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:.55rem .7rem;}
+.law-name{font-size:.72rem;font-weight:700;margin-bottom:.15rem;}
+.law-desc{font-size:.6rem;color:rgba(242,240,236,.4);line-height:1.35;}
 
-/* PHASE HEADER */
-.phase-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:1rem;}
-.ph-num{font-family:var(--mono);font-size:3rem;font-weight:700;line-height:1;flex-shrink:0;width:55px;}
-.ph-title{font-size:1.4rem;font-weight:700;margin-bottom:.3rem;letter-spacing:-.3px;}
-.ph-sub{font-size:.8rem;color:var(--text-muted);line-height:1.6;max-width:500px;}
-.ph-badge{font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .6rem;border-radius:2px;margin-left:auto;flex-shrink:0;}
+/* ROLE CARD */
+.role-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.85rem;display:flex;align-items:center;gap:.75rem;}
+.role-avatar{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.role-title{font-size:.82rem;font-weight:600;color:#F2F0EC;}
+.role-company{font-size:.62rem;color:rgba(242,240,236,.4);}
 
-/* FINANCIAL TABLE */
-.fin-table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;}
-.ftc-header{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);}
-.ftc-title{font-family:var(--mono);font-size:.82rem;font-weight:700;}
-.ftc-subtitle{font-size:.72rem;color:var(--text-muted);}
-.fin-table{width:100%;border-collapse:collapse;}
-.fin-table th{text-align:left;padding:.55rem 1rem;background:var(--surface2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);}
-.fin-table td{padding:.5rem 1rem;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle;}
-.fin-table td.amount{font-family:var(--mono);font-size:.82rem;text-align:right;width:160px;}
-.fin-table td.amount input{font-family:var(--mono);font-size:.82rem;text-align:right;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.35rem .6rem;width:130px;background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;}
-.fin-table td.amount input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(13,71,161,.1);}
-.fin-table td.amount input.correct{border-color:var(--green);background:var(--greenl);}
-.fin-table td.amount input.incorrect{border-color:var(--red);background:var(--redl);}
-.fin-table tr.section-header td{background:var(--surface2);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:.4rem 1rem;}
-.fin-table tr.subtotal td{background:var(--surface2);font-weight:700;border-top:2px solid var(--border);}
-.fin-table tr.subtotal td.calc{font-family:var(--mono);color:var(--blue);}
-.fin-table tr.total-row td{background:var(--ink);color:#F0EEE8;font-weight:700;font-size:.88rem;}
-.fin-table tr.total-row td.calc{font-family:var(--mono);}
-.fin-table tr.gp-row td{background:var(--greenl);color:var(--green);font-weight:700;border-top:2px solid var(--border);}
-.fin-table tr.gp-row.neg td{background:var(--redl);color:var(--red);}
-.fin-table tr.ni-row td{background:var(--ink);color:#F0EEE8;font-weight:700;font-size:.9rem;}
-.item-name{display:flex;align-items:center;gap:.5rem;}
-.tip{cursor:help;font-size:.75rem;color:var(--text-dim);position:relative;display:inline-block;}
-.tip:hover::after{content:attr(data-tip);position:absolute;left:100%;top:50%;transform:translateY(-50%);background:var(--ink);color:#F0EEE8;font-size:.68rem;padding:.4rem .7rem;border-radius:var(--radius-sm);white-space:nowrap;margin-left:.4rem;z-index:20;max-width:240px;white-space:normal;line-height:1.4;pointer-events:none;}
+/* MAIN CONTENT */
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sc-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:1rem;}
+.sc-num-big{font-family:var(--serif);font-size:3rem;font-weight:700;line-height:1;flex-shrink:0;width:52px;}
+.sc-title-area{}
+.sc-category{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:.35rem;}
+.sc-title{font-family:var(--serif);font-size:1.45rem;font-weight:700;line-height:1.2;margin-bottom:.35rem;}
+.sc-setting{font-size:.78rem;color:var(--text-muted);line-height:1.5;}
+.sc-badge-right{margin-left:auto;flex-shrink:0;}
+.urgency-badge{font-size:.65rem;font-weight:700;padding:.28rem .75rem;border-radius:100px;letter-spacing:.04em;}
 
-/* BALANCE CHECKER */
-.balance-check{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
-.bc-item{text-align:center;}
-.bc-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.25rem;}
-.bc-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;}
-.bc-op{font-family:var(--mono);font-size:1.4rem;color:var(--text-muted);}
-.bc-status{font-size:.78rem;font-weight:700;padding:.35rem .85rem;border-radius:100px;}
-.bc-status.balanced{background:var(--greenl);color:var(--green);}
-.bc-status.unbalanced{background:var(--redl);color:var(--red);}
+/* CHARACTERS */
+.characters{padding:.85rem 1.5rem;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;gap:.75rem;flex-wrap:wrap;}
+.character-tag{display:flex;align-items:center;gap:.45rem;padding:.35rem .7rem;background:var(--surface);border:1px solid var(--border);border-radius:100px;font-size:.72rem;}
+.char-emoji{font-size:.88rem;}
+.char-name{font-weight:600;}
+.char-role{color:var(--text-muted);}
 
-/* ANALYSIS */
-.analysis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.25rem;}
-.aq{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
-.aq:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
-.aq-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem;}
-.aq-q{font-size:.9rem;font-weight:600;margin-bottom:.5rem;line-height:1.4;}
-.aq-data{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);background:var(--surface2);padding:.5rem .75rem;border-radius:var(--radius-sm);margin-bottom:.5rem;line-height:1.6;}
-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .85rem;font-family:var(--sans);font-size:.84rem;color:var(--text);resize:vertical;min-height:85px;outline:none;line-height:1.6;transition:border-color .15s;}
-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(13,71,161,.1);}
+/* SCENARIO BODY */
+.sc-body{padding:1.5rem;border-bottom:1px solid var(--border);}
+.sc-body-label{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--text-dim);font-weight:600;margin-bottom:.65rem;}
+.sc-narrative{font-size:.88rem;line-height:1.75;color:var(--text);}
+.sc-quote{margin:1rem 0;padding:.85rem 1.1rem;border-left:3px solid;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--serif);font-size:.95rem;font-style:italic;}
+.key-fact{display:inline-flex;align-items:center;gap:.4rem;margin-top:.75rem;padding:.35rem .75rem;background:var(--surface2);border-radius:100px;font-size:.75rem;color:var(--text-muted);font-weight:500;}
+
+/* DECISION AREA */
+.decision-area{padding:1.5rem;}
+.decision-label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.85rem;}
+
+/* AGENCY SELECTOR */
+.agency-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1.25rem;}
+.agency-opt{padding:.65rem .5rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;text-align:center;}
+.agency-opt:hover{border-color:var(--text-muted);}
+.agency-opt.selected{border-width:2px;}
+.agency-icon{font-size:1.2rem;margin-bottom:.25rem;}
+.agency-name{font-size:.72rem;font-weight:700;margin-bottom:.1rem;}
+.agency-full{font-size:.58rem;color:var(--text-muted);line-height:1.3;}
+
+/* ACTION SELECTOR */
+.action-opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.25rem;}
+.action-opt{display:flex;align-items:flex-start;gap:.75rem;padding:.85rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.action-opt:hover{border-color:var(--text-muted);}
+.action-opt.selected{border-color:var(--ink);background:var(--surface2);}
+.action-letter{width:26px;height:26px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:.05rem;color:var(--text-muted);transition:all .15s;}
+.action-opt.selected .action-letter{background:var(--ink);border-color:var(--ink);color:#F2F0EC;}
+.action-text{flex:1;font-size:.85rem;line-height:1.5;}
+
+/* REASONING */
+.reasoning-area{}
+.reason-label{font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem;display:flex;justify-content:space-between;align-items:baseline;}
+.reason-hint{font-size:.62rem;color:var(--text-dim);font-weight:400;letter-spacing:0;text-transform:none;}
+textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.75rem .9rem;font-family:var(--sans);font-size:.85rem;color:var(--text);resize:vertical;min-height:85px;outline:none;line-height:1.65;transition:border-color .15s;}
+textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(28,26,22,.08);}
 textarea::placeholder{color:var(--text-dim);}
 
-/* RESULT REVEAL */
-.result-row{display:flex;align-items:center;gap:.65rem;padding:.5rem .75rem;border-radius:var(--radius-sm);margin-bottom:.35rem;font-size:.82rem;}
-.result-row.correct-row{background:var(--greenl);border:1px solid var(--greenm);}
-.result-row.wrong-row{background:var(--redl);border:1px solid var(--redm);}
-.result-icon{font-size:1rem;flex-shrink:0;}
-.result-item{flex:1;}
-.result-yours{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);}
-.result-correct{font-family:var(--mono);font-size:.75rem;font-weight:700;}
+/* CONSEQUENCE CARD */
+.consequence{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.25rem;animation:fadeUp .3s ease;}
+.con-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem;}
+.con-icon{font-size:1.4rem;}
+.con-title{font-weight:700;font-size:.95rem;}
+.con-correct{font-size:.7rem;padding:.22rem .65rem;border-radius:100px;margin-left:auto;font-weight:700;}
+.con-text{font-size:.84rem;line-height:1.7;color:var(--text-muted);margin-bottom:.85rem;}
+.con-law-box{padding:.75rem 1rem;border-radius:var(--radius-sm);font-size:.8rem;line-height:1.55;border-left:4px solid;}
+.con-law-title{font-weight:700;margin-bottom:.25rem;}
 
-/* SCENARIO SELECTOR */
-.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
-.sc-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;transition:all .2s;}
-.sc-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08);}
-.sc-card.selected{border-color:var(--blue);background:var(--bluel);}
-.sc-emoji{font-size:2rem;margin-bottom:.5rem;}
-.sc-name{font-weight:700;font-size:.95rem;margin-bottom:.25rem;}
-.sc-type{font-family:var(--mono);font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
-.sc-desc{font-size:.75rem;color:var(--text-muted);line-height:1.45;}
-.sc-health{display:flex;gap:.4rem;margin-top:.75rem;flex-wrap:wrap;}
-.sc-pill{font-size:.62rem;font-weight:600;padding:.15rem .5rem;border-radius:100px;}
+/* INTRO SCREEN */
+.intro-screen{max-width:680px;margin:2.5rem auto;padding:2rem;}
+.intro-logo{text-align:center;font-size:3.5rem;margin-bottom:1rem;}
+.intro-title{font-family:var(--serif);font-size:2rem;font-weight:700;text-align:center;margin-bottom:.5rem;letter-spacing:-.5px;}
+.intro-sub{text-align:center;color:var(--text-muted);line-height:1.65;margin-bottom:1.75rem;font-size:.9rem;}
+.intro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;}
+.intro-card-title{font-family:var(--serif);font-size:.95rem;font-weight:700;margin-bottom:.65rem;display:flex;align-items:center;gap:.5rem;}
+.law-preview-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;}
+.law-preview-item{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .65rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.78rem;}
+.law-preview-badge{font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:3px;flex-shrink:0;margin-top:.05rem;}
+
+/* FINAL REPORT */
+.final-report{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;}
+.fr-header{background:var(--ink);color:#F2F0EC;padding:1.5rem;display:flex;align-items:center;gap:1rem;}
+.fr-title{font-family:var(--serif);font-size:1.4rem;font-weight:700;}
+.fr-sub{font-size:.65rem;color:rgba(242,240,236,.4);letter-spacing:.08em;text-transform:uppercase;}
+.fr-score{font-family:var(--serif);font-size:2.5rem;font-weight:700;margin-left:auto;}
+.fr-body{padding:1.5rem;}
+.verdict-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.verdict-box{text-align:center;padding:1rem;border-radius:var(--radius-sm);border:1.5px solid transparent;}
+.verdict-val{font-family:var(--serif);font-size:1.8rem;font-weight:700;margin-bottom:.2rem;}
+.verdict-label{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.scenario-review{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.5rem;}
+.sr-row{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border-radius:var(--radius-sm);font-size:.82rem;border:1px solid transparent;}
+.sr-row.correct-row{background:var(--greenl);border-color:var(--greenm);}
+.sr-row.wrong-row{background:var(--redl);border-color:var(--redm);}
+.sr-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem;}
+.sr-content{flex:1;}
+.sr-title{font-weight:700;margin-bottom:.2rem;}
+.sr-detail{font-size:.75rem;color:var(--text-muted);line-height:1.4;}
 
 /* FEEDBACK */
-.feedback-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.fb-header{background:var(--ink);color:#F0EEE8;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:.85rem;}
-.fb-icon{font-size:1.6rem;}
-.fb-title{font-family:var(--mono);font-size:.95rem;font-weight:700;}
-.fb-sub{font-family:var(--mono);font-size:.6rem;color:rgba(240,238,232,.4);letter-spacing:.08em;text-transform:uppercase;}
-.fb-body{padding:1.6rem;font-size:.87rem;line-height:1.85;color:var(--text);white-space:pre-wrap;min-height:80px;}
+.feedback-section{border-top:1px solid var(--border);padding-top:1.5rem;margin-top:.5rem;}
+.fb-label{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.85rem;}
 .score-row{display:flex;gap:.45rem;flex-wrap:wrap;margin-bottom:1.1rem;}
-.sc{font-size:.67rem;font-weight:700;padding:.27rem .75rem;border-radius:100px;font-family:var(--mono);}
+.sc{font-size:.67rem;font-weight:700;padding:.27rem .75rem;border-radius:100px;}
 .sc.great{background:var(--greenl);color:var(--green);border:1px solid var(--greenm);}
 .sc.ok{background:var(--amberl);color:var(--amber);border:1px solid var(--amberm);}
 .sc.needs{background:var(--redl);color:var(--red);border:1px solid var(--redm);}
+.fb-text{font-size:.87rem;line-height:1.85;color:var(--text);white-space:pre-wrap;}
 
-.typing-dot{display:inline-block;width:6px;height:6px;background:var(--blue);border-radius:50%;animation:blink 1.2s infinite;margin:0 2px;vertical-align:middle;}
+.typing-dot{display:inline-block;width:6px;height:6px;background:var(--ink);border-radius:50%;animation:blink 1.2s infinite;margin:0 2px;vertical-align:middle;}
 .typing-dot:nth-child(2){animation-delay:.2s;}
 .typing-dot:nth-child(3){animation-delay:.4s;}
 @keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
 
 /* BUTTONS */
-.btn{font-family:var(--sans);font-size:.86rem;font-weight:600;padding:.62rem 1.4rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .2s;}
-.btn-primary{background:var(--ink);color:#F0EEE8;}
+.btn{font-family:var(--sans);font-size:.86rem;font-weight:600;padding:.65rem 1.5rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--ink);color:#F2F0EC;}
 .btn-primary:hover{background:#333;transform:translateY(-1px);}
-.btn-primary:disabled{background:var(--border);color:var(--text-dim);cursor:not-allowed;transform:none;}
 .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
 .btn-outline:hover{border-color:var(--text-muted);}
-.btn-green{background:var(--green);color:#fff;}
-.btn-green:hover{background:#1B5E20;transform:translateY(-1px);}
-.btn-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-top:1.1rem;}
-.inst-box{padding:.8rem 1rem;border-radius:var(--radius-sm);font-size:.8rem;line-height:1.6;margin-bottom:1rem;border-left:3px solid;}
-.divider{height:1px;background:var(--border);margin:1.25rem 0;}
-
-/* RATIO CARD */
-.ratio-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.65rem;margin-bottom:1.25rem;}
-.ratio-card{border-radius:var(--radius-sm);padding:.75rem;text-align:center;border:1.5px solid transparent;}
-.ratio-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;margin-bottom:.25rem;}
-.ratio-label{font-size:.65rem;font-weight:700;margin-bottom:.15rem;}
-.ratio-desc{font-size:.58rem;opacity:.7;line-height:1.3;}
+.btn-row{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;margin-top:1.25rem;}
 
 @media(max-width:768px){
   .layout{grid-template-columns:1fr;}
   .sidebar{display:none;}
-  .scenario-grid,.ratio-grid{grid-template-columns:1fr 1fr;}
+  .agency-grid{grid-template-columns:repeat(2,1fr);}
+  .verdict-grid,.law-preview-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -203,1041 +205,587 @@ textarea::placeholder{color:var(--text-dim);}
 <script>
 const WORKER_URL="https://digitalmarketing.robert-nielson14.workers.dev";
 
+// ── AGENCIES ──
+const AGENCIES=[
+  {id:'osha',name:'OSHA',full:'Occupational Safety & Health Administration',icon:'⛑️',color:'#B71C1C',bg:'#FFEBEE',desc:'Workplace safety and health standards'},
+  {id:'eeoc',name:'EEOC',full:'Equal Employment Opportunity Commission',icon:'⚖️',color:'#0D47A1',bg:'#E3F2FD',desc:'Prevents discrimination in employment'},
+  {id:'ftc',name:'FTC',full:'Federal Trade Commission',icon:'🛡️',color:'#1B5E20',bg:'#E8F5E9',desc:'Prevents unfair business practices and fraud'},
+  {id:'ada',name:'ADA',full:'Americans with Disabilities Act',icon:'♿',color:'#4A148C',bg:'#F3E5F5',desc:'Protects rights of people with disabilities'},
+  {id:'flsa',name:'FLSA',full:'Fair Labor Standards Act',icon:'💰',color:'#004D40',bg:'#E0F2F1',desc:'Sets minimum wage, overtime, and child labor rules'},
+  {id:'hipaa',name:'HIPAA',full:'Health Insurance Portability & Accountability Act',icon:'🏥',color:'#1A237E',bg:'#E8EAF6',desc:'Protects medical information privacy'},
+  {id:'ethics',name:'Code of Ethics',full:'Company Code of Ethics / Whistleblower',icon:'📋',color:'#E65100',bg:'#FFF3E0',desc:'Internal ethical standards and reporting obligations'},
+  {id:'csr',name:'CSR',full:'Corporate Social Responsibility',icon:'🌱',color:'#33691E',bg:'#F1F8E9',desc:'Company obligations to society and environment'},
+];
+
 // ── SCENARIOS ──
 const SCENARIOS=[
   {
-    id:'healthy',emoji:'🏪',name:'Meridian Retail Co.',type:'Retail / Healthy',
-    desc:'An established retail chain with steady sales and solid profitability. Good for learning the basics.',
-    health:[{label:'Profitable',c:'#1B5E20',bg:'#E8F5E9'},{label:'Stable',c:'#0D47A1',bg:'#E3F2FD'},{label:'Low Debt',c:'#4A148C',bg:'#F3E5F5'}],
-    year:'Fiscal Year 2024',
-    // Income data — students see these as a raw list and must place them correctly
-    incomeItems:[
-      {name:'Sales Revenue',key:'salesRevenue',val:850000,section:'revenue',tip:'Money earned from selling products'},
-      {name:'Service Revenue',key:'serviceRevenue',val:42000,section:'revenue',tip:'Money earned from services provided'},
-      {name:'Cost of Goods Sold (COGS)',key:'cogs',val:510000,section:'cogs',tip:'Direct costs to produce goods sold'},
-      {name:'Salaries & Wages',key:'salaries',val:98000,section:'opex',tip:'Employee compensation'},
-      {name:'Rent & Utilities',key:'rent',val:36000,section:'opex',tip:'Facility costs'},
-      {name:'Marketing & Advertising',key:'marketing',val:24000,section:'opex',tip:'Costs to promote the business'},
-      {name:'Depreciation',key:'depreciation',val:18000,section:'opex',tip:'Non-cash expense — spreading cost of assets over time'},
-      {name:'Interest Expense',key:'interest',val:8500,section:'nonop',tip:'Cost of borrowing — paid to lenders'},
-      {name:'Income Tax (21%)',key:'taxes',val:40852,section:'nonop',tip:'Corporate income tax on earnings before tax'},
+    id:1,
+    agencyId:'osha',
+    category:'Workplace Safety',
+    urgency:'HIGH',urgencyColor:'#B71C1C',urgencyBg:'#FFEBEE',
+    title:'The Broken Scaffold',
+    setting:'Apex Manufacturing — Warehouse & Production Floor',
+    characters:[
+      {emoji:'👷',name:'Marcus Rivera',role:'Warehouse worker — 3 years'},
+      {emoji:'👔',name:'Plant Manager Cho',role:'Your supervisor'},
+      {emoji:'⚖️',name:'You',role:'HR Compliance Officer'},
     ],
-    // Balance sheet — students see a raw trial balance list
-    balanceItems:[
-      {name:'Cash & Cash Equivalents',key:'cash',val:95000,section:'currentAsset',tip:'Money on hand and in bank accounts'},
-      {name:'Accounts Receivable',key:'ar',val:48000,section:'currentAsset',tip:'Money customers owe for goods already delivered'},
-      {name:'Inventory',key:'inventory',val:62000,section:'currentAsset',tip:'Goods available for sale — valued at cost'},
-      {name:'Prepaid Expenses',key:'prepaid',val:8000,section:'currentAsset',tip:'Expenses paid in advance — insurance, deposits'},
-      {name:'Property & Equipment (gross)',key:'ppe',val:280000,section:'fixedAsset',tip:'Buildings and equipment at original purchase price'},
-      {name:'Accumulated Depreciation',key:'accDeprec',val:-72000,section:'fixedAsset',tip:'Total depreciation taken since purchase — negative number'},
-      {name:'Intangible Assets',key:'intangibles',val:15000,section:'fixedAsset',tip:'Patents, trademarks, goodwill'},
-      {name:'Accounts Payable',key:'ap',val:38000,section:'currentLiab',tip:'Money owed to suppliers'},
-      {name:'Short-Term Debt',key:'stDebt',val:25000,section:'currentLiab',tip:'Loans due within 12 months'},
-      {name:'Accrued Expenses',key:'accrued',val:12000,section:'currentLiab',tip:'Expenses incurred but not yet paid'},
-      {name:'Long-Term Debt',key:'ltDebt',val:95000,section:'ltLiab',tip:'Loans due beyond 12 months'},
-      {name:'Deferred Revenue',key:'deferredRev',val:8000,section:'ltLiab',tip:'Revenue received but not yet earned'},
-      {name:'Common Stock / Paid-in Capital',key:'stock',val:150000,section:'equity',tip:'Money invested by owners or shareholders'},
-      {name:'Retained Earnings',key:'retained',val:208000,section:'equity',tip:'Accumulated profits kept in the business (prior years)'},
+    narrative:'Marcus Rivera, a warehouse worker at Apex Manufacturing, has filed a formal complaint with your HR department. He reports that the scaffolding on the production floor has a cracked support beam that maintenance identified two weeks ago. A repair order was submitted, but Plant Manager Cho told the crew to keep using it because "the order is in the system and we\'re behind on orders."\n\nToday, Marcus slipped on a wet floor near the scaffold. He wasn\'t injured, but the near-miss scared him. He is now telling you that if you don\'t fix this, he is going to report it externally.',
+    quote:'"I almost fell today. That scaffold should be shut down. If nobody fixes it in 48 hours, I\'m calling someone outside this company."',
+    keyFact:'⚠️ The repair request was filed 14 days ago and the scaffold is still in active use',
+    actions:[
+      {id:'A',text:'Shut down the scaffold immediately, document the hazard, complete the repair, and file an internal incident report. Assure Marcus his complaint is protected under federal law.',correct:true},
+      {id:'B',text:'Tell Marcus the repair order is already submitted and he should be patient — management is handling it.',correct:false},
+      {id:'C',text:'Escalate to Plant Manager Cho and let him decide whether to shut it down.',correct:false},
+      {id:'D',text:'Tell Marcus that if he files an external complaint he could face disciplinary action for going around internal channels.',correct:false},
     ],
-    // Cash flow items
-    cashFlowItems:[
-      {name:'Depreciation Add-back',key:'deprAddback',val:18000,section:'operating',tip:'Non-cash — added back to reconcile net income to cash'},
-      {name:'Change in Accounts Receivable',key:'arChange',val:-5000,section:'operating',tip:'Negative = AR increased, less cash collected than billed'},
-      {name:'Change in Inventory',key:'invChange',val:-8000,section:'operating',tip:'Negative = bought more inventory, uses cash'},
-      {name:'Change in Accounts Payable',key:'apChange',val:3000,section:'operating',tip:'Positive = AP increased, keeping cash longer by paying suppliers later'},
-      {name:'Capital Expenditures (CapEx)',key:'capex',val:-45000,section:'investing',tip:'Cash spent on property and equipment — negative outflow'},
-      {name:'Debt Repayment',key:'debtRepay',val:-15000,section:'financing',tip:'Cash paid to reduce loans — negative outflow'},
-      {name:'Dividends Paid',key:'dividends',val:-20000,section:'financing',tip:'Cash returned to shareholders — negative outflow'},
-    ],
-    beginningCash:95000,
+    correctAgency:'osha',
+    consequence:{
+      correct:{icon:'✅',title:'Correct — OSHA Violation Prevented',text:'You correctly identified this as an OSHA violation and acted immediately. OSHA requires employers to maintain a hazard-free workplace under the General Duty Clause. By shutting down the scaffold and documenting the hazard, you protected both Marcus and the company. Retaliating against an employee for reporting a safety concern is also illegal under OSHA — warning D was not only wrong, it was itself a violation.',color:'var(--green)',bg:'var(--greenl)'},
+      wrong:{icon:'❌',title:'Incorrect — OSHA Violation Occurred',text:'This situation required immediate corrective action under OSHA\'s General Duty Clause, which requires employers to provide a workplace free from recognized hazards. Options B and C both delay action on a known hazard. Option D constitutes illegal retaliation against an employee exercising their right to report a safety concern — this alone could result in an OSHA citation. The company now faces potential fines up to $15,625 per violation.',color:'var(--red)',bg:'var(--redl)'},
+      law:'OSHA — General Duty Clause: Employers must provide a workplace free from recognized hazards that are causing or likely to cause death or serious physical harm. Retaliating against employees who report safety concerns is a federal crime.',
+      lawColor:'#B71C1C',
+    },
+    placeholder:'Explain which law or regulation applies and why. What specific section or principle of OSHA is at stake here? Why are options B, C, and D problematic from a legal standpoint?',
   },
   {
-    id:'struggling',emoji:'⚠️',name:'Cascade Services LLC',type:'Service / Struggling',
-    desc:'High debt, thin margins, and a cash crisis. Tests whether students can identify financial warning signs.',
-    health:[{label:'Low Margin',c:'#B71C1C',bg:'#FFEBEE'},{label:'High Debt',c:'#E65100',bg:'#FFF3E0'},{label:'Cash Crisis',c:'#B71C1C',bg:'#FFEBEE'}],
-    year:'Fiscal Year 2024',
-    incomeItems:[
-      {name:'Sales Revenue',key:'salesRevenue',val:380000,section:'revenue',tip:'Money earned from product sales'},
-      {name:'Service Revenue',key:'serviceRevenue',val:95000,section:'revenue',tip:'Money earned from services'},
-      {name:'Cost of Goods Sold (COGS)',key:'cogs',val:285000,section:'cogs',tip:'Direct costs to produce goods sold'},
-      {name:'Salaries & Wages',key:'salaries',val:110000,section:'opex',tip:'Employee compensation'},
-      {name:'Rent & Utilities',key:'rent',val:48000,section:'opex',tip:'Facility costs'},
-      {name:'Marketing & Advertising',key:'marketing',val:18000,section:'opex',tip:'Costs to promote the business'},
-      {name:'Depreciation',key:'depreciation',val:22000,section:'opex',tip:'Non-cash asset cost allocation'},
-      {name:'Interest Expense',key:'interest',val:32000,section:'nonop',tip:'High interest from heavy debt load'},
-      {name:'Income Tax (21%)',key:'taxes',val:0,section:'nonop',tip:'No tax owed when there is a net loss'},
+    id:2,
+    agencyId:'eeoc',
+    category:'Employment Discrimination',
+    urgency:'CRITICAL',urgencyColor:'#0D47A1',urgencyBg:'#E3F2FD',
+    title:'The Overlooked Candidate',
+    setting:'Horizon Financial Services — HR Department',
+    characters:[
+      {emoji:'👩🏾‍💼',name:'Denise Okafor',role:'External candidate — 8 yrs experience, MBA'},
+      {emoji:'👨‍💼',name:'Hiring Manager Webb',role:'Department Director'},
+      {emoji:'⚖️',name:'You',role:'HR Compliance Officer'},
     ],
-    balanceItems:[
-      {name:'Cash & Cash Equivalents',key:'cash',val:12000,section:'currentAsset',tip:'Very low — this is a warning sign'},
-      {name:'Accounts Receivable',key:'ar',val:85000,section:'currentAsset',tip:'High AR suggests customers are slow to pay'},
-      {name:'Inventory',key:'inventory',val:15000,section:'currentAsset',tip:'Goods available for sale'},
-      {name:'Prepaid Expenses',key:'prepaid',val:4000,section:'currentAsset',tip:'Expenses paid in advance'},
-      {name:'Property & Equipment (gross)',key:'ppe',val:320000,section:'fixedAsset',tip:'Equipment at original cost'},
-      {name:'Accumulated Depreciation',key:'accDeprec',val:-145000,section:'fixedAsset',tip:'High — assets are aging'},
-      {name:'Intangible Assets',key:'intangibles',val:8000,section:'fixedAsset',tip:'Patents and trademarks'},
-      {name:'Accounts Payable',key:'ap',val:72000,section:'currentLiab',tip:'High — company is slow paying its own suppliers'},
-      {name:'Short-Term Debt',key:'stDebt',val:48000,section:'currentLiab',tip:'Large amount due within a year'},
-      {name:'Accrued Expenses',key:'accrued',val:28000,section:'currentLiab',tip:'Unpaid wages and other obligations'},
-      {name:'Long-Term Debt',key:'ltDebt',val:285000,section:'ltLiab',tip:'Very high long-term debt load'},
-      {name:'Deferred Revenue',key:'deferredRev',val:5000,section:'ltLiab',tip:'Revenue received but not earned yet'},
-      {name:'Common Stock / Paid-in Capital',key:'stock',val:80000,section:'equity',tip:'Original owner investment'},
-      {name:'Retained Earnings',key:'retained',val:-146000,section:'equity',tip:'Negative — accumulated losses over time'},
+    narrative:'Horizon Financial Services recently posted a Senior Analyst position. Denise Okafor, a Black woman with 8 years of experience and an MBA from a top-10 program, applied and was rated the top candidate by the interview panel — highest scores across all competencies.\n\nHowever, Hiring Manager Webb chose the second-ranked candidate, a white male with fewer qualifications. When you asked Webb to document his reasoning, he wrote: "Culture fit and communication style." No specific examples were provided.\n\nDenise has since contacted your department asking why she was not selected. She has also mentioned she is consulting an attorney.',
+    quote:'"I was the most qualified candidate by every metric your own panel used. I deserve a real explanation."',
+    keyFact:'📋 Denise scored highest on all 6 interview rubric categories — panel documentation on file',
+    actions:[
+      {id:'A',text:'Conduct an internal investigation, document all records, and require Webb to provide specific, objective, non-discriminatory reasons for his decision. If none exist, escalate to legal counsel and consider reversing the hiring decision.',correct:true},
+      {id:'B',text:'Send Denise a standard rejection letter citing "a highly competitive candidate pool."',correct:false},
+      {id:'C',text:'Tell Webb to add more specific notes to his documentation to justify the decision retroactively.',correct:false},
+      {id:'D',text:'Settle the matter quickly by offering Denise a lower-level position to avoid a lawsuit.',correct:false},
     ],
-    cashFlowItems:[
-      {name:'Depreciation Add-back',key:'deprAddback',val:22000,section:'operating',tip:'Non-cash expense added back'},
-      {name:'Change in Accounts Receivable',key:'arChange',val:-15000,section:'operating',tip:'AR grew — collected less cash than billed'},
-      {name:'Change in Inventory',key:'invChange',val:5000,section:'operating',tip:'Inventory decreased — converted to cash'},
-      {name:'Change in Accounts Payable',key:'apChange',val:8000,section:'operating',tip:'AP grew — delaying payments to preserve cash'},
-      {name:'Capital Expenditures (CapEx)',key:'capex',val:-8000,section:'investing',tip:'Minimal investment — company cannot afford much'},
-      {name:'Debt Repayment',key:'debtRepay',val:-12000,section:'financing',tip:'Required loan payments'},
-    ],
-    beginningCash:12000,
+    correctAgency:'eeoc',
+    consequence:{
+      correct:{icon:'✅',title:'Correct — EEOC Compliance Procedures Followed',text:'You correctly identified potential Title VII discrimination and initiated a proper internal investigation. "Culture fit" without objective criteria is a well-documented proxy for racial bias in hiring — courts have ruled on this repeatedly. Requiring specific, documented, objective reasons forces accountability. If Webb cannot provide them, the company may need to reconsider the decision to avoid an EEOC charge.',color:'var(--green)',bg:'var(--greenl)'},
+      wrong:{icon:'❌',title:'Incorrect — Exposure to EEOC Complaint',text:'Option B ignores a documented potential violation. Option C is illegal document fabrication and would significantly worsen the company\'s legal position — tampering with records is a serious offense. Option D without proper process could be seen as admission of wrongdoing and may not protect the company. The company now has significant exposure to an EEOC charge and potential Title VII lawsuit.',color:'var(--red)',bg:'var(--redl)'},
+      law:'EEOC — Title VII of the Civil Rights Act: Prohibits employment discrimination based on race, color, religion, sex, or national origin. "Culture fit" without objective criteria has been found by courts to be a pretext for discrimination.',
+      lawColor:'#0D47A1',
+    },
+    placeholder:'Explain which law applies and what the legal standard is. Why is "culture fit" legally problematic as a hiring justification? What does Title VII require of employers in hiring decisions?',
   },
   {
-    id:'growth',emoji:'🚀',name:'NovaTech Solutions',type:'Tech Startup / Growth',
-    desc:'Strong revenue but burning cash on expansion. Tests the profit vs. cash flow distinction.',
-    health:[{label:'High Growth',c:'#1B5E20',bg:'#E8F5E9'},{label:'Cash Burn',c:'#B71C1C',bg:'#FFEBEE'},{label:'VC Backed',c:'#4A148C',bg:'#F3E5F5'}],
-    year:'Fiscal Year 2024',
-    incomeItems:[
-      {name:'Product Revenue',key:'salesRevenue',val:1250000,section:'revenue',tip:'Revenue from product sales'},
-      {name:'Service/Subscription Revenue',key:'serviceRevenue',val:380000,section:'revenue',tip:'Recurring subscription income'},
-      {name:'Cost of Goods Sold (COGS)',key:'cogs',val:620000,section:'cogs',tip:'Direct costs to deliver products and services'},
-      {name:'Salaries & Wages',key:'salaries',val:520000,section:'opex',tip:'Large team — high headcount for growth stage'},
-      {name:'Rent & Utilities',key:'rent',val:85000,section:'opex',tip:'Multiple office locations'},
-      {name:'Marketing & Advertising',key:'marketing',val:145000,section:'opex',tip:'Heavy marketing investment to drive growth'},
-      {name:'Depreciation',key:'depreciation',val:38000,section:'opex',tip:'Equipment and software depreciation'},
-      {name:'Interest Expense',key:'interest',val:12000,section:'nonop',tip:'Interest on growth financing'},
-      {name:'Income Tax (21%)',key:'taxes',val:44226,section:'nonop',tip:'Tax on positive earnings before tax'},
+    id:3,
+    agencyId:'ethics',
+    category:'Code of Ethics / Whistleblowing',
+    urgency:'URGENT',urgencyColor:'#E65100',urgencyBg:'#FFF3E0',
+    title:'The Inflated Numbers',
+    setting:'Crestline Technology — Finance Department',
+    characters:[
+      {emoji:'👨‍💻',name:'Jordan Park',role:'Junior Financial Analyst — 18 months'},
+      {emoji:'👩‍💼',name:'CFO Martinez',role:'Chief Financial Officer'},
+      {emoji:'⚖️',name:'You',role:'HR Compliance Officer'},
     ],
-    balanceItems:[
-      {name:'Cash & Cash Equivalents',key:'cash',val:245000,section:'currentAsset',tip:'Higher cash from VC investment'},
-      {name:'Accounts Receivable',key:'ar',val:185000,section:'currentAsset',tip:'Large AR — growing customer base'},
-      {name:'Inventory',key:'inventory',val:42000,section:'currentAsset',tip:'Hardware component inventory'},
-      {name:'Prepaid Expenses',key:'prepaid',val:28000,section:'currentAsset',tip:'Prepaid software and insurance'},
-      {name:'Property & Equipment (gross)',key:'ppe',val:450000,section:'fixedAsset',tip:'Servers, equipment, office build-out'},
-      {name:'Accumulated Depreciation',key:'accDeprec',val:-95000,section:'fixedAsset',tip:'Depreciation on tech equipment'},
-      {name:'Intangible Assets',key:'intangibles',val:125000,section:'fixedAsset',tip:'Proprietary software and patents'},
-      {name:'Accounts Payable',key:'ap',val:95000,section:'currentLiab',tip:'Amounts owed to vendors'},
-      {name:'Short-Term Debt',key:'stDebt',val:50000,section:'currentLiab',tip:'Short-term credit facility'},
-      {name:'Accrued Expenses',key:'accrued',val:65000,section:'currentLiab',tip:'Accrued payroll and bonuses'},
-      {name:'Long-Term Debt',key:'ltDebt',val:120000,section:'ltLiab',tip:'Growth financing loan'},
-      {name:'Deferred Revenue',key:'deferredRev',val:85000,section:'ltLiab',tip:'Subscription payments received in advance'},
-      {name:'Common Stock / Paid-in Capital',key:'stock',val:500000,section:'equity',tip:'VC investment and founder equity'},
-      {name:'Retained Earnings',key:'retained',val:165000,section:'equity',tip:'Accumulated profits since founding'},
+    narrative:'Jordan Park, a junior financial analyst, comes to your office visibly distressed. He has discovered that the CFO, Martinez, has been instructing the finance team to record sales as "closed" one quarter before they are finalized — a practice called "channel stuffing." This inflates quarterly revenue numbers that are reported to the board of directors and, because Crestline is publicly traded, to investors.\n\nJordan tried to raise it with his direct manager, who told him to "not ask questions above his pay grade." He is now asking you what he should do.',
+    quote:'"This is fraud. I know it and my manager knows it. But I\'m a junior analyst. If I say something, I lose my job. If I don\'t say something, I\'m part of it."',
+    keyFact:'📊 Crestline Technology is a publicly traded company — SEC reporting obligations apply',
+    actions:[
+      {id:'A',text:'Take Jordan\'s complaint seriously, document everything, escalate to the Audit Committee of the Board (bypassing the CFO), and advise Jordan about his whistleblower protections under federal law. Do not allow retaliation.',correct:true},
+      {id:'B',text:'Tell Jordan to document his concerns and submit them through the normal chain of command.',correct:false},
+      {id:'C',text:'Advise Jordan to speak directly with the CFO to clarify whether the practice is actually wrong.',correct:false},
+      {id:'D',text:'Tell Jordan this is above your authority and he should consult a personal attorney.',correct:false},
     ],
-    cashFlowItems:[
-      {name:'Depreciation Add-back',key:'deprAddback',val:38000,section:'operating',tip:'Non-cash — added back to net income'},
-      {name:'Change in Accounts Receivable',key:'arChange',val:-45000,section:'operating',tip:'AR grew fast — revenue outpaced cash collected'},
-      {name:'Change in Inventory',key:'invChange',val:-12000,section:'operating',tip:'Built up inventory for growth'},
-      {name:'Change in Accounts Payable',key:'apChange',val:18000,section:'operating',tip:'AP grew — managing cash by paying later'},
-      {name:'Capital Expenditures (CapEx)',key:'capex',val:-180000,section:'investing',tip:'Heavy investment in servers and infrastructure'},
-      {name:'Investment Purchases',key:'investments',val:-50000,section:'investing',tip:'Strategic investment purchases'},
-      {name:'Debt Repayment',key:'debtRepay',val:-25000,section:'financing',tip:'Loan repayments'},
+    correctAgency:'ethics',
+    consequence:{
+      correct:{icon:'✅',title:'Correct — Whistleblower Protections Properly Applied',text:'You correctly recognized that normal chain-of-command reporting is compromised when a C-suite executive is involved in the alleged misconduct. Escalating to the Audit Committee is the appropriate internal path. Jordan has federal whistleblower protections under the Sarbanes-Oxley Act (SOX) and Dodd-Frank Act — retaliating against him would expose the company to additional federal liability on top of the accounting fraud.',color:'var(--green)',bg:'var(--greenl)'},
+      wrong:{icon:'❌',title:'Incorrect — Whistleblower Protections Not Applied',text:'Option B sending Jordan through normal channels is dangerous when his manager has already dismissed him and the CFO is the alleged wrongdoer. Option C is reckless — confronting the CFO who is allegedly committing fraud could result in immediate retaliation. Option D abandons your compliance responsibility. This company has potential SEC and Sarbanes-Oxley exposure that requires immediate, documented escalation.',color:'var(--red)',bg:'var(--redl)'},
+      law:'SOX Whistleblower Protections & Company Code of Ethics: Sarbanes-Oxley Act prohibits retaliation against employees who report fraud to the SEC or internally. Companies are required to have anonymous reporting channels (hotlines) for exactly this reason.',
+      lawColor:'#E65100',
+    },
+    placeholder:'Explain which laws protect Jordan. What is the Sarbanes-Oxley Act and what does it require? Why is the normal chain of command not appropriate here? What whistleblower protections exist?',
+  },
+  {
+    id:4,
+    agencyId:'eeoc',
+    category:'Sexual Harassment / Employee Rights',
+    urgency:'CRITICAL',urgencyColor:'#B71C1C',urgencyBg:'#FFEBEE',
+    title:'The Uncomfortable Manager',
+    setting:'Summit Hospitality Group — Hotel Operations',
+    characters:[
+      {emoji:'👩',name:'Priya Nair',role:'Front Desk Supervisor — 2 years'},
+      {emoji:'👨‍💼',name:'Manager Collins',role:'General Manager — 11 years'},
+      {emoji:'⚖️',name:'You',role:'HR Compliance Officer'},
     ],
-    beginningCash:245000,
-  }
+    narrative:'Priya Nair comes to your HR office and closes the door. Over the past four months, General Manager Collins has made repeated comments about her appearance at staff meetings ("You always look so nice, Priya"), called her at home twice after hours about non-urgent matters, and stood unusually close during one-on-one meetings. She has asked him to stop twice verbally but he has not changed his behavior.\n\nPriya says she has started dreading coming to work. She is not sure if this "counts" as harassment and is afraid that if she formally reports it, Collins — who has been with the company for 11 years — will find a way to get her fired.',
+    quote:'"I don\'t know if what he\'s doing is actually illegal. I just know it makes me feel unsafe at work. And I\'m scared to say anything officially."',
+    keyFact:'🗓️ The behavior has been ongoing for 4 months — Priya has asked him to stop twice',
+    actions:[
+      {id:'A',text:'Take a formal written statement from Priya, initiate a confidential investigation, interview witnesses, place Collins on administrative leave during the investigation, and advise Priya of her rights. Document everything.',correct:true},
+      {id:'B',text:'Informally speak to Collins and ask him to be more professional going forward, without documenting anything.',correct:false},
+      {id:'C',text:'Tell Priya that since there was no physical contact, it may not rise to the legal definition of harassment and suggest she try to work it out directly.',correct:false},
+      {id:'D',text:'Transfer Priya to a different department to remove her from the situation.',correct:false},
+    ],
+    correctAgency:'eeoc',
+    consequence:{
+      correct:{icon:'✅',title:'Correct — Hostile Work Environment Properly Addressed',text:'You correctly identified this as potential hostile work environment sexual harassment under Title VII — it does not require physical contact. The EEOC standard is whether the conduct is "severe or pervasive" enough to create a hostile work environment. Four months of unwanted behavior that Priya asked to stop twice clearly meets this standard. Placing Collins on administrative leave during the investigation is critical — allowing him to supervise Priya during an investigation about his behavior creates retaliation risk.',color:'var(--green)',bg:'var(--greenl)'},
+      wrong:{icon:'❌',title:'Incorrect — EEOC Violation Created',text:'Option B creates no paper trail and does not protect the company if Collins continues. Option C is factually wrong — the EEOC\'s hostile work environment standard does not require physical contact, and telling Priya to handle it herself exposes the company to severe liability for failing to act. Option D transferring the victim is considered retaliatory by the EEOC — the harasser, not the victim, should face consequences.',color:'var(--red)',bg:'var(--redl)'},
+      law:'EEOC — Title VII / Hostile Work Environment: Sexual harassment includes creating a hostile work environment through severe or pervasive conduct. Employers who know about harassment and fail to act are liable. Transferring the victim instead of the harasser is considered retaliation.',
+      lawColor:'#0D47A1',
+    },
+    placeholder:'Explain what "hostile work environment" means under Title VII. Does this situation qualify? Why is physical contact not required? What are the employer\'s legal obligations once they become aware of potential harassment?',
+  },
+  {
+    id:5,
+    agencyId:'ada',
+    category:'Disability Accommodation',
+    urgency:'URGENT',urgencyColor:'#4A148C',urgencyBg:'#F3E5F5',
+    title:'The Denied Accommodation',
+    setting:'Vantage Analytics — Data Science Department',
+    characters:[
+      {emoji:'👨‍💻',name:'Sam Chen',role:'Senior Data Scientist — top performer, 4 years'},
+      {emoji:'👩‍💼',name:'Director Walsh',role:'Department Director'},
+      {emoji:'⚖️',name:'You',role:'HR Compliance Officer'},
+    ],
+    narrative:'Sam Chen, a top-performing senior data scientist, has disclosed that he has been diagnosed with severe anxiety disorder and ADHD. His doctor has recommended two accommodations: permission to work from home two days per week and permission to use noise-canceling headphones during open-office hours.\n\nDirector Walsh denied both requests, telling Sam: "Everyone has to work the same hours in the same space. If I make an exception for you, everyone will want one. Besides, your performance reviews have been excellent — you seem to be managing fine."\n\nSam has now come to you, asking if Walsh\'s denial is legal.',
+    quote:'"My doctor says I need these accommodations. My work is excellent. But my manager says no because it would be unfair to others. That doesn\'t sound right."',
+    keyFact:'📈 Sam\'s last three performance reviews: Exceeds Expectations in all categories',
+    actions:[
+      {id:'A',text:'Inform Walsh that the denial likely violates the ADA, initiate the formal "interactive process" required by law, review medical documentation, and determine whether the accommodations constitute an "undue hardship" — which they almost certainly do not.',correct:true},
+      {id:'B',text:'Tell Sam that because his performance is excellent, the accommodations must not be necessary.',correct:false},
+      {id:'C',text:'Support Walsh\'s decision to maintain consistent policies across the team.',correct:false},
+      {id:'D',text:'Offer Sam a leave of absence instead of the accommodations he requested.',correct:false},
+    ],
+    correctAgency:'ada',
+    consequence:{
+      correct:{icon:'✅',title:'Correct — ADA Interactive Process Initiated',text:'You correctly identified that Walsh\'s denial likely violates the ADA. The law requires employers to engage in an "interactive process" to find reasonable accommodations — they cannot simply say no. Walsh\'s argument that excellent performance means no accommodation is needed is legally backwards: it shows the employee is capable, but the accommodation may be what makes that performance possible. Working from home two days and using headphones are almost certainly not "undue hardships" for a data science role.',color:'var(--green)',bg:'var(--greenl)'},
+      wrong:{icon:'❌',title:'Incorrect — ADA Violation Occurred',text:'Option B misunderstands the ADA — excellent performance does not eliminate the right to accommodation. Option C supporting Walsh creates direct ADA liability for the company. Option D offering leave instead of the requested accommodation is not the interactive process the ADA requires — the employer must consider the specific accommodation requested first. The company is now exposed to an ADA complaint.',color:'var(--red)',bg:'var(--redl)'},
+      law:'ADA — Americans with Disabilities Act: Employers must provide "reasonable accommodations" for employees with disabilities unless it causes "undue hardship." Employers must engage in an "interactive process" with the employee. Denying accommodation because others might want the same treatment is not a valid legal defense.',
+      lawColor:'#4A148C',
+    },
+    placeholder:'Explain what the ADA requires of employers regarding reasonable accommodation. What is the "interactive process"? Why is Walsh\'s "consistency" argument not a valid legal defense? What constitutes an "undue hardship"?',
+  },
+  {
+    id:6,
+    agencyId:'ftc',
+    category:'FTC / Corporate Social Responsibility',
+    urgency:'HIGH',urgencyColor:'#1B5E20',urgencyBg:'#E8F5E9',
+    title:'The Misleading Claims',
+    setting:'GreenLife Products — Marketing Department',
+    characters:[
+      {emoji:'🌿',name:'Marketing Team',role:'Recently launched new campaign'},
+      {emoji:'🏢',name:'Competitor — EcoWave',role:'Has filed a complaint'},
+      {emoji:'⚖️',name:'You',role:'HR Compliance Officer (acting as Ethics Officer)'},
+    ],
+    narrative:'GreenLife Products, a consumer goods company, recently launched a national marketing campaign claiming their cleaning products are "100% natural," "completely biodegradable," and "zero environmental impact." A competitor, EcoWave, has filed a complaint with the FTC alleging these claims are false.\n\nYou investigate internally and discover: the products are 78% natural ingredients (not 100%), they biodegrade within 5 years (not "completely"), and the manufacturing process has documented carbon emissions. The marketing team\'s position is: "Our products are still better than the competition — close enough."\n\nThe FTC is now requesting documentation.',
+    quote:'"Close enough isn\'t good enough when you\'re making specific environmental claims to consumers who are paying a premium based on those claims."',
+    keyFact:'🔍 FTC Green Guides prohibit unqualified environmental claims that are not substantiated',
+    actions:[
+      {id:'A',text:'Immediately pull the misleading claims, cooperate fully with the FTC investigation, correct all marketing materials with accurate qualified claims, and implement a review process to prevent future violations.',correct:true},
+      {id:'B',text:'Respond to the FTC that the claims are "substantially true" and ask them to consider the products\' overall environmental benefit.',correct:false},
+      {id:'C',text:'Continue the campaign while legal prepares a defense, since pulling it would be an admission of guilt.',correct:false},
+      {id:'D',text:'Argue that competitors make similar claims and the industry standard supports the marketing language.',correct:false},
+    ],
+    correctAgency:'ftc',
+    consequence:{
+      correct:{icon:'✅',title:'Correct — FTC Green Guides Compliance Restored',text:'You correctly applied the FTC\'s authority over deceptive advertising. The FTC Green Guides specifically prohibit unqualified environmental claims like "100% natural" or "zero environmental impact" unless they can be fully substantiated. Consumers pay a premium for genuine eco-friendly products — false claims are both illegal and a violation of corporate social responsibility. Immediate correction and full cooperation with the FTC investigation is the only legally sound response.',color:'var(--green)',bg:'var(--greenl)'},
+      wrong:{icon:'❌',title:'Incorrect — FTC Deceptive Advertising Violation',text:'Option B "substantially true" is not the legal standard — the FTC requires that environmental claims be accurate and not misleading to reasonable consumers. Option C continuing the campaign while under investigation would significantly increase liability and could result in injunctive relief and civil penalties. Option D the "industry does it too" argument has never been an effective FTC defense. GreenLife now faces potential FTC consent orders and civil penalties up to $50,120 per violation per day.',color:'var(--red)',bg:'var(--redl)'},
+      law:'FTC — Green Guides & Section 5: The FTC prohibits deceptive acts or practices in commerce. The Green Guides specifically address environmental marketing claims — unqualified terms like "natural" or "eco-friendly" must be substantiated. Companies must also consider Corporate Social Responsibility obligations to consumers.',
+      lawColor:'#1B5E20',
+    },
+    placeholder:'Explain the FTC\'s authority over advertising claims. What are the FTC Green Guides? How does this scenario also relate to Corporate Social Responsibility? Why is the "industry does it" argument not a valid defense?',
+  },
 ];
 
-// ── COMPUTED HELPERS ──
-function calcNet(s){
-  const it=s.incomeItems;
-  const get=key=>it.find(i=>i.key===key)?.val||0;
-  const totalRev=get('salesRevenue')+get('serviceRevenue');
-  const grossProfit=totalRev-get('cogs');
-  const totalOpEx=it.filter(i=>i.section==='opex').reduce((a,i)=>a+i.val,0);
-  const opIncome=grossProfit-totalOpEx;
-  const ebt=opIncome-get('interest');
-  const taxes=get('taxes');
-  const netIncome=ebt-taxes;
-  return{totalRev,grossProfit,totalOpEx,opIncome,ebt,taxes,netIncome};
-}
-
-function calcBal(s){
-  const bi=s.balanceItems;
-  const sum=sec=>bi.filter(i=>i.section===sec).reduce((a,i)=>a+i.val,0);
-  const currentAssets=sum('currentAsset');
-  const fixedAssetsNet=sum('fixedAsset');
-  const totalAssets=currentAssets+fixedAssetsNet;
-  const currentLiab=sum('currentLiab');
-  const ltLiab=sum('ltLiab');
-  const totalLiab=currentLiab+ltLiab;
-  const equity=sum('equity')+calcNet(s).netIncome;
-  return{currentAssets,fixedAssetsNet,totalAssets,currentLiab,ltLiab,totalLiab,equity,totalLiabEquity:totalLiab+equity};
-}
-
-function calcCF(s){
-  const ni=calcNet(s).netIncome;
-  const cf=s.cashFlowItems;
-  const sum=sec=>cf.filter(i=>i.section===sec).reduce((a,i)=>a+i.val,0);
-  const opCF=ni+sum('operating');
-  const invCF=sum('investing');
-  const finCF=sum('financing');
-  const netChange=opCF+invCF+finCF;
-  const endingCash=s.beginningCash+netChange;
-  return{opCF,invCF,finCF,netChange,endingCash};
-}
-
-function fmt(n){
-  if(n===null||n===undefined)return'—';
-  const abs=Math.abs(Math.round(n));
-  return n<0?'('+abs.toLocaleString()+')':''+abs.toLocaleString();
-}
-function fmtD(n){return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
-
 // ── STATE ──
-let phase=0;
-let scenario=null;
-let studentIncome={};
-let studentBalance={};
-let studentCF={};
-let studentAnalysis={};
-let netIncomeFromPhase1=0;
+let currentScenario=0;
+let selectedAgency=null;
+let selectedAction=null;
+let showingConsequence=false;
+let decisions=[];
+let agencyCounts={correct:0,wrong:0};
 
-// ── HEADER & SIDEBAR ──
+// ── HELPERS ──
 function buildHeader(){
-  const el=document.getElementById('hphases');
+  const el=document.getElementById('hscenarios');
   if(!el)return;
-  const phases=[
-    {icon:'📊',name:'Income Stmt'},
-    {icon:'⚖️',name:'Balance Sheet'},
-    {icon:'💸',name:'Cash Flow'},
-    {icon:'🔍',name:'Analysis'},
-  ];
-  el.innerHTML=phases.map((p,i)=>`
-    <div class="hphase ${phase===i+1?'active':phase>i+1?'done':''}">
-      <div class="hphase-icon">${phase>i+1?'✓':p.icon}</div>
-      <div class="hphase-name">${p.name}</div>
-    </div>`).join('');
-  const pn=document.getElementById('h-phase');
-  if(pn){const names=['Select Company','Income Statement','Balance Sheet','Cash Flow Statement','Analysis','Feedback'];pn.textContent=names[phase]||'—';}
-  const cn=document.getElementById('h-company');
-  if(cn)cn.textContent=scenario?scenario.name:'—';
+  el.innerHTML=SCENARIOS.map((s,i)=>{
+    const d=decisions[i];
+    const cls=d===undefined?'':d.agencyCorrect&&d.actionCorrect?'done':'wrong';
+    return`<div class="hsc ${currentScenario===i?'active':''} ${cls}" id="hsc-${i}">
+      <div class="hsc-num">${d===undefined?i+1:d.agencyCorrect&&d.actionCorrect?'✓':'✗'}</div>
+      <div class="hsc-name">${s.category}</div>
+    </div>`;
+  }).join('');
+  const sv=document.getElementById('h-score');
+  if(sv)sv.textContent=agencyCounts.correct+'/'+SCENARIOS.length;
+  const sc=document.getElementById('h-scenario');
+  if(sc)sc.textContent=currentScenario<SCENARIOS.length?'Scenario '+(currentScenario+1):'Complete';
 }
 
 function buildSidebar(){
-  const stmts=document.getElementById('sb-stmts');
-  if(stmts){
-    const phases=[{n:'Income Statement',c:'#64B5F6'},{n:'Balance Sheet',c:'#81C784'},{n:'Cash Flow',c:'#CE93D8'},{n:'Analysis',c:'#FFD54F'}];
-    stmts.innerHTML=phases.map((p,i)=>`
-      <div class="sp-row ${phase===i+1?'active':phase>i+1?'done':''}">
-        <div class="sp-dot" style="background:${p.c}"></div>
-        <div class="sp-name">${p.n}</div>
-        ${phase>i+1?'<div class="sp-check">✓</div>':''}
-      </div>`).join('');
-  }
-  const kn=document.getElementById('sb-kn');
-  if(kn&&scenario){
-    const ci=calcNet(scenario);
-    const cb=calcBal(scenario);
-    const cf=calcCF(scenario);
-    kn.innerHTML=`
-      <div class="kn-row"><span class="kn-label">Total Revenue</span><span class="kn-val" style="color:#FFD54F">${fmtD(ci.totalRev)}</span></div>
-      <div class="kn-row"><span class="kn-label">Net Income</span><span class="kn-val" style="color:${ci.netIncome>=0?'#81C784':'#EF9A9A'}">${fmtD(ci.netIncome)}</span></div>
-      <div class="kn-row"><span class="kn-label">Total Assets</span><span class="kn-val" style="color:#64B5F6">${fmtD(cb.totalAssets)}</span></div>
-      <div class="kn-row"><span class="kn-label">Total Liabilities</span><span class="kn-val" style="color:#EF9A9A">${fmtD(cb.totalLiab)}</span></div>
-      <div class="kn-row"><span class="kn-label">Owner's Equity</span><span class="kn-val" style="color:${cb.equity>=0?'#81C784':'#EF9A9A'}">${fmtD(cb.equity)}</span></div>
-      <div class="kn-row"><span class="kn-label">Operating CF</span><span class="kn-val" style="color:${cf.opCF>=0?'#81C784':'#EF9A9A'}">${fmtD(cf.opCF)}</span></div>`;
+  // Scorecard
+  const el=document.getElementById('sb-scorecard');
+  if(el){
+    el.innerHTML=SCENARIOS.map((s,i)=>{
+      const d=decisions[i];
+      const cls=d===undefined?'pending':d.agencyCorrect&&d.actionCorrect?'correct':'wrong';
+      return`<div class="sc-row ${cls}" id="scrow-${i}">
+        <span class="sc-badge" style="background:${AGENCIES.find(a=>a.id===s.agencyId)?.bg};color:${AGENCIES.find(a=>a.id===s.agencyId)?.color}">${AGENCIES.find(a=>a.id===s.agencyId)?.name||''}</span>
+        <span class="sc-scenario">${s.category}</span>
+        <span class="sc-result">${d===undefined?'—':d.agencyCorrect&&d.actionCorrect?'✓ Correct':'✗ Wrong'}</span>
+      </div>`;
+    }).join('');
   }
 }
 
-// ── PHASE 0: SELECT ──
-function renderSelect(){
-  phase=0;
+// ── INTRO SCREEN ──
+function renderIntro(){
+  document.getElementById('app').innerHTML=`
+  <div class="intro-screen">
+    <div class="intro-logo">⚖️</div>
+    <div class="intro-title">Ethics & Compliance Simulator</div>
+    <div class="intro-sub">You have just been promoted to HR Compliance Officer at a mid-sized company. Six workplace situations are about to land on your desk. For each one, identify the correct law or agency and choose the right course of action. Real consequences follow every decision.</div>
+
+    <div class="intro-card">
+      <div class="intro-card-title">📚 Laws & Agencies You Will Apply</div>
+      <div class="law-preview-grid">
+        ${AGENCIES.map(a=>`
+          <div class="law-preview-item">
+            <span class="law-preview-badge" style="background:${a.bg};color:${a.color}">${a.name}</span>
+            <div>
+              <div style="font-weight:600;font-size:.76rem;margin-bottom:.1rem">${a.full}</div>
+              <div style="font-size:.68rem;color:var(--text-muted)">${a.desc}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="intro-card">
+      <div class="intro-card-title">🎮 How It Works</div>
+      <div style="font-size:.83rem;color:var(--text-muted);line-height:1.65;display:flex;flex-direction:column;gap:.4rem">
+        <div>📋 Read each workplace scenario carefully — details matter</div>
+        <div>⚖️ Identify which law or agency applies (8 options)</div>
+        <div>🎯 Choose the correct course of action (4 options)</div>
+        <div>✍️ Explain your legal reasoning in writing</div>
+        <div>📊 See consequences and get AI feedback at the end</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;padding:1rem;font-size:1rem;border-radius:var(--radius);margin-top:.5rem" onclick="startSim()">Begin as Compliance Officer →</button>
+  </div>`;
+}
+
+function startSim(){currentScenario=0;selectedAgency=null;selectedAction=null;showingConsequence=false;decisions=[];agencyCounts={correct:0,wrong:0};renderScenario();}
+
+// ── RENDER SCENARIO ──
+function renderScenario(){
+  if(currentScenario>=SCENARIOS.length){renderFinalReport();return;}
+  const sc=SCENARIOS[currentScenario];
+  selectedAgency=null;selectedAction=null;showingConsequence=false;
+
   document.getElementById('app').innerHTML=`
   <header>
-    <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5 · Standards 1–3</div></div>
-    <div class="hphases" id="hphases"></div>
+    <div class="hbrand"><h1>Ethics & Compliance Simulator</h1><div class="sub">Business Management · Strand 7</div></div>
+    <div class="hscenarios" id="hscenarios"></div>
     <div class="hright">
-      <div><div class="hstat-label">Phase</div><div class="hstat-val" id="h-phase">Select</div></div>
-      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">—</div></div>
+      <div class="hstat"><div class="hstat-label">Score</div><div class="hstat-val" style="color:#81C784" id="h-score">0/${SCENARIOS.length}</div></div>
+      <div class="hstat"><div class="hstat-label">Current</div><div class="hstat-val" id="h-scenario">—</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
-      <div><div class="sb-label">Statements</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"><div style="font-size:.68rem;color:rgba(240,238,232,.25);font-style:italic">Select a company to begin</div></div></div>
-      <div><div class="sb-label">How It Works</div>
-        <div class="formula-box">
-          <div class="formula-title">Your Task Each Phase</div>
-          <div class="formula-line">1. Read the data sheet</div>
-          <div class="formula-line">2. Enter each value in the</div>
-          <div class="formula-line">   correct location</div>
-          <div class="formula-line">3. Subtotals auto-calculate</div>
-          <div class="formula-line">4. Submit to see results</div>
-          <div class="formula-line hl" style="margin-top:.5rem">No answers shown upfront!</div>
-        </div>
-      </div>
-    </div>
-    <div class="main">
-      <div style="margin-bottom:1.5rem">
-        <div style="font-family:var(--mono);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem">Financial Statements Simulator</div>
-        <div style="font-size:1.75rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.4rem">Analyze a Real Business</div>
-        <div style="font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:580px">Choose a company. You will receive a data sheet of financial information — like a real accountant would — and build all three financial statements from scratch. No answers are given upfront. The Balance Sheet must balance before you can advance.</div>
-      </div>
-      <div class="scenario-grid">
-        ${SCENARIOS.map(s=>`
-          <div class="sc-card ${scenario?.id===s.id?'selected':''}" onclick="selectScenario('${s.id}')" id="sc-${s.id}">
-            <div class="sc-emoji">${s.emoji}</div>
-            <div class="sc-name">${s.name}</div>
-            <div class="sc-type">${s.type}</div>
-            <div class="sc-desc">${s.desc}</div>
-            <div class="sc-health">${s.health.map(h=>`<span class="sc-pill" style="background:${h.bg};color:${h.c}">${h.label}</span>`).join('')}</div>
-          </div>`).join('')}
-      </div>
-      <div id="start-row" style="display:none">
-        <button class="btn btn-primary" onclick="startSim()">Begin Financial Analysis →</button>
-      </div>
-    </div>
-  </div>`;
-  buildHeader();buildSidebar();
-}
-
-function selectScenario(id){
-  scenario=SCENARIOS.find(s=>s.id===id);
-  document.querySelectorAll('.sc-card').forEach(el=>el.classList.remove('selected'));
-  document.getElementById('sc-'+id).classList.add('selected');
-  document.getElementById('start-row').style.display='block';
-  buildSidebar();
-}
-
-function startSim(){
-  if(!scenario)return;
-  phase=1;studentIncome={};studentBalance={};studentCF={};studentAnalysis={};
-  renderApp();
-}
-
-function renderApp(){
-  buildHeader();buildSidebar();
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(phase===1)renderIncome();
-  else if(phase===2)renderBalance();
-  else if(phase===3)renderCashFlow();
-  else if(phase===4)renderAnalysis();
-  else if(phase===5)renderFeedback();
-}
-
-// ── DATA SHEET COMPONENT ──
-function dataSheetHTML(items,title,intro,note){
-  return`
-  <div class="data-sheet">
-    <div class="ds-header">
-      <div class="ds-icon">📋</div>
       <div>
-        <div class="ds-title">${title}</div>
-        <div class="ds-subtitle">Use these figures to complete the statement below</div>
+        <div class="sb-label">Your Role</div>
+        <div class="role-card"><div class="role-avatar">⚖️</div><div><div class="role-title">HR Compliance Officer</div><div class="role-company">Protecting employees & the company</div></div></div>
       </div>
-    </div>
-    <div class="ds-body">
-      <div class="ds-intro">${intro}</div>
-      <div class="ds-grid">
-        ${items.map(item=>`
-          <div class="ds-item" id="ds-${item.key}">
-            <span class="ds-item-name">${item.name}</span>
-            <span class="ds-item-val">${fmtD(item.val)}</span>
-          </div>`).join('')}
-      </div>
-      ${note?`<div class="ds-note">💡 ${note}</div>`:''}
-    </div>
-  </div>`;
-}
-
-// ── PHASE 1: INCOME STATEMENT ──
-function renderIncome(){
-  const s=scenario;
-  const ci=calcNet(s);
-  document.getElementById('app').innerHTML=`
-  <header>
-    <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
-    <div class="hphases" id="hphases"></div>
-    <div class="hright">
-      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#64B5F6" id="h-phase">Income Statement</div></div>
-      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
-    </div>
-  </header>
-  <div class="layout">
-    <div class="sidebar">
-      <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
-      <div><div class="sb-label">Income Statement Formula</div>
-        <div class="formula-box">
-          <div class="formula-line">Revenue − COGS = Gross Profit</div>
-          <div class="formula-line hl" style="margin-top:.35rem">Gross Profit − OpEx</div>
-          <div class="formula-line hl">= Operating Income</div>
-          <div class="formula-line hl" style="margin-top:.35rem">Op. Income − Interest − Tax</div>
-          <div class="formula-line hl">= Net Income</div>
-          <div class="formula-line" style="margin-top:.5rem;font-size:.62rem">Gross Margin = Gross Profit / Revenue</div>
-          <div class="formula-line" style="font-size:.62rem">Net Margin = Net Income / Revenue</div>
+      <div><div class="sb-label">Compliance Scorecard</div><div class="scorecard" id="sb-scorecard"></div></div>
+      <div><div class="sb-label">Quick Law Reference</div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.75rem">
+          <div style="font-size:.68rem;color:rgba(242,240,236,.4);line-height:1.6;font-style:italic">Law references appear after you submit each scenario — research the laws yourself first!</div>
         </div>
       </div>
     </div>
-    <div class="main">
-      <div class="phase-header">
-        <div class="ph-num" style="color:#0D47A1">1</div>
-        <div>
-          <div class="ph-title">Income Statement</div>
-          <div class="ph-sub">Also called the Profit & Loss (P&L). Shows revenue, expenses, and profit over a time period. Use the data sheet below to enter each value in the correct row. Totals calculate automatically.</div>
+    <div class="main" id="scenario-main">
+      <!-- Scenario Card -->
+      <div class="scenario-card">
+        <div class="sc-header">
+          <div class="sc-num-big" style="color:${sc.urgencyColor}">${sc.id}</div>
+          <div class="sc-title-area">
+            <div class="sc-category" style="color:${sc.urgencyColor}">${sc.category}</div>
+            <div class="sc-title">${sc.title}</div>
+            <div class="sc-setting">📍 ${sc.setting}</div>
+          </div>
+          <div class="sc-badge-right"><span class="urgency-badge" style="background:${sc.urgencyBg};color:${sc.urgencyColor}">${sc.urgency}</span></div>
         </div>
-        <span class="ph-badge" style="background:#E3F2FD;color:#0D47A1">Statement 1 of 3</span>
-      </div>
 
-      ${dataSheetHTML(
-        s.incomeItems,
-        s.name+' — Account Balances ('+s.year+')',
-        'These are the financial figures for '+s.name+'. Your job is to place each dollar amount in the correct line of the Income Statement below. Some items are revenues, some are expenses — and they belong in different sections.',
-        'Depreciation is a non-cash expense. Interest Expense goes in Non-Operating Items, not Operating Expenses.'
-      )}
+        <div class="characters">
+          ${sc.characters.map(c=>`<div class="character-tag"><span class="char-emoji">${c.emoji}</span><span class="char-name">${c.name}</span><span class="char-role">— ${c.role}</span></div>`).join('')}
+        </div>
 
-      <div class="fin-table-card">
-        <div class="ftc-header"><div class="ftc-title">${s.name}</div><div class="ftc-subtitle">Income Statement — ${s.year} (enter values from the data sheet above)</div></div>
-        <table class="fin-table">
-          <thead><tr><th>Line Item</th><th style="text-align:right;width:180px">Your Entry</th></tr></thead>
-          <tbody>
-            <tr class="section-header"><td colspan="2">REVENUE</td></tr>
-            ${incomeInputRow('salesRevenue','Sales Revenue','Money earned from selling products or services')}
-            ${incomeInputRow('serviceRevenue','Service Revenue','Money earned from services provided')}
-            <tr class="subtotal"><td><strong>Total Revenue</strong></td><td class="calc" id="c-totalRev">—</td></tr>
-            <tr class="section-header"><td colspan="2">COST OF GOODS SOLD</td></tr>
-            ${incomeInputRow('cogs','Cost of Goods Sold (COGS)','Direct costs to produce the goods or services sold')}
-            <tr class="gp-row" id="gp-row"><td><strong>Gross Profit</strong> <span style="font-size:.72rem;font-weight:400;opacity:.7">(Revenue − COGS)</span></td><td class="calc" id="c-gp">—</td></tr>
-            <tr class="section-header"><td colspan="2">OPERATING EXPENSES</td></tr>
-            ${incomeInputRow('salaries','Salaries & Wages','Employee compensation')}
-            ${incomeInputRow('rent','Rent & Utilities','Facility costs — rent, electricity, internet')}
-            ${incomeInputRow('marketing','Marketing & Advertising','Costs to promote the business')}
-            ${incomeInputRow('depreciation','Depreciation','Non-cash expense — spreading asset cost over time')}
-            <tr class="subtotal"><td><strong>Total Operating Expenses</strong></td><td class="calc" id="c-totalOpEx">—</td></tr>
-            <tr class="subtotal"><td><strong>Operating Income (EBIT)</strong> <span style="font-size:.72rem;font-weight:400;color:var(--text-muted)">(Gross Profit − Op. Expenses)</span></td><td class="calc" id="c-opIncome">—</td></tr>
-            <tr class="section-header"><td colspan="2">NON-OPERATING ITEMS</td></tr>
-            ${incomeInputRow('interest','Interest Expense','Cost of borrowing — paid to lenders on outstanding debt')}
-            <tr class="subtotal"><td><strong>Earnings Before Tax (EBT)</strong></td><td class="calc" id="c-ebt">—</td></tr>
-            ${incomeInputRow('taxes','Income Tax','Corporate income tax — check the data sheet for amount')}
-            <tr class="ni-row"><td><strong>NET INCOME</strong> <span style="font-size:.72rem;font-weight:400;opacity:.7">(The Bottom Line)</span></td><td class="calc" id="c-ni">—</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="sc-body">
+          <div class="sc-body-label">The Situation</div>
+          <div class="sc-narrative">${sc.narrative.replace(/\n\n/g,'</p><p style="margin-top:.75rem">').replace(/^/,'<p>').replace(/$/,'</p>')}</div>
+          <div class="sc-quote" style="border-color:${sc.urgencyColor};background:${sc.urgencyBg};color:${sc.urgencyColor}">${sc.quote}</div>
+          <div><span class="key-fact">${sc.keyFact}</span></div>
+        </div>
 
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="phase=0;renderSelect()">← Change Company</button>
-        <button class="btn btn-primary" onclick="submitIncome()">Submit & See Results →</button>
+        <div class="decision-area">
+          <div class="decision-label">Step 1 — Which law or agency applies to this situation?</div>
+          <div class="agency-grid">
+            ${AGENCIES.map(a=>`
+              <div class="agency-opt ${selectedAgency===a.id?'selected':''}" id="ag-${a.id}" onclick="selectAgency('${a.id}')" style="${selectedAgency===a.id?'border-color:'+a.color+';background:'+a.bg:''}">
+                <div class="agency-icon">${a.icon}</div>
+                <div class="agency-name" style="${selectedAgency===a.id?'color:'+a.color:''}">${a.name}</div>
+                <div class="agency-full">${a.full}</div>
+              </div>`).join('')}
+          </div>
+
+          <div class="decision-label" style="margin-top:1.25rem">Step 2 — What is the correct course of action?</div>
+          <div class="action-opts">
+            ${sc.actions.map(a=>`
+              <div class="action-opt ${selectedAction===a.id?'selected':''}" id="act-${a.id}" onclick="selectAction('${a.id}')">
+                <div class="action-letter">${a.id}</div>
+                <div class="action-text">${a.text}</div>
+              </div>`).join('')}
+          </div>
+
+          <div class="reasoning-area">
+            <div class="reason-label">
+              <span>Step 3 — Explain your legal reasoning</span>
+              <span class="reason-hint">Use specific law names and principles — vague answers score poorly</span>
+            </div>
+            <textarea id="reasoning" placeholder="${sc.placeholder}"></textarea>
+          </div>
+
+          <div class="btn-row">
+            ${currentScenario>0?'<button class="btn btn-outline" onclick="goBack()">← Previous</button>':''}
+            <button class="btn btn-primary" onclick="submitScenario()">Submit Decision →</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>`;
-  buildSidebar();
-  document.querySelectorAll('input[data-phase="income"]').forEach(el=>el.addEventListener('input',updateIncomeLive));
+  buildHeader();buildSidebar();
 }
 
-function incomeInputRow(key,name,tip){
-  return`<tr>
-    <td><div class="item-name">${name} <span class="tip" data-tip="${tip}">ℹ️</span></div></td>
-    <td class="amount"><input type="number" data-key="${key}" data-phase="income" placeholder="Enter amount" min="0"></td>
-  </tr>`;
-}
-
-function getIVal(key){return parseFloat(document.querySelector(`input[data-key="${key}"][data-phase="income"]`)?.value)||0;}
-
-function updateIncomeLive(){
-  const totalRev=getIVal('salesRevenue')+getIVal('serviceRevenue');
-  const gp=totalRev-getIVal('cogs');
-  const totalOpEx=getIVal('salaries')+getIVal('rent')+getIVal('marketing')+getIVal('depreciation');
-  const opIncome=gp-totalOpEx;
-  const ebt=opIncome-getIVal('interest');
-  const ni=ebt-getIVal('taxes');
-
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmtD(val);};
-  set('c-totalRev',totalRev);
-  set('c-gp',gp);
-  set('c-totalOpEx',totalOpEx);
-  set('c-opIncome',opIncome);
-  set('c-ebt',ebt);
-  set('c-ni',ni);
-
-  const gpRow=document.getElementById('gp-row');
-  if(gpRow){gpRow.className=gp<0?'gp-row neg':'gp-row';}
-}
-
-function submitIncome(){
-  const s=scenario;
-  const ci=calcNet(s);
-  const keys=['salesRevenue','serviceRevenue','cogs','salaries','rent','marketing','depreciation','interest','taxes'];
-  const correctMap={salesRevenue:s.incomeItems.find(i=>i.key==='salesRevenue').val,serviceRevenue:s.incomeItems.find(i=>i.key==='serviceRevenue').val,cogs:s.incomeItems.find(i=>i.key==='cogs').val,salaries:s.incomeItems.find(i=>i.key==='salaries').val,rent:s.incomeItems.find(i=>i.key==='rent').val,marketing:s.incomeItems.find(i=>i.key==='marketing').val,depreciation:s.incomeItems.find(i=>i.key==='depreciation').val,interest:s.incomeItems.find(i=>i.key==='interest').val,taxes:s.incomeItems.find(i=>i.key==='taxes').val};
-
-  let correct=0,errors=0;
-  const results=keys.map(key=>{
-    const entered=getIVal(key);
-    const right=correctMap[key];
-    const ok=Math.abs(entered-right)<1;
-    if(ok)correct++;else errors++;
-    return{key,name:s.incomeItems.find(i=>i.key===key)?.name||key,entered,right,ok};
+function selectAgency(id){
+  selectedAgency=id;
+  document.querySelectorAll('.agency-opt').forEach(el=>{
+    const aid=el.id.replace('ag-','');
+    const a=AGENCIES.find(x=>x.id===aid);
+    el.classList.toggle('selected',aid===id);
+    el.style.borderColor=aid===id?a.color:'';
+    el.style.background=aid===id?a.bg:'';
+    el.querySelector('.agency-name').style.color=aid===id?a.color:'';
   });
+}
 
-  studentIncome={...correctMap,correct,errors,results,netIncome:ci.netIncome};
-  netIncomeFromPhase1=ci.netIncome;
+function selectAction(id){
+  selectedAction=id;
+  document.querySelectorAll('.action-opt').forEach(el=>{
+    const aid=el.id.replace('act-','');
+    el.classList.toggle('selected',aid===id);
+    const letter=el.querySelector('.action-letter');
+    if(letter){letter.style.background=aid===id?'var(--ink)':'';letter.style.borderColor=aid===id?'var(--ink)':'';letter.style.color=aid===id?'#F2F0EC':'';}
+  });
+}
 
-  // Show results screen before advancing
-  const main=document.querySelector('.main');
-  if(!main)return;
+function submitScenario(){
+  const sc=SCENARIOS[currentScenario];
+  const reasoning=document.getElementById('reasoning')?.value.trim();
+  if(!selectedAgency){alert('Please select which law or agency applies.');return;}
+  if(!selectedAction){alert('Please select a course of action.');return;}
+  if(!reasoning||reasoning.length<30){document.getElementById('reasoning').style.borderColor='var(--red)';alert('Please explain your legal reasoning before submitting.');return;}
 
-  const html=`
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.25rem">
-    <div style="font-weight:700;font-size:1rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem">
-      ${errors===0?'✅':'📋'} Income Statement Results — ${correct}/${keys.length} correct
+  const agencyCorrect=selectedAgency===sc.correctAgency;
+  const correctAction=sc.actions.find(a=>a.correct);
+  const actionCorrect=selectedAction===correctAction.id;
+  const bothCorrect=agencyCorrect&&actionCorrect;
+
+  decisions[currentScenario]={agencyChosen:selectedAgency,actionChosen:selectedAction,agencyCorrect,actionCorrect,reasoning,scenarioTitle:sc.title,category:sc.category,correctAgency:sc.correctAgency,correctAction:correctAction.id};
+
+  if(bothCorrect)agencyCounts.correct++;
+  else agencyCounts.wrong++;
+
+  buildHeader();buildSidebar();
+
+  // Show consequence
+  const con=sc.consequence;
+  const isCorrect=bothCorrect;
+  const chosenAgency=AGENCIES.find(a=>a.id===selectedAgency);
+  const correctAgency=AGENCIES.find(a=>a.id===sc.correctAgency);
+
+  const conHTML=`
+  <div class="consequence">
+    <div class="con-header">
+      <div class="con-icon">${isCorrect?con.correct.icon:con.wrong.icon}</div>
+      <div>
+        <div class="con-title">${isCorrect?con.correct.title:con.wrong.title}</div>
+        ${!agencyCorrect?`<div style="font-size:.72rem;color:var(--red);margin-top:.15rem">Agency: You chose ${chosenAgency?.name} — Correct: ${correctAgency?.name}</div>`:''}
+        ${!actionCorrect?`<div style="font-size:.72rem;color:var(--red);margin-top:.1rem">Action: Correct answer was Option ${correctAction.id}</div>`:''}
+      </div>
+      <span class="con-correct" style="background:${isCorrect?'var(--greenl)':'var(--redl)'};color:${isCorrect?'var(--green)':'var(--red)'}">${isCorrect?'✓ Both Correct':'✗ Needs Work'}</span>
     </div>
-    ${results.map(r=>`
-      <div class="result-row ${r.ok?'correct-row':'wrong-row'}">
-        <div class="result-icon">${r.ok?'✓':'✗'}</div>
-        <div class="result-item">${r.name}</div>
-        <div class="result-yours">You entered: ${fmtD(r.entered)}</div>
-        ${!r.ok?`<div class="result-correct" style="color:var(--green)">Correct: ${fmtD(r.right)}</div>`:''}
-      </div>`).join('')}
-    <div style="margin-top:1rem;padding:.85rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.82rem;color:var(--text-muted)">
-      <strong>Net Income: ${fmtD(ci.netIncome)}</strong> — this flows into your Balance Sheet and Cash Flow Statement.
+    <div class="con-text">${isCorrect?con.correct.text:con.wrong.text}</div>
+    <div class="con-law-box" style="border-color:${con.lawColor};background:${con.lawColor}10">
+      <div class="con-law-title" style="color:${con.lawColor}">📋 The Law That Applies</div>
+      ${con.law}
     </div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="phase=2;renderApp()">Continue to Balance Sheet →</button>
+      ${currentScenario<SCENARIOS.length-1?
+        `<button class="btn btn-primary" onclick="nextScenario()">Next Scenario →</button>`:
+        `<button class="btn btn-primary" style="background:var(--green)" onclick="nextScenario()">See Final Report & AI Feedback →</button>`}
     </div>
   </div>`;
-  main.insertAdjacentHTML('beforeend',html);
-  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+
+  const main=document.getElementById('scenario-main');
+  if(main)main.insertAdjacentHTML('beforeend',conHTML);
+  document.querySelector('.consequence')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── PHASE 2: BALANCE SHEET ──
-function renderBalance(){
-  const s=scenario;
-  const cb=calcBal(s);
-  const ci=calcNet(s);
-
-  document.getElementById('app').innerHTML=`
-  <header>
-    <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
-    <div class="hphases" id="hphases"></div>
-    <div class="hright">
-      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#81C784" id="h-phase">Balance Sheet</div></div>
-      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
-    </div>
-  </header>
-  <div class="layout">
-    <div class="sidebar">
-      <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
-      <div><div class="sb-label">Balance Sheet Formula</div>
-        <div class="formula-box">
-          <div class="formula-line hl">Assets = Liabilities + Equity</div>
-          <div class="formula-line" style="margin-top:.5rem">Current Assets: cash &lt; 1yr</div>
-          <div class="formula-line">Fixed Assets: long-term</div>
-          <div class="formula-line">Current Liab: due &lt; 1yr</div>
-          <div class="formula-line">Long-term Liab: due 1yr+</div>
-          <div class="formula-line" style="margin-top:.5rem">Retained Earnings includes</div>
-          <div class="formula-line">prior years + net income</div>
-        </div>
-      </div>
-      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.75rem">
-        <div class="sb-label" style="margin-bottom:.4rem">Net Income from Phase 1</div>
-        <div style="font-family:var(--mono);font-size:.9rem;font-weight:700;color:${ci.netIncome>=0?'#81C784':'#EF9A9A'}">${fmtD(ci.netIncome)}</div>
-        <div style="font-size:.62rem;color:rgba(240,238,232,.4);margin-top:.2rem">Add to Retained Earnings</div>
-      </div>
-    </div>
-    <div class="main">
-      <div class="phase-header">
-        <div class="ph-num" style="color:#1B5E20">2</div>
-        <div>
-          <div class="ph-title">Balance Sheet</div>
-          <div class="ph-sub">A snapshot of what the company owns (Assets), owes (Liabilities), and the owners' stake (Equity) on one date. Place each account from the data sheet into the correct category. Assets MUST equal Liabilities + Equity to advance.</div>
-        </div>
-        <span class="ph-badge" style="background:#E8F5E9;color:#1B5E20">Statement 2 of 3</span>
-      </div>
-
-      ${dataSheetHTML(
-        s.balanceItems,
-        s.name+' — Account Balances (as of end of '+s.year+')',
-        'Below are all balance sheet accounts for '+s.name+'. Place each amount in the correct section — Current Assets, Fixed Assets, Current Liabilities, Long-Term Liabilities, or Owner\'s Equity. The order within each section matters too.',
-        'Accumulated Depreciation is a negative number — it reduces the value of Fixed Assets. Net Income from Phase 1 ('+fmtD(ci.netIncome)+') should be added to Retained Earnings when entering Owner\'s Equity.'
-      )}
-
-      <div class="balance-check" id="balance-check">
-        <div class="bc-item"><div class="bc-label">Total Assets</div><div class="bc-val" id="bc-assets" style="color:#0D47A1">$0</div></div>
-        <div class="bc-op">=</div>
-        <div class="bc-item"><div class="bc-label">Total Liabilities</div><div class="bc-val" id="bc-liab" style="color:#B71C1C">$0</div></div>
-        <div class="bc-op">+</div>
-        <div class="bc-item"><div class="bc-label">Owner's Equity</div><div class="bc-val" id="bc-equity" style="color:#1B5E20">$0</div></div>
-        <div class="bc-status unbalanced" id="bc-status">⚠ Does Not Balance</div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
-        <!-- ASSETS -->
-        <div class="fin-table-card">
-          <div class="ftc-header"><div class="ftc-title" style="color:#0D47A1">ASSETS — What the company owns</div></div>
-          <table class="fin-table">
-            <thead><tr><th>Account</th><th style="text-align:right;width:150px">Amount</th></tr></thead>
-            <tbody>
-              <tr class="section-header"><td colspan="2">Current Assets (convert to cash within 1 year)</td></tr>
-              ${balInputRow('cash','Cash & Cash Equivalents','Liquid money — bank accounts and petty cash')}
-              ${balInputRow('ar','Accounts Receivable','Customers owe this — will become cash when collected')}
-              ${balInputRow('inventory','Inventory','Goods available for sale — valued at cost')}
-              ${balInputRow('prepaid','Prepaid Expenses','Paid in advance — insurance, deposits')}
-              <tr class="subtotal"><td><strong>Total Current Assets</strong></td><td class="calc" id="bc-totalCA">—</td></tr>
-              <tr class="section-header"><td colspan="2">Fixed Assets (long-term)</td></tr>
-              ${balInputRow('ppe','Property & Equipment (gross)','At original purchase price — before depreciation')}
-              ${balInputRow('accDeprec','Accumulated Depreciation','Enter as NEGATIVE — e.g. -72000')}
-              ${balInputRow('intangibles','Intangible Assets','Patents, trademarks, goodwill')}
-              <tr class="subtotal"><td><strong>Total Fixed Assets (net)</strong></td><td class="calc" id="bc-totalFA">—</td></tr>
-              <tr class="total-row"><td><strong>TOTAL ASSETS</strong></td><td class="calc" id="bc-totalA">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- LIABILITIES + EQUITY -->
-        <div class="fin-table-card">
-          <div class="ftc-header"><div class="ftc-title" style="color:#B71C1C">LIABILITIES & EQUITY — What is owed + owners' stake</div></div>
-          <table class="fin-table">
-            <thead><tr><th>Account</th><th style="text-align:right;width:150px">Amount</th></tr></thead>
-            <tbody>
-              <tr class="section-header"><td colspan="2">Current Liabilities (due within 1 year)</td></tr>
-              ${balInputRow('ap','Accounts Payable','Money owed to suppliers')}
-              ${balInputRow('stDebt','Short-Term Debt','Loans due within 12 months')}
-              ${balInputRow('accrued','Accrued Expenses','Incurred but not yet paid — wages, taxes')}
-              <tr class="subtotal"><td><strong>Total Current Liabilities</strong></td><td class="calc" id="bc-totalCL">—</td></tr>
-              <tr class="section-header"><td colspan="2">Long-Term Liabilities</td></tr>
-              ${balInputRow('ltDebt','Long-Term Debt','Loans due beyond 12 months')}
-              ${balInputRow('deferredRev','Deferred Revenue','Received but not yet earned — subscriptions, deposits')}
-              <tr class="subtotal"><td><strong>Total Liabilities</strong></td><td class="calc" id="bc-totalL">—</td></tr>
-              <tr class="section-header"><td colspan="2">Owner's Equity</td></tr>
-              ${balInputRow('stock',"Common Stock / Paid-in Capital","Owner or shareholder investment")}
-              ${balInputRow('retained',"Retained Earnings (incl. Net Income)","Prior retained earnings + this year's net income from Phase 1")}
-              <tr class="subtotal"><td><strong>Total Owner's Equity</strong></td><td class="calc" id="bc-totalE">—</td></tr>
-              <tr class="total-row"><td><strong>TOTAL LIABILITIES + EQUITY</strong></td><td class="calc" id="bc-totalLE">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="phase=1;renderApp()">← Back</button>
-        <button class="btn btn-primary" id="bal-submit-btn" onclick="submitBalance()">Submit & See Results →</button>
-      </div>
-    </div>
-  </div>`;
-  buildSidebar();
-  document.querySelectorAll('input[data-phase="balance"]').forEach(el=>el.addEventListener('input',updateBalanceLive));
+function nextScenario(){
+  currentScenario++;
+  if(currentScenario>=SCENARIOS.length)renderFinalReport();
+  else renderScenario();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function balInputRow(key,name,tip){
-  return`<tr>
-    <td><div class="item-name">${name} <span class="tip" data-tip="${tip}">ℹ️</span></div></td>
-    <td class="amount"><input type="number" data-key="${key}" data-phase="balance" placeholder="Enter amount"></td>
-  </tr>`;
-}
-
-function getBVal(key){return parseFloat(document.querySelector('input[data-key="'+key+'"][data-phase="balance"]')?.value)||0;}
-
-function updateBalanceLive(){
-  const totalCA=getBVal('cash')+getBVal('ar')+getBVal('inventory')+getBVal('prepaid');
-  const totalFA=getBVal('ppe')+getBVal('accDeprec')+getBVal('intangibles');
-  const totalA=totalCA+totalFA;
-  const totalCL=getBVal('ap')+getBVal('stDebt')+getBVal('accrued');
-  const totalL=totalCL+getBVal('ltDebt')+getBVal('deferredRev');
-  const totalE=getBVal('stock')+getBVal('retained');
-  const totalLE=totalL+totalE;
-  const balanced=Math.abs(totalA-totalLE)<2;
-
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmtD(val);};
-  set('bc-totalCA',totalCA);set('bc-totalFA',totalFA);set('bc-totalA',totalA);
-  set('bc-totalCL',totalCL);set('bc-totalL',totalL);set('bc-totalE',totalE);set('bc-totalLE',totalLE);
-  document.getElementById('bc-assets').textContent=fmtD(totalA);
-  document.getElementById('bc-liab').textContent=fmtD(totalL);
-  document.getElementById('bc-equity').textContent=fmtD(totalE);
-  const st=document.getElementById('bc-status');
-  if(st){st.textContent=balanced?'✓ Balanced!':'⚠ Difference: '+fmtD(Math.abs(totalA-totalLE));st.className='bc-status '+(balanced?'balanced':'unbalanced');}
-}
-
-function submitBalance(){
-  const s=scenario;
-  const cb=calcBal(s);
-  const ci=calcNet(s);
-  const correctMap={};
-  s.balanceItems.forEach(i=>{
-    if(i.key==='retained')correctMap[i.key]=i.val+ci.netIncome;
-    else correctMap[i.key]=i.val;
-  });
-
-  const keys=s.balanceItems.map(i=>i.key);
-  let correct=0,errors=0;
-  const results=keys.map(key=>{
-    const entered=getBVal(key);
-    const right=correctMap[key];
-    const ok=Math.abs(entered-right)<2;
-    if(ok)correct++;else errors++;
-    return{key,name:s.balanceItems.find(i=>i.key===key)?.name||key,entered,right,ok};
-  });
-
-  studentBalance={...correctMap,correct,errors,results};
-
-  const main=document.querySelector('.main');
-  if(!main)return;
-  const html=`
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.25rem">
-    <div style="font-weight:700;font-size:1rem;margin-bottom:.85rem">${errors===0?'✅':'📋'} Balance Sheet Results — ${correct}/${keys.length} correct</div>
-    ${results.map(r=>`
-      <div class="result-row ${r.ok?'correct-row':'wrong-row'}">
-        <div class="result-icon">${r.ok?'✓':'✗'}</div>
-        <div class="result-item">${r.name}</div>
-        <div class="result-yours">You: ${fmtD(r.entered)}</div>
-        ${!r.ok?`<div class="result-correct" style="color:var(--green)">Correct: ${fmtD(r.right)}</div>`:''}
-      </div>`).join('')}
-    <div style="margin-top:1rem;padding:.75rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.8rem;color:var(--text-muted)">
-      Total Assets: <strong>${fmtD(cb.totalAssets)}</strong> = Total Liabilities: <strong>${fmtD(cb.totalLiab)}</strong> + Equity: <strong>${fmtD(cb.equity)}</strong>
-    </div>
-    <div class="btn-row"><button class="btn btn-primary" onclick="phase=3;renderApp()">Continue to Cash Flow →</button></div>
-  </div>`;
-  main.insertAdjacentHTML('beforeend',html);
-  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-}
-
-// ── PHASE 3: CASH FLOW ──
-function renderCashFlow(){
-  const s=scenario;
-  const ci=calcNet(s);
-  const cf=calcCF(s);
-
-  document.getElementById('app').innerHTML=`
-  <header>
-    <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
-    <div class="hphases" id="hphases"></div>
-    <div class="hright">
-      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#CE93D8" id="h-phase">Cash Flow</div></div>
-      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
-    </div>
-  </header>
-  <div class="layout">
-    <div class="sidebar">
-      <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
-      <div><div class="sb-label">Cash Flow Formula</div>
-        <div class="formula-box">
-          <div class="formula-line">Net Income</div>
-          <div class="formula-line">+ Depreciation (non-cash)</div>
-          <div class="formula-line">± Working capital changes</div>
-          <div class="formula-line hl">= Operating Cash Flow</div>
-          <div class="formula-line" style="margin-top:.35rem">+/- Investing Activities</div>
-          <div class="formula-line">+/- Financing Activities</div>
-          <div class="formula-line hl">= Net Cash Change</div>
-          <div class="formula-line" style="margin-top:.35rem">Beginning Cash + Change</div>
-          <div class="formula-line hl">= Ending Cash</div>
-        </div>
-      </div>
-      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.75rem">
-        <div class="sb-label" style="margin-bottom:.35rem">Key Insight</div>
-        <div style="font-size:.68rem;color:rgba(240,238,232,.6);line-height:1.6">Net Income: ${fmtD(ci.netIncome)}<br>Operating CF: ${fmtD(cf.opCF)}<br><br>A profitable company can still run out of cash!</div>
-      </div>
-    </div>
-    <div class="main">
-      <div class="phase-header">
-        <div class="ph-num" style="color:#4A148C">3</div>
-        <div>
-          <div class="ph-title">Cash Flow Statement</div>
-          <div class="ph-sub">Shows how cash actually moves — from operations, investing, and financing. Net Income from Phase 1 is pre-filled. Use the data sheet to enter the adjustments. Cash outflows are negative numbers.</div>
-        </div>
-        <span class="ph-badge" style="background:#F3E5F5;color:#4A148C">Statement 3 of 3</span>
-      </div>
-
-      ${dataSheetHTML(
-        s.cashFlowItems,
-        s.name+' — Cash Flow Adjustments ('+s.year+')',
-        'These are the adjustments needed to convert Net Income to actual cash flow. Enter each in the correct activity section below. Cash outflows (money leaving the business) are negative numbers.',
-        'CapEx and debt repayment are always negative — they are cash leaving the business. The depreciation add-back is always positive.'
-      )}
-
-      <div class="fin-table-card">
-        <div class="ftc-header"><div class="ftc-title">${s.name}</div><div class="ftc-subtitle">Cash Flow Statement — ${s.year}</div></div>
-        <table class="fin-table">
-          <thead><tr><th>Item</th><th style="text-align:right;width:180px">Amount</th></tr></thead>
-          <tbody>
-            <tr class="section-header"><td colspan="2">OPERATING ACTIVITIES — Day-to-day business cash</td></tr>
-            <tr>
-              <td><div class="item-name">Net Income <span class="tip" data-tip="Flows directly from your Income Statement in Phase 1 — pre-filled">ℹ️</span></div></td>
-              <td class="amount"><input type="number" data-key="netIncome" data-phase="cf" value="${Math.round(ci.netIncome)}" style="background:var(--greenl);border-color:var(--green)" oninput="updateCFLive()"></td>
-            </tr>
-            ${cfInputRow('deprAddback','Add: Depreciation (non-cash)','Non-cash expense added back — check data sheet')}
-            ${cfInputRow('arChange','Change in Accounts Receivable','Check data sheet — can be negative')}
-            ${cfInputRow('invChange','Change in Inventory','Check data sheet — can be negative')}
-            ${cfInputRow('apChange','Change in Accounts Payable','Check data sheet — can be positive')}
-            <tr class="subtotal"><td><strong>Net Cash from Operating Activities</strong></td><td class="calc" id="cf-opTotal">—</td></tr>
-            <tr class="section-header"><td colspan="2">INVESTING ACTIVITIES — Long-term asset purchases/sales</td></tr>
-            ${cfInputRow('capex','Capital Expenditures (CapEx)','Enter as negative — cash leaving for equipment')}
-            ${s.cashFlowItems.find(i=>i.key==='investments')?cfInputRow('investments','Investment Purchases','Enter from data sheet'):''}
-            <tr class="subtotal"><td><strong>Net Cash from Investing Activities</strong></td><td class="calc" id="cf-invTotal">—</td></tr>
-            <tr class="section-header"><td colspan="2">FINANCING ACTIVITIES — Borrowing and repaying money</td></tr>
-            ${cfInputRow('debtRepay','Debt Repayment','Enter as negative — cash leaving to repay loans')}
-            ${s.cashFlowItems.find(i=>i.key==='dividends')?cfInputRow('dividends','Dividends Paid','Enter as negative — cash paid to shareholders'):''}
-            <tr class="subtotal"><td><strong>Net Cash from Financing Activities</strong></td><td class="calc" id="cf-finTotal">—</td></tr>
-            <tr class="subtotal"><td><strong>Net Change in Cash</strong></td><td class="calc" id="cf-netChange">—</td></tr>
-            <tr><td><strong>Beginning Cash Balance</strong></td><td class="amount" style="font-family:var(--mono);text-align:right;padding-right:1rem">${fmtD(s.beginningCash)}</td></tr>
-            <tr class="ni-row"><td><strong>ENDING CASH BALANCE</strong></td><td class="calc" id="cf-endCash">—</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="phase=2;renderApp()">← Back</button>
-        <button class="btn btn-primary" onclick="submitCashFlow()">Submit & Continue to Analysis →</button>
-      </div>
-    </div>
-  </div>`;
-  buildSidebar();
-  document.querySelectorAll('input[data-phase="cf"]').forEach(el=>el.addEventListener('input',updateCFLive));
-  updateCFLive();
-}
-
-function cfInputRow(key,name,tip){
-  return`<tr>
-    <td><div class="item-name">${name} <span class="tip" data-tip="${tip}">ℹ️</span></div></td>
-    <td class="amount"><input type="number" data-key="${key}" data-phase="cf" placeholder="Enter amount" oninput="updateCFLive()"></td>
-  </tr>`;
-}
-
-function getCFVal(key){return parseFloat(document.querySelector('input[data-key="'+key+'"][data-phase="cf"]')?.value)||0;}
-
-function updateCFLive(){
-  const s=scenario;
-  const opCF=getCFVal('netIncome')+getCFVal('deprAddback')+getCFVal('arChange')+getCFVal('invChange')+getCFVal('apChange');
-  const invCF=getCFVal('capex')+(s.cashFlowItems.find(i=>i.key==='investments')?getCFVal('investments'):0);
-  const finCF=getCFVal('debtRepay')+(s.cashFlowItems.find(i=>i.key==='dividends')?getCFVal('dividends'):0);
-  const netChange=opCF+invCF+finCF;
-  const endCash=s.beginningCash+netChange;
-  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmtD(val);};
-  set('cf-opTotal',opCF);set('cf-invTotal',invCF);set('cf-finTotal',finCF);set('cf-netChange',netChange);set('cf-endCash',endCash);
-}
-
-function submitCashFlow(){
-  const s=scenario;
-  const cf=calcCF(s);
-  const ci=calcNet(s);
-  const cfItems=s.cashFlowItems;
-  const keys=['netIncome',...cfItems.map(i=>i.key)];
-  const correctMap={netIncome:Math.round(ci.netIncome)};
-  cfItems.forEach(i=>{correctMap[i.key]=i.val;});
-
-  let correct=0,errors=0;
-  const results=keys.map(key=>{
-    const entered=getCFVal(key);
-    const right=correctMap[key];
-    const ok=Math.abs(entered-right)<2;
-    if(ok)correct++;else errors++;
-    const name=key==='netIncome'?'Net Income':cfItems.find(i=>i.key===key)?.name||key;
-    return{key,name,entered,right,ok};
-  });
-
-  studentCF={...correctMap,correct,errors,results};
-  phase=4;renderApp();
-}
-
-// ── PHASE 4: ANALYSIS ──
-function renderAnalysis(){
-  const s=scenario;
-  const ci=calcNet(s);
-  const cb=calcBal(s);
-  const cf=calcCF(s);
-  const gpMargin=ci.totalRev>0?((ci.grossProfit/ci.totalRev)*100).toFixed(1):0;
-  const netMargin=ci.totalRev>0?((ci.netIncome/ci.totalRev)*100).toFixed(1):0;
-  const curRatio=cb.currentLiab>0?(cb.currentAssets/cb.currentLiab).toFixed(2):0;
-  const debtRatio=cb.totalAssets>0?((cb.totalLiab/cb.totalAssets)*100).toFixed(1):0;
-  const roi=cb.totalAssets>0?((ci.netIncome/cb.totalAssets)*100).toFixed(1):0;
-
-  function ratioCard(label,val,status,desc){
-    const colors={pos:['#E8F5E9','#1B5E20'],neg:['#FFEBEE','#B71C1C'],neu:['#FFF3E0','#E65100']};
-    const[bg,c]=colors[status];
-    return`<div class="ratio-card" style="background:${bg};border-color:${c}30">
-      <div class="ratio-val" style="color:${c}">${val}</div>
-      <div class="ratio-label" style="color:${c}">${label}</div>
-      <div class="ratio-desc" style="color:${c}">${desc}</div>
-    </div>`;
+function goBack(){
+  if(currentScenario>0){
+    const d=decisions[currentScenario-1];
+    if(d){if(d.agencyCorrect&&d.actionCorrect)agencyCounts.correct--;else agencyCounts.wrong--;}
+    decisions.splice(currentScenario-1,1);
+    currentScenario--;
+    renderScenario();
   }
+}
+
+// ── FINAL REPORT ──
+async function renderFinalReport(){
+  buildHeader();
+  const total=SCENARIOS.length;
+  const correct=decisions.filter(d=>d.agencyCorrect&&d.actionCorrect).length;
+  const agencyCorrect=decisions.filter(d=>d.agencyCorrect).length;
+  const actionCorrect=decisions.filter(d=>d.actionCorrect).length;
+
+  let rating='',ratingColor='',ratingBg='';
+  if(correct>=5){rating='Outstanding Compliance Officer';ratingColor='var(--green)';ratingBg='var(--greenl)';}
+  else if(correct>=3){rating='Competent — Needs Development';ratingColor='var(--amber)';ratingBg:'var(--amberl)';}
+  else{rating='Significant Training Required';ratingColor='var(--red)';ratingBg='var(--redl)';}
 
   document.getElementById('app').innerHTML=`
   <header>
-    <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
-    <div class="hphases" id="hphases"></div>
+    <div class="hbrand"><h1>Ethics & Compliance Simulator</h1><div class="sub">Business Management · Strand 7</div></div>
+    <div class="hscenarios" id="hscenarios"></div>
     <div class="hright">
-      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#FFD54F" id="h-phase">Analysis</div></div>
-      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
+      <div class="hstat"><div class="hstat-label">Final Score</div><div class="hstat-val" style="color:#81C784" id="h-score">${correct}/${total}</div></div>
+      <div class="hstat"><div class="hstat-label">Status</div><div class="hstat-val" id="h-scenario">Complete</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
-      <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
-      <div><div class="sb-label">Healthy Benchmarks</div>
-        <div class="formula-box">
-          <div class="formula-line">Gross Margin: &gt;30% good</div>
-          <div class="formula-line">Net Margin: &gt;10% strong</div>
-          <div class="formula-line">Current Ratio: &gt;1.5 safe</div>
-          <div class="formula-line">Debt Ratio: &lt;50% low risk</div>
-          <div class="formula-line">ROI: &gt;10% attractive</div>
-        </div>
+      <div><div class="sb-label">Final Scorecard</div><div class="scorecard" id="sb-scorecard"></div></div>
+      <div><div class="sb-label">Laws Covered</div>
+        <div class="law-ref" id="sb-laws-final"></div>
       </div>
     </div>
     <div class="main">
-      <div class="phase-header">
-        <div class="ph-num" style="color:#E65100">4</div>
-        <div>
-          <div class="ph-title">Financial Analysis</div>
-          <div class="ph-sub">Now interpret what the numbers mean. Use all three statements to answer the questions below. Reference specific numbers from your data — vague answers will score poorly.</div>
-        </div>
-        <span class="ph-badge" style="background:#FFF3E0;color:#E65100">Analysis Phase</span>
-      </div>
-
-      <div class="ratio-grid">
-        ${ratioCard('Gross Margin',gpMargin+'%',parseFloat(gpMargin)>30?'pos':'neg','After direct costs')}
-        ${ratioCard('Net Margin',netMargin+'%',parseFloat(netMargin)>10?'pos':parseFloat(netMargin)>0?'neu':'neg','Profit per revenue $')}
-        ${ratioCard('Current Ratio',curRatio+'x',parseFloat(curRatio)>1.5?'pos':parseFloat(curRatio)>1?'neu':'neg','Short-term liquidity')}
-        ${ratioCard('Debt Ratio',debtRatio+'%',parseFloat(debtRatio)<50?'pos':parseFloat(debtRatio)<70?'neu':'neg','% financed by debt')}
-        ${ratioCard('ROI',roi+'%',parseFloat(roi)>10?'pos':parseFloat(roi)>0?'neu':'neg','Return on assets')}
-      </div>
-
-      <div class="analysis-card">
-        <div class="aq">
-          <div class="aq-num">Question 1 — Profitability (Income Statement)</div>
-          <div class="aq-q">Is ${s.name} profitable? Calculate and explain the gross profit margin and net profit margin. What do these margins tell you about how well the business controls its costs?</div>
-          <div class="aq-data">Total Revenue: ${fmtD(ci.totalRev)} · Gross Profit: ${fmtD(ci.grossProfit)} · Net Income: ${fmtD(ci.netIncome)}<br>Gross Margin: ${gpMargin}% · Net Margin: ${netMargin}%</div>
-          <textarea id="aq1" placeholder="e.g. ${s.name} has a gross margin of ${gpMargin}% meaning that for every dollar of revenue, ${gpMargin} cents remain after paying direct costs. The net margin of ${netMargin}% means... Compared to healthy benchmarks (gross >30%, net >10%), this business is..."></textarea>
-        </div>
-        <div class="aq">
-          <div class="aq-num">Question 2 — Liquidity & Debt (Balance Sheet)</div>
-          <div class="aq-q">Can ${s.name} pay its short-term bills? Calculate the current ratio (Current Assets ÷ Current Liabilities). Is the debt level sustainable? Reference the debt ratio.</div>
-          <div class="aq-data">Current Assets: ${fmtD(cb.currentAssets)} · Current Liabilities: ${fmtD(cb.currentLiab)}<br>Current Ratio: ${curRatio}x · Total Debt: ${fmtD(cb.totalLiab)} · Debt Ratio: ${debtRatio}%</div>
-          <textarea id="aq2" placeholder="e.g. The current ratio of ${curRatio} means the company has $${curRatio} in current assets for every $1.00 of current liabilities. This [is/is not] concerning because... The debt ratio of ${debtRatio}% means..."></textarea>
-        </div>
-        <div class="aq">
-          <div class="aq-num">Question 3 — Cash vs. Profit (Cash Flow Statement)</div>
-          <div class="aq-q">Is ${s.name} generating real cash? Compare Net Income to Operating Cash Flow and explain why they are different. Why does this difference matter for business survival?</div>
-          <div class="aq-data">Net Income: ${fmtD(ci.netIncome)} · Operating Cash Flow: ${fmtD(cf.opCF)}<br>Net Change in Cash: ${fmtD(cf.netChange)} · Ending Cash: ${fmtD(cf.endCash)}</div>
-          <textarea id="aq3" placeholder="e.g. Net income was ${fmtD(ci.netIncome)} but operating cash flow was ${fmtD(cf.opCF)}. These differ because depreciation of $X is non-cash... A company can be profitable but cash-poor when..."></textarea>
-        </div>
-        <div class="aq">
-          <div class="aq-num">Question 4 — Management Decision</div>
-          <div class="aq-q">Based on all three financial statements, should ${s.name} expand operations next year? Make a specific recommendation and support it with at least 3 numbers from the statements.</div>
-          <div class="aq-data">Use data from all three statements. Consider: profitability, cash position, debt load, and operating cash flow.</div>
-          <textarea id="aq4" placeholder="e.g. I [recommend/do not recommend] expansion because the ROI of ${roi}% [supports/does not support] taking on additional risk... The operating cash flow of ${fmtD(cf.opCF)} [does/does not] provide enough internal funding... The debt ratio of ${debtRatio}% suggests..."></textarea>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="phase=3;renderApp()">← Back</button>
-        <button class="btn btn-primary" onclick="submitAnalysis()">Get AI Feedback →</button>
-      </div>
-    </div>
-  </div>`;
-  buildSidebar();
-}
-
-function submitAnalysis(){
-  const fields=['aq1','aq2','aq3','aq4'];
-  for(const id of fields){
-    const el=document.getElementById(id);
-    if(!el?.value.trim()||el.value.trim().length<30){
-      el.style.borderColor='#B71C1C';el.focus();
-      alert('Please answer all four questions before continuing.');return;
-    }
-  }
-  studentAnalysis={aq1:document.getElementById('aq1').value.trim(),aq2:document.getElementById('aq2').value.trim(),aq3:document.getElementById('aq3').value.trim(),aq4:document.getElementById('aq4').value.trim()};
-  phase=5;renderApp();
-}
-
-// ── PHASE 5: FEEDBACK ──
-async function renderFeedback(){
-  const s=scenario;
-  const ci=calcNet(s);
-  const cb=calcBal(s);
-  const cf=calcCF(s);
-  const gpMargin=((ci.grossProfit/ci.totalRev)*100).toFixed(1);
-  const netMargin=((ci.netIncome/ci.totalRev)*100).toFixed(1);
-  const curRatio=(cb.currentAssets/cb.currentLiab).toFixed(2);
-  const debtRatio=((cb.totalLiab/cb.totalAssets)*100).toFixed(1);
-  const roi=((ci.netIncome/cb.totalAssets)*100).toFixed(1);
-
-  document.getElementById('app').innerHTML=`
-  <header>
-    <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
-    <div class="hphases" id="hphases"></div>
-    <div class="hright">
-      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#81C784" id="h-phase">Complete</div></div>
-      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
-    </div>
-  </header>
-  <div class="layout">
-    <div class="sidebar">
-      <div><div class="sb-label">All Statements ✓</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Final Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
-    </div>
-    <div class="main">
-      <div class="feedback-card">
-        <div class="fb-header">
-          <div class="fb-icon">📊</div>
+      <div class="final-report">
+        <div class="fr-header">
+          <div class="fr-icon" style="font-size:2rem">⚖️</div>
           <div>
-            <div class="fb-title">${s.name} — Financial Analysis Review</div>
-            <div class="fb-sub">Business Management · Strand 5 · Standards 1–3</div>
+            <div class="fr-title">Compliance Officer Performance Report</div>
+            <div class="fr-sub">Business Management · Strand 7 · Ethics & Legal Regulations</div>
           </div>
-          <div style="margin-left:auto;text-align:right">
-            <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3)">Statement Accuracy</div>
-            <div style="font-family:var(--mono);font-size:.9rem;font-weight:700;color:#FFD54F;margin-top:.2rem">
-              Income: ${studentIncome.correct||0}/${s.incomeItems.length} · Balance: ${studentBalance.correct||0}/${s.balanceItems.length} · CF: ${studentCF.correct||0}/${s.cashFlowItems.length+1}
-            </div>
-          </div>
+          <div class="fr-score" style="color:${correct>=5?'#81C784':correct>=3?'#FFD54F':'#EF9A9A'}">${correct}/${total}</div>
         </div>
-        <div style="padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1)">
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;font-size:.82rem">
-            <div style="background:var(--bluel);border:1px solid var(--bluem);border-radius:var(--radius-sm);padding:.85rem">
-              <div style="font-weight:700;color:var(--blue);margin-bottom:.4rem">📊 Income Statement</div>
-              Revenue: ${fmtD(ci.totalRev)}<br>Gross Profit: ${fmtD(ci.grossProfit)}<br>Net Income: <strong style="color:${ci.netIncome>=0?'var(--green)':'var(--red)'}">${fmtD(ci.netIncome)}</strong>
+        <div class="fr-body">
+          <div style="text-align:center;padding:.85rem;border-radius:var(--radius-sm);margin-bottom:1.25rem;background:${ratingBg||'var(--surface2)'}">
+            <div style="font-family:var(--serif);font-size:1.1rem;font-weight:700;color:${ratingColor}">${rating}</div>
+          </div>
+          <div class="verdict-grid">
+            <div class="verdict-box" style="background:var(--greenl);border-color:var(--greenm)">
+              <div class="verdict-val" style="color:var(--green)">${correct}</div>
+              <div class="verdict-label" style="color:var(--green)">Fully Correct</div>
             </div>
-            <div style="background:var(--greenl);border:1px solid var(--greenm);border-radius:var(--radius-sm);padding:.85rem">
-              <div style="font-weight:700;color:var(--green);margin-bottom:.4rem">⚖️ Balance Sheet</div>
-              Total Assets: ${fmtD(cb.totalAssets)}<br>Total Liabilities: ${fmtD(cb.totalLiab)}<br>Owner's Equity: <strong style="color:${cb.equity>=0?'var(--green)':'var(--red)'}">${fmtD(cb.equity)}</strong>
+            <div class="verdict-box" style="background:var(--bluel);border-color:var(--bluem)">
+              <div class="verdict-val" style="color:#0D47A1">${agencyCorrect}</div>
+              <div class="verdict-label" style="color:#0D47A1">Right Agency</div>
             </div>
-            <div style="background:var(--purplel);border:1px solid var(--purplem);border-radius:var(--radius-sm);padding:.85rem">
-              <div style="font-weight:700;color:var(--purple);margin-bottom:.4rem">💸 Cash Flow</div>
-              Operating CF: <strong style="color:${cf.opCF>=0?'var(--green)':'var(--red)'}">${fmtD(cf.opCF)}</strong><br>Net Change: ${fmtD(cf.netChange)}<br>Ending Cash: ${fmtD(cf.endCash)}
+            <div class="verdict-box" style="background:var(--redl);border-color:var(--redm)">
+              <div class="verdict-val" style="color:var(--red)">${total-correct}</div>
+              <div class="verdict-label" style="color:var(--red)">Incorrect</div>
             </div>
           </div>
-          <div class="score-row" id="score-row"></div>
-          <div class="fb-body" id="fb-body"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+
+          <div class="scenario-review">
+            ${decisions.map((d,i)=>{
+              const sc=SCENARIOS[i];
+              const both=d.agencyCorrect&&d.actionCorrect;
+              const chosenA=AGENCIES.find(a=>a.id===d.agencyChosen);
+              const correctA=AGENCIES.find(a=>a.id===d.correctAgency);
+              return`<div class="sr-row ${both?'correct-row':'wrong-row'}">
+                <div class="sr-icon">${both?'✅':'❌'}</div>
+                <div class="sr-content">
+                  <div class="sr-title">${sc.title} — ${sc.category}</div>
+                  <div class="sr-detail">Agency: ${d.agencyCorrect?'✓ '+chosenA?.name:'✗ You chose '+chosenA?.name+', correct: '+correctA?.name} · Action: ${d.actionCorrect?'✓ Option '+d.actionChosen:'✗ Option '+d.actionChosen+', correct: '+d.correctAction}</div>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+
+          <div class="feedback-section">
+            <div class="fb-label">🏛️ Legal Compliance Advisor Review</div>
+            <div class="score-row" id="score-row"></div>
+            <div class="fb-text" id="fb-text"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+          </div>
         </div>
       </div>
       <div class="btn-row" style="margin-top:.75rem">
-        <button class="btn btn-outline" onclick="phase=0;renderSelect()">🔄 Try Another Company</button>
-        <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn btn-outline" onclick="renderIntro()">🔄 Run Again</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print Report</button>
       </div>
     </div>
   </div>`;
   buildHeader();buildSidebar();
 
-  const systemPrompt=`You are a demanding but fair financial analysis professor reviewing a high school student's work on financial statements for Utah Business Management Strand 5. Hold work to real professional standards.
+  const decisionSummary=decisions.map((d,i)=>{
+    const sc=SCENARIOS[i];
+    const chosenA=AGENCIES.find(a=>a.id===d.agencyChosen)?.name||d.agencyChosen;
+    const correctA=AGENCIES.find(a=>a.id===d.correctAgency)?.name||d.correctAgency;
+    return`Scenario ${i+1} — "${sc.title}" (${sc.category}):
+  Agency chosen: ${chosenA} | Correct: ${correctA} | ${d.agencyCorrect?'✓':'✗'}
+  Action chosen: Option ${d.actionChosen} | Correct: Option ${d.correctAction} | ${d.actionCorrect?'✓':'✗'}
+  Student reasoning: "${d.reasoning}"`;
+  }).join('\n\n');
+
+  const systemPrompt=`You are a demanding but fair legal compliance professor reviewing a high school student's performance on an ethics and compliance simulation for Utah Business Management Strand 7. Hold work to real professional standards. A compliance officer who does not know which law applies in a workplace crisis is a liability to their company.
 
 SCORING:
-- "Great" = correctly interpreted ratios, used financial vocabulary accurately, drew logical conclusions from data
-- "OK" = correct direction but missing depth, incomplete vocabulary, or weak connections between statements
-- "Needs Work" = incorrect interpretation, misunderstood concepts, or conclusions not supported by numbers
+- "Great" = correctly identified the law, chose the right action, AND explained the legal reasoning with specific principles
+- "OK" = correct identification but weak or vague legal reasoning
+- "Needs Work" = wrong law, wrong action, or reasoning that shows fundamental misunderstanding
 
 Start with EXACTLY:
-SCORES: Income Statement Analysis:[Great/OK/Needs Work] | Balance Sheet Analysis:[Great/OK/Needs Work] | Cash Flow Analysis:[Great/OK/Needs Work] | Management Decision:[Great/OK/Needs Work] | Overall Financial Literacy:[Great/OK/Needs Work]
+SCORES: Agency Identification:[Great/OK/Needs Work] | Action Selection:[Great/OK/Needs Work] | Legal Reasoning:[Great/OK/Needs Work] | Employee Rights Knowledge:[Great/OK/Needs Work] | Overall Compliance Acumen:[Great/OK/Needs Work]
 
-Then 4 focused paragraphs:
-1. Profitability analysis — did they correctly explain gross margin (${gpMargin}%) and net margin (${netMargin}%)? Did they use vocabulary: revenue, COGS, gross profit, operating expenses, net income?
-2. Liquidity/solvency — did they correctly interpret the current ratio (${curRatio}x) and debt ratio (${debtRatio}%)? Did they explain what these mean for the company's financial health?
-3. Cash vs profit — did they understand WHY net income (${fmtD(ci.netIncome)}) differs from operating cash flow (${fmtD(cf.opCF)})? Did they mention depreciation, working capital changes?
-4. Management decision — was it supported by specific data? Was it logically consistent with what the numbers show?
+Then 4 paragraphs:
+1. Evaluate which laws they identified correctly vs incorrectly. Reference specific scenarios by name. A compliance officer who cannot distinguish OSHA from EEOC or ADA is not ready for the role.
+2. Evaluate their action choices — did they choose actions that would actually protect the company and employees? Call out any choices that would themselves create violations (like retaliating against a whistleblower or transferring a harassment victim).
+3. Evaluate the quality of their written legal reasoning across scenarios. Did they use specific law names, sections, or principles? Did they explain WHY the law applies — or just name it?
+4. Overall assessment — which laws do they understand well, which do they need to study more? Which scenario showed their strongest and weakest understanding?
 
-End with one specific rewrite challenge — identify their weakest answer and show them what a stronger version looks like. No markdown ** or ##.`;
+End with one specific study challenge: pick the law they struggled with most and give them a one-paragraph explanation of what they need to understand about it. No markdown ** or ##.`;
 
-  const userPrompt=`Student Financial Analysis — ${s.name} (${s.type})
+  const userPrompt=`Student Compliance Results:
+Score: ${correct}/${total} correct (Agency correct: ${agencyCorrect}, Action correct: ${actionCorrect})
 
-Statement accuracy: Income ${studentIncome.correct}/${s.incomeItems.length}, Balance ${studentBalance.correct}/${s.balanceItems.length}, Cash Flow ${studentCF.correct}/${s.cashFlowItems.length+1}
-
-Key Financials: Revenue=${fmtD(ci.totalRev)}, Gross Profit=${fmtD(ci.grossProfit)} (${gpMargin}%), Net Income=${fmtD(ci.netIncome)} (${netMargin}%)
-Total Assets=${fmtD(cb.totalAssets)}, Total Liabilities=${fmtD(cb.totalLiab)}, Equity=${fmtD(cb.equity)}, Current Ratio=${curRatio}x, Debt Ratio=${debtRatio}%
-Operating CF=${fmtD(cf.opCF)}, Net Change=${fmtD(cf.netChange)}, Ending Cash=${fmtD(cf.endCash)}, ROI=${roi}%
-
-Q1 (Profitability): "${studentAnalysis.aq1}"
-Q2 (Liquidity/Solvency): "${studentAnalysis.aq2}"
-Q3 (Cash vs Profit): "${studentAnalysis.aq3}"
-Q4 (Management Decision): "${studentAnalysis.aq4}"`;
+${decisionSummary}`;
 
   try{
     const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -1255,13 +803,13 @@ Q4 (Management Decision): "${studentAnalysis.aq4}"`;
         return`<span class="sc ${cls}">${lbl}: ${rat}</span>`;
       }).join('');
     }
-    document.getElementById('fb-body').textContent=main;
+    document.getElementById('fb-text').textContent=main;
   }catch(err){
-    document.getElementById('fb-body').textContent='Connection error: '+err.message;
+    document.getElementById('fb-text').textContent='Connection error: '+err.message;
   }
 }
 
-renderSelect();
+renderIntro();
 </script>
 </body>
 </html>
