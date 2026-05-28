@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Ventures Escape Room — Business Management Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0C0F;--surface:#111418;--surface2:#181C22;--surface3:#1E2330;
+  --border:#2A3040;--border2:#3A4560;
+  --text:#E8EDF5;--text-muted:#8A9AB5;--text-dim:#4A5570;
+  --green:#00FF88;--greend:#00CC66;--greenl:rgba(0,255,136,.1);--greenborder:rgba(0,255,136,.3);
+  --red:#FF4466;--redl:rgba(255,68,102,.1);--redborder:rgba(255,68,102,.3);
+  --blue:#4488FF;--bluel:rgba(68,136,255,.1);--blueborder:rgba(68,136,255,.3);
+  --amber:#FFB800;--amberl:rgba(255,184,0,.1);--amberborder:rgba(255,184,0,.3);
+  --purple:#AA44FF;--purplel:rgba(170,68,255,.1);--purpleborder:rgba(170,68,255,.3);
+  --cyan:#00CCFF;--cyanl:rgba(0,204,255,.1);--cyanborder:rgba(0,204,255,.3);
+  --room1:#4488FF;--room2:#00FF88;--room3:#AA44FF;--room4:#FFB800;--room5:#FF4466;--room6:#00CCFF;
+  --mono:'Share Tech Mono',monospace;--display:'Rajdhani',sans-serif;--body:'Exo 2',sans-serif;
+  --radius:8px;--radius-sm:4px;
+}
+body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* SCANLINE EFFECT */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);pointer-events:none;z-index:9999;}
+
+/* HUD HEADER */
+.hud{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,12,15,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0;height:52px;backdrop-filter:blur(10px);}
+.hud-brand{padding:0 1.25rem;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;gap:.65rem;flex-shrink:0;}
+.hud-logo{font-size:1.1rem;}
+.hud-title{font-family:var(--display);font-size:.9rem;font-weight:700;color:var(--green);letter-spacing:.06em;}
+.hud-rooms{display:flex;flex:1;}
+.hud-room{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid var(--border);font-size:.58rem;font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);transition:all .3s;gap:.15rem;cursor:default;}
+.hud-room.active{color:var(--text);}
+.hud-room.complete{color:var(--green);}
+.hud-room-num{font-size:.72rem;font-weight:700;}
+.hud-room-name{font-size:.52rem;}
+.hud-stats{display:flex;align-items:stretch;border-left:1px solid var(--border);flex-shrink:0;}
+.hud-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 1rem;border-right:1px solid var(--border);gap:.1rem;}
+.hud-stat:last-child{border-right:none;}
+.hud-stat-label{font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);font-family:var(--display);}
+.hud-stat-val{font-family:var(--mono);font-size:.9rem;font-weight:700;}
+#timer-val{color:var(--green);}
+#timer-val.warn{color:var(--amber);animation:pulse .8s infinite;}
+#timer-val.danger{color:var(--red);animation:pulse .4s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* MAIN CONTENT */
+.room-container{padding-top:52px;min-height:100vh;display:flex;flex-direction:column;}
+.room-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2rem;max-width:900px;margin:0 auto;width:100%;}
+
+/* INTRO SCREEN */
+.intro-hero{text-align:center;padding:2rem 0 1.5rem;}
+.intro-logo{font-size:4rem;margin-bottom:1rem;animation:flicker 3s infinite;}
+@keyframes flicker{0%,90%,100%{opacity:1}92%{opacity:.8}94%{opacity:1}96%{opacity:.7}98%{opacity:1}}
+.intro-title{font-family:var(--display);font-size:2.8rem;font-weight:800;letter-spacing:.04em;margin-bottom:.5rem;background:linear-gradient(135deg,var(--blue),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.intro-subtitle{font-size:.9rem;color:var(--text-muted);margin-bottom:2rem;line-height:1.6;}
+.briefing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:left;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+.briefing-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--green));}
+.briefing-title{font-family:var(--display);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:.85rem;}
+.briefing-text{font-size:.85rem;color:var(--text-muted);line-height:1.75;}
+.briefing-text strong{color:var(--text);}
+.room-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:1.5rem;}
+.rp-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;display:flex;align-items:center;gap:.6rem;}
+.rp-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:.75rem;font-weight:700;flex-shrink:0;}
+.rp-info{}
+.rp-name{font-size:.75rem;font-weight:600;margin-bottom:.1rem;}
+.rp-topic{font-size:.62rem;color:var(--text-dim);}
+.name-input-wrap{display:flex;gap:.75rem;align-items:center;margin-bottom:1rem;}
+.name-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;font-family:var(--body);font-size:.95rem;color:var(--text);outline:none;transition:border-color .15s;}
+.name-input:focus{border-color:var(--green);}
+.name-input::placeholder{color:var(--text-dim);}
+.start-btn{background:linear-gradient(135deg,var(--blue),var(--green));color:#000;font-family:var(--display);font-size:1rem;font-weight:800;padding:.85rem 2.5rem;border:none;border-radius:var(--radius-sm);cursor:pointer;letter-spacing:.06em;transition:all .2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,255,136,.3);}
+
+/* ROOM HEADER */
+.room-header{width:100%;margin-bottom:1.5rem;}
+.room-title-bar{display:flex;align-items:center;gap:1rem;margin-bottom:.75rem;}
+.room-num-badge{font-family:var(--mono);font-size:.7rem;padding:.3rem .75rem;border-radius:var(--radius-sm);font-weight:700;border:1px solid;}
+.room-title{font-family:var(--display);font-size:1.6rem;font-weight:800;letter-spacing:.02em;}
+.room-narrative{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1.1rem;font-size:.82rem;color:var(--text-muted);line-height:1.65;position:relative;}
+.room-narrative::before{content:'📡 TRANSMISSION';position:absolute;top:-8px;left:12px;font-family:var(--display);font-size:.58rem;letter-spacing:.15em;background:var(--bg);padding:0 .4rem;color:var(--text-dim);}
+
+/* VAULT */
+.vault{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.5rem;width:100%;margin-bottom:1rem;position:relative;overflow:hidden;}
+.vault-label{font-family:var(--display);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin-bottom:1rem;}
+.vault.unlocked{border-color:var(--green);background:var(--greenl);}
+.vault.locked{border-color:var(--border2);}
+
+/* CODE INPUT */
+.code-display{display:flex;gap:.5rem;justify-content:center;margin:1rem 0;}
+.code-digit{width:52px;height:64px;background:var(--surface2);border:2px solid var(--border2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:1.8rem;font-weight:700;color:var(--green);transition:all .3s;}
+.code-digit.filled{border-color:var(--green);background:var(--greenl);}
+.code-digit.wrong{border-color:var(--red);background:var(--redl);animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* PUZZLE ELEMENTS */
+.puzzle-section{margin-bottom:1.25rem;}
+.puzzle-label{font-family:var(--display);font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.65rem;display:flex;justify-content:space-between;align-items:center;}
+.puzzle-label span{font-size:.58rem;color:var(--text-dim);}
+
+/* MATCHING */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.match-col-label{font-family:var(--display);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.5rem;text-align:center;}
+.match-items{display:flex;flex-direction:column;gap:.4rem;}
+.match-item{padding:.55rem .85rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.8rem;cursor:pointer;transition:all .15s;text-align:center;user-select:none;}
+.match-item:hover{border-color:var(--text-muted);}
+.match-item.selected{border-color:var(--blue);background:var(--bluel);color:var(--blue);}
+.match-item.matched{border-color:var(--green);background:var(--greenl);color:var(--green);cursor:default;}
+.match-item.wrong-match{border-color:var(--red);background:var(--redl);animation:shake .3s ease;}
+
+/* MULTIPLE CHOICE */
+.mc-opts{display:flex;flex-direction:column;gap:.4rem;}
+.mc-opt{display:flex;align-items:center;gap:.75rem;padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;font-size:.83rem;}
+.mc-opt:hover{border-color:var(--text-muted);background:var(--surface2);}
+.mc-opt.correct-anim{border-color:var(--green);background:var(--greenl);color:var(--green);}
+.mc-opt.wrong-anim{border-color:var(--red);background:var(--redl);animation:shake .3s ease;}
+.mc-letter{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:.72rem;font-weight:700;flex-shrink:0;color:var(--text-dim);}
+
+/* SORT BINS */
+.sort-area{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.sort-bin{background:var(--surface2);border:1.5px dashed var(--border2);border-radius:var(--radius-sm);padding:.85rem;min-height:90px;}
+.sort-bin-label{font-family:var(--display);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;font-weight:700;}
+.sort-items-pool{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;}
+.sort-item{padding:.35rem .75rem;border:1.5px solid var(--border);border-radius:100px;font-size:.75rem;cursor:pointer;background:var(--surface2);transition:all .15s;user-select:none;}
+.sort-item:hover{border-color:var(--blue);background:var(--bluel);}
+.sort-item.placed{opacity:.35;cursor:default;}
+.sort-item.in-bin{display:inline-flex;align-items:center;gap:.3rem;cursor:pointer;}
+.sort-item.in-bin:hover{border-color:var(--red);}
+
+/* FINANCE INPUT */
+.fin-table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+.fin-table td{padding:.45rem .75rem;border:1px solid var(--border);font-size:.82rem;}
+.fin-table tr.section-hdr td{background:var(--surface2);font-family:var(--display);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);}
+.fin-table tr.total-row td{background:var(--surface3);font-weight:700;border-top:2px solid var(--border2);}
+.fin-input{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:.35rem .6rem;font-family:var(--mono);font-size:.82rem;color:var(--green);width:130px;text-align:right;outline:none;transition:border-color .15s;}
+.fin-input:focus{border-color:var(--green);}
+.fin-input.correct{border-color:var(--green);background:var(--greenl);}
+.fin-input.incorrect{border-color:var(--red);background:var(--redl);}
+.fin-calc{font-family:var(--mono);font-size:.82rem;color:var(--text-muted);text-align:right;}
+
+/* DECIDE STEPS */
+.decide-steps{display:flex;flex-direction:column;gap:.5rem;}
+.decide-step{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1rem;transition:all .2s;}
+.decide-step.active-step{border-color:var(--green);background:var(--greenl);}
+.decide-step.done-step{border-color:var(--green);opacity:.6;}
+.decide-step.locked-step{opacity:.35;}
+.decide-step-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem;}
+.decide-letter{width:28px;height:28px;border-radius:50%;background:var(--surface3);border:1.5px solid var(--border2);font-family:var(--display);font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.decide-step.active-step .decide-letter{background:var(--green);border-color:var(--green);color:#000;}
+.decide-step.done-step .decide-letter{background:var(--greenl);border-color:var(--green);color:var(--green);}
+.decide-step-name{font-family:var(--display);font-size:.85rem;font-weight:700;}
+.decide-step-hint{font-size:.75rem;color:var(--text-muted);}
+
+/* NOTIFICATIONS */
+.notification{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:200;padding:.75rem 1.5rem;border-radius:var(--radius-sm);font-family:var(--display);font-size:.85rem;font-weight:700;letter-spacing:.04em;border:1px solid;animation:notifIn .2s ease;max-width:500px;text-align:center;}
+.notification.success{background:var(--greenl);border-color:var(--greenborder);color:var(--green);}
+.notification.error{background:var(--redl);border-color:var(--redborder);color:var(--red);}
+.notification.hint{background:var(--amberl);border-color:var(--amberborder);color:var(--amber);}
+.notification.penalty{background:var(--redl);border-color:var(--redborder);color:var(--red);}
+@keyframes notifIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* HINT BUTTON */
+.hint-btn{background:transparent;border:1px solid var(--amberborder);color:var(--amber);font-family:var(--display);font-size:.72rem;font-weight:600;padding:.35rem .85rem;border-radius:var(--radius-sm);cursor:pointer;letter-spacing:.06em;transition:all .15s;}
+.hint-btn:hover{background:var(--amberl);}
+.hint-btn:disabled{opacity:.35;cursor:not-allowed;}
+.hint-used{font-size:.65rem;color:var(--text-dim);margin-left:.4rem;}
+
+/* ACTION BUTTONS */
+.action-btn{font-family:var(--display);font-size:.85rem;font-weight:700;padding:.6rem 1.5rem;border-radius:var(--radius-sm);border:none;cursor:pointer;letter-spacing:.04em;transition:all .2s;}
+.action-btn.primary{background:var(--green);color:#000;}
+.action-btn.primary:hover{background:var(--greend);transform:translateY(-1px);}
+.action-btn.secondary{background:transparent;border:1px solid var(--border2);color:var(--text-muted);}
+.action-btn.secondary:hover{border-color:var(--text-muted);color:var(--text);}
+.btn-row{display:flex;gap:.65rem;align-items:center;margin-top:1rem;flex-wrap:wrap;}
+
+/* COMPLETION */
+.complete-screen{text-align:center;padding:2rem;}
+.complete-icon{font-size:5rem;margin-bottom:1rem;animation:bounce 1s ease infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.complete-title{font-family:var(--display);font-size:2.5rem;font-weight:800;letter-spacing:.04em;margin-bottom:.5rem;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin:1.5rem 0;}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center;}
+.stat-val{font-family:var(--mono);font-size:1.6rem;font-weight:700;margin-bottom:.25rem;}
+.stat-label{font-size:.65rem;font-family:var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.leaderboard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin:1rem 0;text-align:left;}
+.lb-title{font-family:var(--display);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.85rem;}
+.lb-row{display:flex;align-items:center;gap.75rem;padding:.5rem .65rem;border-radius:var(--radius-sm);font-size:.82rem;margin-bottom:.3rem;}
+.lb-row.you{background:var(--greenl);border:1px solid var(--greenborder);}
+.lb-rank{font-family:var(--mono);font-size:.75rem;color:var(--text-dim);width:28px;}
+.lb-name{flex:1;font-weight:600;}
+.lb-time{font-family:var(--mono);font-size:.78rem;color:var(--green);}
+.lb-hints{font-size:.68rem;color:var(--text-dim);margin-left:.5rem;}
+
+@media(max-width:600px){
+  .room-preview,.match-grid,.sort-area,.stats-grid{grid-template-columns:1fr;}
+  .code-digit{width:40px;height:52px;font-size:1.4rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div class="hud" id="hud">
+  <div class="hud-brand">
+    <div class="hud-logo">🔐</div>
+    <div class="hud-title">APEX VENTURES</div>
+  </div>
+  <div class="hud-rooms" id="hud-rooms"></div>
+  <div class="hud-stats">
+    <div class="hud-stat">
+      <div class="hud-stat-label">Time Left</div>
+      <div class="hud-stat-val" id="timer-val">50:00</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-stat-label">Hints Used</div>
+      <div class="hud-stat-val" style="color:var(--amber)" id="hints-val">0</div>
+    </div>
+    <div class="hud-stat">
+      <div class="hud-stat-label">Penalties</div>
+      <div class="hud-stat-val" style="color:var(--red)" id="penalties-val">0</div>
+    </div>
+  </div>
+</div>
+
+<div class="room-container" id="room-container"></div>
+
+<script>
+// ── GAME STATE ──
+const TOTAL_SECONDS = 50 * 60;
+let timeRemaining = TOTAL_SECONDS;
+let timerInterval = null;
+let currentRoom = 0; // 0 = intro
+let playerName = '';
+let hintsUsed = 0;
+let penalties = 0;
+let roomHintUsed = [false,false,false,false,false,false];
+let roomStartTime = 0;
+let gameStartTime = 0;
+let gameComplete = false;
+
+const ROOMS = [
+  { name:'Economy', color:'var(--room1)', topic:'Business Cycles & Economic Systems' },
+  { name:'Decision', color:'var(--room2)', topic:'DECIDE Framework' },
+  { name:'Leadership', color:'var(--room3)', topic:'Leadership & Motivation' },
+  { name:'HR & Law', color:'var(--room4)', topic:'HR & Employment Law' },
+  { name:'Finance', color:'var(--room5)', topic:'Financial Statements' },
+  { name:'Ethics', color:'var(--room6)', topic:'Ethics & Compliance' },
+];
+
+// ── TIMER ──
+function startTimer(){
+  timerInterval = setInterval(()=>{
+    if(gameComplete)return;
+    timeRemaining--;
+    updateTimerDisplay();
+    if(timeRemaining<=0){clearInterval(timerInterval);timeOut();}
+  },1000);
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(timeRemaining/60);
+  const s = timeRemaining%60;
+  const el = document.getElementById('timer-val');
+  if(!el)return;
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  el.className = 'hud-stat-val' + (timeRemaining<300?'danger':timeRemaining<600?' warn':'');
+}
+
+function addPenalty(seconds=60){
+  timeRemaining = Math.max(0, timeRemaining - seconds);
+  penalties++;
+  document.getElementById('penalties-val').textContent = penalties;
+  updateTimerDisplay();
+}
+
+function timeOut(){
+  showNotification('⏰ Time\'s up! The company couldn\'t be saved.','error',3000);
+  setTimeout(()=>renderComplete(false),3000);
+}
+
+// ── HUD ──
+function updateHUD(){
+  const el = document.getElementById('hud-rooms');
+  if(!el)return;
+  el.innerHTML = ROOMS.map((r,i)=>`
+    <div class="hud-room ${currentRoom===i+1?'active':currentRoom>i+1?'complete':''}">
+      <div class="hud-room-num" style="color:${currentRoom>i+1?'var(--green)':currentRoom===i+1?r.color:'var(--text-dim)'}">${currentRoom>i+1?'✓':i+1}</div>
+      <div class="hud-room-name">${r.name}</div>
+    </div>`).join('');
+  document.getElementById('hints-val').textContent = hintsUsed;
+  document.getElementById('penalties-val').textContent = penalties;
+}
+
+// ── NOTIFICATIONS ──
+function showNotification(msg, type='success', duration=2500){
+  document.querySelectorAll('.notification').forEach(el=>el.remove());
+  const el = document.createElement('div');
+  el.className = `notification ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), duration);
+}
+
+// ── HINT SYSTEM ──
+function useHint(roomIdx, hintText){
+  if(roomHintUsed[roomIdx]){
+    // Second hint costs time
+    addPenalty(60);
+    hintsUsed++;
+    showNotification(`💡 HINT (−60s): ${hintText}`, 'hint', 6000);
+  } else {
+    roomHintUsed[roomIdx] = true;
+    hintsUsed++;
+    showNotification(`💡 FREE HINT: ${hintText}`, 'hint', 6000);
+  }
+  document.getElementById('hints-val').textContent = hintsUsed;
+}
+
+// ── INTRO ──
+function renderIntro(){
+  currentRoom = 0;
+  updateHUD();
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="intro-hero">
+      <div class="intro-logo">🏢</div>
+      <div class="intro-title">APEX VENTURES<br>ESCAPE ROOM</div>
+      <div class="intro-subtitle">Business Management · Final Review · All 6 Strands</div>
+    </div>
+
+    <div class="briefing-card">
+      <div class="briefing-title">📡 Mission Briefing</div>
+      <div class="briefing-text">
+        <strong>SITUATION CRITICAL.</strong> You are a business consultant hired by Apex Ventures. A rogue employee has locked the company's systems behind 6 encrypted vaults — one per department.<br><br>
+        Each vault requires business knowledge to crack. You have <strong>50 minutes</strong> to unlock all 6 and save the company. Wrong answers trigger <strong>60-second time penalties</strong>. Each room has one <strong>free hint</strong> — use it wisely. Additional hints cost 60 seconds each.
+      </div>
+    </div>
+
+    <div class="room-preview">
+      ${ROOMS.map((r,i)=>`
+        <div class="rp-item">
+          <div class="rp-num" style="background:${r.color}20;border:1px solid ${r.color}40;color:${r.color}">${i+1}</div>
+          <div class="rp-info"><div class="rp-name">${r.name} Vault</div><div class="rp-topic">${r.topic}</div></div>
+        </div>`).join('')}
+    </div>
+
+    <div class="name-input-wrap">
+      <input class="name-input" id="player-name" placeholder="Enter your name to begin..." maxlength="30">
+      <button class="start-btn" onclick="startGame()">ENTER →</button>
+    </div>
+  </div>`;
+}
+
+function startGame(){
+  const name = document.getElementById('player-name')?.value.trim();
+  if(!name){ showNotification('Enter your name to begin!','error',2000); return; }
+  playerName = name;
+  gameStartTime = Date.now();
+  startTimer();
+  currentRoom = 1;
+  renderRoom1();
+}
+
+// ════════════════════════════════════════════
+// ROOM 1 — ECONOMY & BUSINESS CYCLES
+// ════════════════════════════════════════════
+let r1Matches = {}; // termId -> definitionId
+let r1MCAnswer = null;
+
+const R1_TERMS = [
+  {id:'expansion',label:'Expansion'},
+  {id:'peak',label:'Peak'},
+  {id:'recession',label:'Recession'},
+  {id:'trough',label:'Trough'},
+];
+const R1_DEFS = [
+  {id:'def_trough',label:'Lowest point of the cycle — unemployment is highest, output is lowest'},
+  {id:'def_expansion',label:'Period of growing output, falling unemployment, rising consumer confidence'},
+  {id:'def_peak',label:'Highest point before decline — economy is running at full capacity'},
+  {id:'def_recession',label:'Two or more quarters of declining GDP — layoffs increase'},
+];
+const R1_CORRECT = {expansion:'def_expansion',peak:'def_peak',recession:'def_recession',trough:'def_trough'};
+
+let r1SelectedTerm = null;
+let r1SelectedDef = null;
+
+function renderRoom1(){
+  updateHUD();
+  const c = ROOMS[0];
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="room-header">
+      <div class="room-title-bar">
+        <span class="room-num-badge" style="color:${c.color};border-color:${c.color}40;background:${c.color}10">VAULT 1</span>
+        <div class="room-title" style="color:${c.color}">The Economy Vault</div>
+        <button class="hint-btn" onclick="useHint(0,'The business cycle goes in order: Expansion → Peak → Recession → Trough → then back to Expansion. A recession is specifically 2+ quarters of declining GDP.')">💡 Hint</button>
+      </div>
+      <div class="room-narrative">Vault 1 is locked behind the Economics Department. The vault code is generated by correctly matching business cycle phases and identifying the economic system. <strong>Match all 4 terms, then answer the bonus question to reveal the unlock code.</strong></div>
+    </div>
+
+    <!-- MATCHING PUZZLE -->
+    <div class="vault locked" id="v1-match">
+      <div class="vault-label">Puzzle A — Match Business Cycle Phases to Definitions</div>
+      <div class="match-grid">
+        <div>
+          <div class="match-col-label">Phase</div>
+          <div class="match-items">
+            ${R1_TERMS.map(t=>`<div class="match-item" id="mt-${t.id}" onclick="r1SelectTerm('${t.id}')">${t.label}</div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="match-col-label">Definition</div>
+          <div class="match-items">
+            ${R1_DEFS.map(d=>`<div class="match-item" id="md-${d.id}" onclick="r1SelectDef('${d.id}')">${d.label}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div id="r1-match-progress" style="font-size:.72rem;color:var(--text-dim);text-align:center">Matched: 0/4 — Click a phase, then click its matching definition</div>
+    </div>
+
+    <!-- MC PUZZLE -->
+    <div class="vault locked" id="v1-mc" style="opacity:.4;pointer-events:none">
+      <div class="vault-label">Puzzle B — Economic Systems (unlocks after Puzzle A)</div>
+      <div class="puzzle-label">Northland is a country where the government owns all businesses, sets all prices, and decides what gets produced. Which economic system is this?</div>
+      <div class="mc-opts">
+        ${[
+          {id:'market',text:'Market Economy — individuals and businesses make all economic decisions'},
+          {id:'mixed',text:'Mixed Economy — combination of government and private control'},
+          {id:'command',text:'Command Economy — government owns production and controls all economic decisions'},
+          {id:'traditional',text:'Traditional Economy — customs and traditions determine production'},
+        ].map((o,i)=>`
+          <div class="mc-opt" id="r1mc-${o.id}" onclick="r1AnswerMC('${o.id}')">
+            <div class="mc-letter">${String.fromCharCode(65+i)}</div>
+            <div>${o.text}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- CODE DISPLAY -->
+    <div class="vault locked" id="v1-code" style="opacity:.4">
+      <div class="vault-label">Vault 1 Code</div>
+      <div class="code-display">
+        ${[...Array(4)].map((_,i)=>`<div class="code-digit" id="r1d-${i}">?</div>`).join('')}
+      </div>
+      <div style="text-align:center;font-size:.72rem;color:var(--text-dim)">Complete both puzzles to reveal the code — a historically significant year</div>
+    </div>
+  </div>`;
+}
+
+function r1SelectTerm(id){
+  if(r1Matches[id]) return; // already matched
+  r1SelectedTerm = id;
+  document.querySelectorAll('[id^="mt-"]').forEach(el=>el.classList.remove('selected'));
+  const el = document.getElementById('mt-'+id);
+  if(el) el.classList.add('selected');
+}
+
+function r1SelectDef(id){
+  if(!r1SelectedTerm) return;
+  if(Object.values(r1Matches).includes(id)) return; // def already used
+
+  const correctDef = R1_CORRECT[r1SelectedTerm];
+  if(id === correctDef){
+    r1Matches[r1SelectedTerm] = id;
+    document.getElementById('mt-'+r1SelectedTerm)?.classList.replace('selected','matched');
+    document.getElementById('md-'+id)?.classList.add('matched');
+    r1SelectedTerm = null;
+    const matched = Object.keys(r1Matches).length;
+    document.getElementById('r1-match-progress').textContent = `Matched: ${matched}/4`;
+    if(matched === 4){
+      showNotification('✓ All phases matched correctly!','success');
+      const mc = document.getElementById('v1-mc');
+      if(mc){mc.style.opacity='1';mc.style.pointerEvents='auto';}
+    }
+  } else {
+    addPenalty(60);
+    showNotification('✗ Incorrect match! −60 seconds','error');
+    const termEl = document.getElementById('mt-'+r1SelectedTerm);
+    const defEl = document.getElementById('md-'+id);
+    termEl?.classList.add('wrong-match');
+    defEl?.classList.add('wrong-match');
+    setTimeout(()=>{termEl?.classList.remove('wrong-match','selected');defEl?.classList.remove('wrong-match');},600);
+    r1SelectedTerm = null;
+  }
+}
+
+function r1AnswerMC(id){
+  if(id === 'command'){
+    document.getElementById('r1mc-command')?.classList.add('correct-anim');
+    showNotification('✓ Correct! Command Economy — government controls all production.','success');
+    setTimeout(()=>r1RevealCode(), 800);
+  } else {
+    addPenalty(60);
+    showNotification('✗ Incorrect! −60 seconds. Think about who controls production.','error');
+    const el = document.getElementById('r1mc-'+id);
+    el?.classList.add('wrong-anim');
+    setTimeout(()=>el?.classList.remove('wrong-anim'),600);
+  }
+}
+
+function r1RevealCode(){
+  const code = ['1','9','9','1']; // 1991 — year the USSR (largest command economy) dissolved
+  const codeEl = document.getElementById('v1-code');
+  if(codeEl){codeEl.style.opacity='1';codeEl.classList.replace('locked','unlocked');}
+  code.forEach((d,i)=>{
+    setTimeout(()=>{
+      const el = document.getElementById('r1d-'+i);
+      if(el){el.textContent=d;el.classList.add('filled');}
+    },i*300);
+  });
+  setTimeout(()=>{
+    showNotification('🔓 VAULT 1 UNLOCKED! Proceeding to Decision Vault...','success',3000);
+    setTimeout(()=>{ currentRoom=2; renderRoom2(); },3000);
+  },1500);
+}
+
+// ════════════════════════════════════════════
+// ROOM 2 — DECIDE FRAMEWORK
+// ════════════════════════════════════════════
+let r2Step = 0;
+let r2Answers = [];
+
+const R2_STEPS = [
+  {
+    letter:'D', name:'Define the Goal',
+    question:'Apex Ventures needs to cut costs. What is the FIRST thing a manager should do in the DECIDE process?',
+    options:['Clearly define what problem you are actually trying to solve and what success looks like','List all possible solutions immediately','Ask employees to vote on the best option','Call a meeting with all stakeholders'],
+    correct: 0,
+    hint:'The D in DECIDE stands for Define. Before you can solve a problem, you need to know exactly what the goal is.',
+  },
+  {
+    letter:'E', name:'Establish Criteria',
+    question:'After defining the goal, what does the "E" step require?',
+    options:['Evaluate the final result','Eliminate the worst options first','Establish the criteria — specific conditions any good solution must meet','Explain the decision to employees'],
+    correct: 2,
+    hint:'Criteria are the standards your solution must meet. They come BEFORE you look at options.',
+  },
+  {
+    letter:'C', name:'Choose Good Options',
+    question:'A manager has defined the goal and set criteria. What comes next?',
+    options:['Make a decision immediately','Collect data on outcomes','Choose good options — identify 3-4 realistic alternative solutions','Consult legal counsel'],
+    correct: 2,
+    hint:'After criteria are set, you generate alternatives — not one solution, several good options to compare.',
+  },
+  {
+    letter:'I', name:'Identify Pros & Cons',
+    question:'Which of the following describes the "I" step most accurately?',
+    options:['Identify the one correct answer','Inform stakeholders of your decision','Investigate the market','Identify pros and cons of each option — objectively evaluate alternatives against your criteria'],
+    correct: 3,
+    hint:'The I step is about honest evaluation — both strengths AND weaknesses of every option, not just your preferred one.',
+  },
+  {
+    letter:'D', name:'Decide',
+    question:'After analyzing pros and cons, a manager must make the call. What should that decision be based on?',
+    options:['Gut feeling and past experience','Whichever option your boss prefers','The option that best satisfies the criteria established in Step 2','The cheapest available option'],
+    correct: 2,
+    hint:'The decision should be logical — the option that best meets the criteria YOU established in Step E. If you ignore your own criteria, the whole process was wasted.',
+  },
+  {
+    letter:'E', name:'Evaluate Results',
+    question:'The final E — Evaluate. When does this step happen and what does it involve?',
+    options:['After implementing — reflecting on whether the decision achieved the goal and what to do differently next time','Before the decision — to preview outcomes','During the decision — as a final check','Only if the decision fails'],
+    correct: 0,
+    hint:'Evaluate comes AFTER implementation. You look back: Did we achieve the goal? What worked? What would we change? This is how managers improve their decision-making over time.',
+  },
+];
+
+function renderRoom2(){
+  updateHUD();
+  const c = ROOMS[1];
+  r2Step = 0; r2Answers = [];
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="room-header">
+      <div class="room-title-bar">
+        <span class="room-num-badge" style="color:${c.color};border-color:${c.color}40;background:${c.color}10">VAULT 2</span>
+        <div class="room-title" style="color:${c.color}">The Decision Vault</div>
+        <button class="hint-btn" id="r2-hint-btn" onclick="r2GetHint()">💡 Hint</button>
+      </div>
+      <div class="room-narrative">The Decision Vault is protected by the DECIDE framework. Answer each step correctly to generate the 6-digit code. <strong>Each correct answer reveals one digit. Wrong answers cost 60 seconds.</strong></div>
+    </div>
+
+    <div class="code-display" style="margin-bottom:1rem">
+      ${R2_STEPS.map((_,i)=>`<div class="code-digit" id="r2d-${i}">?</div>`).join('')}
+    </div>
+
+    <div class="vault locked" id="r2-puzzle">
+      <div id="r2-step-content"></div>
+    </div>
+  </div>`;
+  r2RenderStep();
+}
+
+function r2RenderStep(){
+  const step = R2_STEPS[r2Step];
+  if(!step) return;
+  const el = document.getElementById('r2-step-content');
+  if(!el) return;
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.85rem">
+      <div style="width:36px;height:36px;border-radius:50%;background:${ROOMS[1].color};color:#000;font-family:var(--display);font-size:1rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${step.letter}</div>
+      <div>
+        <div style="font-family:var(--display);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:${ROOMS[1].color}">Step ${r2Step+1} of 6 — What does the "${step.letter}" stand for?</div>
+        <div style="font-weight:700;font-size:.92rem;color:var(--text-dim);font-style:italic">Name hidden — identify it from the question below</div>
+      </div>
+    </div>
+    <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6">${step.question}</div>
+    <div class="mc-opts">
+      ${step.options.map((o,i)=>`
+        <div class="mc-opt" id="r2opt-${i}" onclick="r2Answer(${i})">
+          <div class="mc-letter">${String.fromCharCode(65+i)}</div>
+          <div>${o}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function r2Answer(idx){
+  const step = R2_STEPS[r2Step];
+  if(idx === step.correct){
+    document.getElementById(`r2opt-${idx}`)?.classList.add('correct-anim');
+    const digit = String(r2Step+1);
+    const digitEl = document.getElementById('r2d-'+r2Step);
+    if(digitEl){digitEl.textContent=digit;digitEl.classList.add('filled');}
+    r2Step++;
+    if(r2Step >= R2_STEPS.length){
+      setTimeout(()=>{
+        showNotification('🔓 VAULT 2 UNLOCKED! DECIDE complete!','success',3000);
+        setTimeout(()=>{currentRoom=3;renderRoom3();},3000);
+      },800);
+    } else {
+      showNotification(`✓ Correct! Digit ${r2Step} revealed.`,'success');
+      setTimeout(()=>r2RenderStep(),900);
+    }
+  } else {
+    addPenalty(60);
+    showNotification('✗ Incorrect! −60 seconds.','error');
+    const el = document.getElementById(`r2opt-${idx}`);
+    el?.classList.add('wrong-anim');
+    setTimeout(()=>el?.classList.remove('wrong-anim'),600);
+  }
+}
+
+function r2GetHint(){
+  const step = R2_STEPS[r2Step];
+  useHint(1, step.hint);
+}
+
+// ════════════════════════════════════════════
+// ROOM 3 — LEADERSHIP & MOTIVATION
+// ════════════════════════════════════════════
+let r3Matches = {};
+let r3SelectedStyle = null;
+
+const R3_STYLES = [
+  {id:'autocratic',label:'Autocratic'},
+  {id:'democratic',label:'Democratic'},
+  {id:'laissezfaire',label:'Laissez-Faire'},
+];
+const R3_SCENARIOS = [
+  {id:'s_creative',label:'Experienced creative team brainstorming a new product — they have great ideas and strong opinions'},
+  {id:'s_expert',label:'Team of PhD researchers who know significantly more than the manager about the technical topic'},
+  {id:'s_crisis',label:'Financial crisis — every second counts, team is paralyzed, decisions must happen NOW'},
+];
+const R3_STYLE_CORRECT = {autocratic:'s_crisis',democratic:'s_creative',laissezfaire:'s_expert'};
+
+const R3_THEORIES = [
+  {id:'maslow',label:"Maslow's Hierarchy"},
+  {id:'theory_x',label:'Theory X'},
+  {id:'theory_y',label:'Theory Y'},
+  {id:'herzberg',label:"Herzberg's Two-Factor"},
+  {id:'theory_z',label:'Theory Z'},
+];
+const R3_THEORY_DEFS = [
+  {id:'td_y',label:'People are self-motivated, enjoy challenge, and will perform well if given meaningful work and autonomy'},
+  {id:'td_maslow',label:'Motivate by identifying which level of need — survival, safety, belonging, importance, or self-fulfillment — is currently unmet'},
+  {id:'td_z',label:'Long-term employment, trust, collaborative culture, and employee involvement in decisions build loyalty and productivity'},
+  {id:'td_x',label:'People dislike work and need close supervision, direction, and control to be productive'},
+  {id:'td_herzberg',label:'Remove dissatisfiers (hygiene factors like pay/conditions) AND add motivators (achievement, recognition, growth) separately'},
+];
+const R3_THEORY_CORRECT = {maslow:'td_maslow',theory_x:'td_x',theory_y:'td_y',herzberg:'td_herzberg',theory_z:'td_z'};
+let r3TheoryMatches = {};
+let r3SelectedTheory = null;
+
+function renderRoom3(){
+  updateHUD();
+  const c = ROOMS[2];
+  r3Matches = {}; r3SelectedStyle = null; r3TheoryMatches = {}; r3SelectedTheory = null;
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="room-header">
+      <div class="room-title-bar">
+        <span class="room-num-badge" style="color:${c.color};border-color:${c.color}40;background:${c.color}10">VAULT 3</span>
+        <div class="room-title" style="color:${c.color}">The Leadership Vault</div>
+        <button class="hint-btn" onclick="useHint(2,'Autocratic = crisis/urgent. Democratic = collaborative team with ideas. Laissez-Faire = expert team that needs freedom. Theory X = people are lazy. Theory Y = people are self-motivated.')">💡 Hint</button>
+      </div>
+      <div class="room-narrative">Two matching puzzles stand between you and the Leadership Vault. Match leadership styles to the right situation, then match motivation theories to their core principle.</div>
+    </div>
+
+    <div class="vault locked" id="v3-styles">
+      <div class="vault-label">Puzzle A — Match Leadership Style to the Right Situation</div>
+      <div class="match-grid">
+        <div>
+          <div class="match-col-label">Leadership Style</div>
+          <div class="match-items">
+            ${R3_STYLES.map(s=>`<div class="match-item" id="rs-${s.id}" onclick="r3SelectStyle('${s.id}')">${s.label}</div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="match-col-label">When to Use It</div>
+          <div class="match-items">
+            ${R3_SCENARIOS.map(sc=>`<div class="match-item" id="rsc-${sc.id}" onclick="r3SelectScenario('${sc.id}')" style="font-size:.75rem">${sc.label}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div id="r3-style-progress" style="font-size:.72rem;color:var(--text-dim);text-align:center">Matched: 0/3</div>
+    </div>
+
+    <div class="vault locked" id="v3-theories" style="opacity:.4;pointer-events:none">
+      <div class="vault-label">Puzzle B — Match Motivation Theory to Core Principle (unlocks after Puzzle A)</div>
+      <div class="match-grid">
+        <div>
+          <div class="match-col-label">Theory</div>
+          <div class="match-items">
+            ${R3_THEORIES.map(t=>`<div class="match-item" id="rt-${t.id}" onclick="r3SelectTheory('${t.id}')">${t.label}</div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="match-col-label">Core Principle</div>
+          <div class="match-items">
+            ${R3_THEORY_DEFS.map(d=>`<div class="match-item" id="rtd-${d.id}" onclick="r3SelectTheoryDef('${d.id}')" style="font-size:.7rem;text-align:left;line-height:1.35">${d.label}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div id="r3-theory-progress" style="font-size:.72rem;color:var(--text-dim);text-align:center">Matched: 0/5</div>
+    </div>
+  </div>`;
+}
+
+function r3SelectStyle(id){
+  if(r3Matches[id]) return;
+  r3SelectedStyle = id;
+  document.querySelectorAll('[id^="rs-"]').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('rs-'+id)?.classList.add('selected');
+}
+
+function r3SelectScenario(id){
+  if(!r3SelectedStyle) return;
+  if(Object.values(r3Matches).includes(id)) return;
+  if(R3_STYLE_CORRECT[r3SelectedStyle] === id){
+    r3Matches[r3SelectedStyle] = id;
+    document.getElementById('rs-'+r3SelectedStyle)?.classList.replace('selected','matched');
+    document.getElementById('rsc-'+id)?.classList.add('matched');
+    r3SelectedStyle = null;
+    const cnt = Object.keys(r3Matches).length;
+    document.getElementById('r3-style-progress').textContent = `Matched: ${cnt}/3`;
+    if(cnt===3){
+      showNotification('✓ Leadership styles matched!','success');
+      const v=document.getElementById('v3-theories');
+      if(v){v.style.opacity='1';v.style.pointerEvents='auto';}
+    }
+  } else {
+    addPenalty(60);
+    showNotification('✗ Wrong match! −60 seconds','error');
+    const s=document.getElementById('rs-'+r3SelectedStyle);
+    const sc=document.getElementById('rsc-'+id);
+    s?.classList.add('wrong-match'); sc?.classList.add('wrong-match');
+    setTimeout(()=>{s?.classList.remove('wrong-match','selected');sc?.classList.remove('wrong-match');},600);
+    r3SelectedStyle = null;
+  }
+}
+
+function r3SelectTheory(id){
+  if(r3TheoryMatches[id]) return;
+  r3SelectedTheory = id;
+  document.querySelectorAll('[id^="rt-"]').forEach(el=>{if(!el.classList.contains('matched'))el.classList.remove('selected');});
+  document.getElementById('rt-'+id)?.classList.add('selected');
+}
+
+function r3SelectTheoryDef(id){
+  if(!r3SelectedTheory) return;
+  if(Object.values(r3TheoryMatches).includes(id)) return;
+  if(R3_THEORY_CORRECT[r3SelectedTheory]===id){
+    r3TheoryMatches[r3SelectedTheory]=id;
+    document.getElementById('rt-'+r3SelectedTheory)?.classList.replace('selected','matched');
+    document.getElementById('rtd-'+id)?.classList.add('matched');
+    r3SelectedTheory=null;
+    const cnt=Object.keys(r3TheoryMatches).length;
+    document.getElementById('r3-theory-progress').textContent=`Matched: ${cnt}/5`;
+    if(cnt===5){
+      setTimeout(()=>{
+        showNotification('🔓 VAULT 3 UNLOCKED! Leadership mastered!','success',3000);
+        setTimeout(()=>{currentRoom=4;renderRoom4();},3000);
+      },400);
+    }
+  } else {
+    addPenalty(60);
+    showNotification('✗ Incorrect theory match! −60 seconds','error');
+    const t=document.getElementById('rt-'+r3SelectedTheory);
+    const td=document.getElementById('rtd-'+id);
+    t?.classList.add('wrong-match'); td?.classList.add('wrong-match');
+    setTimeout(()=>{t?.classList.remove('wrong-match','selected');td?.classList.remove('wrong-match');},600);
+    r3SelectedTheory=null;
+  }
+}
+
+// ════════════════════════════════════════════
+// ROOM 4 — HR & EMPLOYMENT LAW
+// ════════════════════════════════════════════
+let r4LegalBin = [];
+let r4IllegalBin = [];
+let r4AgencyMatches = {};
+let r4SelectedAgency = null;
+
+const R4_QUESTIONS = [
+  {id:'q1',text:'Tell me about a time you managed a difficult project deadline.',legal:true},
+  {id:'q2',text:'Are you married? Do you plan to have children?',legal:false},
+  {id:'q3',text:'How do you handle conflict with a coworker?',legal:true},
+  {id:'q4',text:'What country are you originally from?',legal:false},
+  {id:'q5',text:'What are your salary expectations for this role?',legal:true},
+  {id:'q6',text:'What religion do you practice?',legal:false},
+  {id:'q7',text:'Describe your experience with project management software.',legal:true},
+  {id:'q8',text:'Do you have any disabilities we should be aware of?',legal:false},
+];
+
+const R4_AGENCIES = [
+  {id:'osha',label:'OSHA'},
+  {id:'eeoc',label:'EEOC'},
+  {id:'ada',label:'ADA'},
+  {id:'ftc',label:'FTC'},
+];
+const R4_VIOLATIONS = [
+  {id:'v_disability',label:'Employee with anxiety disorder requests to work from home 2 days/week — manager says no without engaging in any process'},
+  {id:'v_ads',label:'Company advertises product as "100% organic" when only 60% of ingredients are organic'},
+  {id:'v_safety',label:'Manager ignores a reported broken safety guardrail on the warehouse floor for two weeks'},
+  {id:'v_disc',label:'A qualified candidate is rejected and internal notes say "cultural fit" with no objective criteria documented'},
+];
+const R4_AGENCY_CORRECT = {osha:'v_safety',eeoc:'v_disc',ada:'v_disability',ftc:'v_ads'};
+
+function renderRoom4(){
+  updateHUD();
+  const c = ROOMS[3];
+  r4LegalBin=[]; r4IllegalBin=[]; r4AgencyMatches={}; r4SelectedAgency=null;
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="room-header">
+      <div class="room-title-bar">
+        <span class="room-num-badge" style="color:${c.color};border-color:${c.color}40;background:${c.color}10">VAULT 4</span>
+        <div class="room-title" style="color:${c.color}">The HR Vault</div>
+        <button class="hint-btn" onclick="useHint(3,'Illegal questions ask about: marital status, children, religion, national origin, disability, age. OSHA=safety, EEOC=discrimination, ADA=disability accommodation, FTC=false advertising.')">💡 Hint</button>
+      </div>
+      <div class="room-narrative">The HR Vault requires knowledge of employment law. Sort the interview questions, then match each agency to the violation it covers.</div>
+    </div>
+
+    <!-- SORT PUZZLE -->
+    <div class="vault locked" id="v4-sort">
+      <div class="vault-label">Puzzle A — Sort Interview Questions: Legal or Illegal?</div>
+      <div class="sort-items-pool" id="r4-pool">
+        ${R4_QUESTIONS.map(q=>`<div class="sort-item" id="r4q-${q.id}" onclick="r4MoveToPool('${q.id}')">${q.text}</div>`).join('')}
+      </div>
+      <div class="sort-area">
+        <div class="sort-bin" id="r4-legal-bin">
+          <div class="sort-bin-label" style="color:var(--green)">✓ Legal to Ask</div>
+          <div id="r4-legal-items" style="display:flex;flex-wrap:wrap;gap:.35rem"></div>
+        </div>
+        <div class="sort-bin" id="r4-illegal-bin">
+          <div class="sort-bin-label" style="color:var(--red)">✗ Illegal to Ask</div>
+          <div id="r4-illegal-items" style="display:flex;flex-wrap:wrap;gap:.35rem"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem;margin-top:.75rem">
+        <button class="action-btn primary" onclick="r4CheckSort()">Check Sort →</button>
+        <div style="font-size:.72rem;color:var(--text-dim);align-self:center">Click a question to move it, then click a bin. Or drag questions between bins.</div>
+      </div>
+      <div id="r4-sort-instruction" style="font-size:.75rem;color:var(--amber);margin-top:.5rem"></div>
+    </div>
+
+    <!-- AGENCY PUZZLE -->
+    <div class="vault locked" id="v4-agency" style="opacity:.4;pointer-events:none">
+      <div class="vault-label">Puzzle B — Match Agency to the Violation It Covers (unlocks after Puzzle A)</div>
+      <div class="match-grid">
+        <div>
+          <div class="match-col-label">Agency</div>
+          <div class="match-items">
+            ${R4_AGENCIES.map(a=>`<div class="match-item" id="ra-${a.id}" onclick="r4SelectAgency('${a.id}')">${a.label}</div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="match-col-label">Workplace Violation</div>
+          <div class="match-items">
+            ${R4_VIOLATIONS.map(v=>`<div class="match-item" id="rv-${v.id}" onclick="r4SelectViolation('${v.id}')" style="font-size:.75rem;text-align:left">${v.label}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div id="r4-agency-progress" style="font-size:.72rem;color:var(--text-dim);text-align:center">Matched: 0/4</div>
+    </div>
+  </div>`;
+
+  // Set up click-to-bin behavior
+  document.getElementById('r4-legal-bin').addEventListener('click', ()=>r4PlaceInBin('legal'));
+  document.getElementById('r4-illegal-bin').addEventListener('click', ()=>r4PlaceInBin('illegal'));
+}
+
+let r4SelectedQuestion = null;
+function r4MoveToPool(id){
+  // If item is in a bin, move it back to pool
+  r4LegalBin = r4LegalBin.filter(q=>q!==id);
+  r4IllegalBin = r4IllegalBin.filter(q=>q!==id);
+  r4SelectedQuestion = id;
+  r4RefreshSort();
+  document.getElementById('r4-sort-instruction').textContent = `"${R4_QUESTIONS.find(q=>q.id===id)?.text.substring(0,40)}..." selected — click a bin below.`;
+}
+
+function r4PlaceInBin(bin){
+  if(!r4SelectedQuestion) return;
+  if(bin==='legal'){ if(!r4LegalBin.includes(r4SelectedQuestion)) r4LegalBin.push(r4SelectedQuestion); }
+  else { if(!r4IllegalBin.includes(r4SelectedQuestion)) r4IllegalBin.push(r4SelectedQuestion); }
+  document.getElementById('r4-sort-instruction').textContent = '';
+  r4SelectedQuestion = null;
+  r4RefreshSort();
+}
+
+function r4RefreshSort(){
+  const pool = document.getElementById('r4-pool');
+  const legal = document.getElementById('r4-legal-items');
+  const illegal = document.getElementById('r4-illegal-items');
+  if(!pool||!legal||!illegal) return;
+
+  const placed = [...r4LegalBin,...r4IllegalBin];
+  pool.innerHTML = R4_QUESTIONS.filter(q=>!placed.includes(q.id)).map(q=>`<div class="sort-item ${r4SelectedQuestion===q.id?'selected':''}" onclick="r4MoveToPool('${q.id}')">${q.text.substring(0,45)}...</div>`).join('');
+  legal.innerHTML = r4LegalBin.map(id=>{ const q=R4_QUESTIONS.find(q=>q.id===id); return`<div class="sort-item in-bin" onclick="r4MoveToPool('${id}')">${q?.text.substring(0,30)}... ✕</div>`; }).join('');
+  illegal.innerHTML = r4IllegalBin.map(id=>{ const q=R4_QUESTIONS.find(q=>q.id===id); return`<div class="sort-item in-bin" onclick="r4MoveToPool('${id}')">${q?.text.substring(0,30)}... ✕</div>`; }).join('');
+}
+
+function r4CheckSort(){
+  const allPlaced = r4LegalBin.length + r4IllegalBin.length === R4_QUESTIONS.length;
+  if(!allPlaced){ showNotification('Sort ALL 8 questions before checking.','error',2000); return; }
+
+  let correct = true;
+  R4_QUESTIONS.forEach(q=>{
+    const inLegal = r4LegalBin.includes(q.id);
+    const inIllegal = r4IllegalBin.includes(q.id);
+    if(q.legal && !inLegal) correct = false;
+    if(!q.legal && !inIllegal) correct = false;
+  });
+
+  if(correct){
+    showNotification('✓ Perfect sort! All questions correctly categorized.','success');
+    const v=document.getElementById('v4-agency');
+    if(v){v.style.opacity='1';v.style.pointerEvents='auto';}
+  } else {
+    addPenalty(60);
+    showNotification('✗ Some questions are in the wrong bin! −60 seconds. Remember: marital status, children, religion, national origin, and disability are always illegal.','error',5000);
+    // Reset bins
+    r4LegalBin=[]; r4IllegalBin=[];
+    r4RefreshSort();
+  }
+}
+
+function r4SelectAgency(id){
+  if(r4AgencyMatches[id]) return;
+  r4SelectedAgency=id;
+  document.querySelectorAll('[id^="ra-"]').forEach(el=>{if(!el.classList.contains('matched'))el.classList.remove('selected');});
+  document.getElementById('ra-'+id)?.classList.add('selected');
+}
+
+function r4SelectViolation(id){
+  if(!r4SelectedAgency) return;
+  if(Object.values(r4AgencyMatches).includes(id)) return;
+  if(R4_AGENCY_CORRECT[r4SelectedAgency]===id){
+    r4AgencyMatches[r4SelectedAgency]=id;
+    document.getElementById('ra-'+r4SelectedAgency)?.classList.replace('selected','matched');
+    document.getElementById('rv-'+id)?.classList.add('matched');
+    r4SelectedAgency=null;
+    const cnt=Object.keys(r4AgencyMatches).length;
+    document.getElementById('r4-agency-progress').textContent=`Matched: ${cnt}/4`;
+    if(cnt===4){
+      setTimeout(()=>{
+        showNotification('🔓 VAULT 4 UNLOCKED! HR knowledge confirmed!','success',3000);
+        setTimeout(()=>{currentRoom=5;renderRoom5();},3000);
+      },400);
+    }
+  } else {
+    addPenalty(60);
+    showNotification('✗ Wrong agency match! −60 seconds','error');
+    const a=document.getElementById('ra-'+r4SelectedAgency);
+    const v=document.getElementById('rv-'+id);
+    a?.classList.add('wrong-match'); v?.classList.add('wrong-match');
+    setTimeout(()=>{a?.classList.remove('wrong-match','selected');v?.classList.remove('wrong-match');},600);
+    r4SelectedAgency=null;
+  }
+}
+
+// ════════════════════════════════════════════
+// ROOM 5 — FINANCIAL STATEMENTS
+// ════════════════════════════════════════════
+// Apex Ventures Financial Data
+const R5_DATA = {
+  salesRevenue: 420000,
+  serviceRevenue: 80000,
+  cogs: 250000,
+  salaries: 95000,
+  rent: 28000,
+  marketing: 18000,
+  depreciation: 12000,
+  interest: 9500,
+  // break-even data
+  unitPrice: 45,
+  unitVarCost: 18,
+  fixedCosts: 12000,
+};
+
+function calcR5(){
+  const totalRev = R5_DATA.salesRevenue + R5_DATA.serviceRevenue;
+  const grossProfit = totalRev - R5_DATA.cogs;
+  const totalOpEx = R5_DATA.salaries + R5_DATA.rent + R5_DATA.marketing + R5_DATA.depreciation;
+  const opIncome = grossProfit - totalOpEx;
+  const ebt = opIncome - R5_DATA.interest;
+  const tax = Math.round(Math.max(0,ebt) * 0.21);
+  const netIncome = ebt - tax;
+  const beUnits = Math.ceil(R5_DATA.fixedCosts / (R5_DATA.unitPrice - R5_DATA.unitVarCost));
+  return {totalRev, grossProfit, totalOpEx, opIncome, ebt, tax, netIncome, beUnits};
+}
+
+let r5Checked = false;
+
+function renderRoom5(){
+  updateHUD();
+  const c = ROOMS[4];
+  const ci = calcR5();
+  r5Checked = false;
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="room-header">
+      <div class="room-title-bar">
+        <span class="room-num-badge" style="color:${c.color};border-color:${c.color}40;background:${c.color}10">VAULT 5</span>
+        <div class="room-title" style="color:${c.color}">The Finance Vault</div>
+        <button class="hint-btn" onclick="useHint(4,'Gross Profit = Revenue − COGS. Operating Income = Gross Profit − All Operating Expenses. Break-Even Units = Fixed Costs ÷ (Price − Variable Cost per unit).')">💡 Hint</button>
+      </div>
+      <div class="room-narrative">The Finance Vault requires you to complete Apex Ventures' Income Statement and calculate the break-even point. <strong>The vault code equals the Break-Even units rounded to nearest 10.</strong></div>
+    </div>
+
+    <div class="vault locked" id="v5-main">
+      <div class="vault-label">Apex Ventures — Income Statement Data Sheet</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.4rem;margin-bottom:1rem;background:var(--surface2);border-radius:var(--radius-sm);padding:.85rem">
+        ${[
+          ['Sales Revenue','$420,000'],['Service Revenue','$80,000'],['COGS','$250,000'],
+          ['Salaries & Wages','$95,000'],['Rent & Utilities','$28,000'],['Marketing','$18,000'],
+          ['Depreciation','$12,000'],['Interest Expense','$9,500'],['Tax Rate','21%'],
+        ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:.3rem .5rem;background:var(--surface);border-radius:var(--radius-sm);font-size:.78rem"><span style="color:var(--text-muted)">${k}</span><span style="font-family:var(--mono);font-weight:700">${v}</span></div>`).join('')}
+      </div>
+
+      <table class="fin-table">
+        <tbody>
+          <tr class="section-hdr"><td colspan="2">REVENUE</td></tr>
+          <tr><td>Sales Revenue + Service Revenue</td><td><input class="fin-input" id="f-totalrev" placeholder="$0" type="number"></td></tr>
+          <tr class="section-hdr"><td colspan="2">COST OF GOODS SOLD</td></tr>
+          <tr><td>Cost of Goods Sold</td><td><input class="fin-input" id="f-cogs" placeholder="$0" type="number"></td></tr>
+          <tr class="total-row"><td><strong>Gross Profit</strong> (Revenue − COGS)</td><td class="fin-calc" id="f-gp">—</td></tr>
+          <tr class="section-hdr"><td colspan="2">OPERATING EXPENSES</td></tr>
+          <tr><td>Total Operating Expenses (Salaries + Rent + Marketing + Depreciation)</td><td><input class="fin-input" id="f-opex" placeholder="$0" type="number"></td></tr>
+          <tr class="total-row"><td><strong>Operating Income</strong></td><td class="fin-calc" id="f-opinc">—</td></tr>
+          <tr class="section-hdr"><td colspan="2">NON-OPERATING</td></tr>
+          <tr><td>Interest Expense</td><td><input class="fin-input" id="f-int" placeholder="$0" type="number"></td></tr>
+          <tr><td>Income Tax (21% of EBT)</td><td><input class="fin-input" id="f-tax" placeholder="$0" type="number"></td></tr>
+          <tr class="total-row"><td><strong>NET INCOME</strong></td><td class="fin-calc" id="f-ni">—</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:1.25rem;background:var(--surface2);border-radius:var(--radius-sm);padding:1rem">
+        <div style="font-family:var(--display);font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.65rem">Break-Even Calculation</div>
+        <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.65rem">Unit Price: <strong>$45</strong> · Variable Cost per Unit: <strong>$18</strong> · Monthly Fixed Costs: <strong>$12,000</strong></div>
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+          <div style="font-size:.82rem">Break-Even Units = Fixed Costs ÷ (Price − Variable Cost) =</div>
+          <input class="fin-input" id="f-be" placeholder="units" type="number" style="width:100px">
+          <div style="font-size:.8rem;color:var(--text-muted)">units per month</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="action-btn primary" onclick="r5Check()">Submit Financial Data →</button>
+      </div>
+    </div>
+
+    <div class="vault locked" id="v5-code" style="opacity:.4">
+      <div class="vault-label">Vault 5 Code — Break-Even Units</div>
+      <div class="code-display">
+        ${[...Array(3)].map((_,i)=>`<div class="code-digit" id="r5d-${i}">?</div>`).join('')}
+      </div>
+      <div style="text-align:center;font-size:.72rem;color:var(--text-dim)">The vault code is the break-even number (3 digits)</div>
+    </div>
+  </div>`;
+
+  document.querySelectorAll('.fin-input').forEach(el=>el.addEventListener('input',r5UpdateLive));
+}
+
+function r5UpdateLive(){
+  const totalRev = parseFloat(document.getElementById('f-totalrev')?.value)||0;
+  const cogs = parseFloat(document.getElementById('f-cogs')?.value)||0;
+  const opex = parseFloat(document.getElementById('f-opex')?.value)||0;
+  const intExp = parseFloat(document.getElementById('f-int')?.value)||0;
+  const tax = parseFloat(document.getElementById('f-tax')?.value)||0;
+  const gp = totalRev - cogs;
+  const opinc = gp - opex;
+  const ni = opinc - intExp - tax;
+  const fmt = n => n===0?'—':'$'+Math.round(n).toLocaleString();
+  const set = (id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmt(val);};
+  set('f-gp',gp); set('f-opinc',opinc); set('f-ni',ni);
+}
+
+function r5Check(){
+  const ci = calcR5();
+  const fields = [
+    {id:'f-totalrev',correct:ci.totalRev,label:'Total Revenue'},
+    {id:'f-cogs',correct:R5_DATA.cogs,label:'COGS'},
+    {id:'f-opex',correct:ci.totalOpEx,label:'Total Operating Expenses'},
+    {id:'f-int',correct:R5_DATA.interest,label:'Interest Expense'},
+    {id:'f-tax',correct:ci.tax,label:'Income Tax'},
+    {id:'f-be',correct:ci.beUnits,label:'Break-Even Units'},
+  ];
+
+  let errors = 0;
+  fields.forEach(f=>{
+    const val = parseFloat(document.getElementById(f.id)?.value)||0;
+    const ok = Math.abs(val - f.correct) < 2;
+    const el = document.getElementById(f.id);
+    if(el) el.className = 'fin-input ' + (ok?'correct':'incorrect');
+    if(!ok) errors++;
+  });
+
+  if(errors > 0){
+    addPenalty(60);
+    showNotification(`✗ ${errors} value(s) incorrect! −60 seconds. Check your calculations.`,'error', 4000);
+    return;
+  }
+
+  // Reveal code from break-even
+  const code = ci.beUnits.toString().padStart(3,'0').split('');
+  const codeEl = document.getElementById('v5-code');
+  if(codeEl){codeEl.style.opacity='1';codeEl.classList.replace('locked','unlocked');}
+  code.forEach((d,i)=>{
+    setTimeout(()=>{
+      const el = document.getElementById('r5d-'+i);
+      if(el){el.textContent=d;el.classList.add('filled');}
+    },i*300);
+  });
+  setTimeout(()=>{
+    showNotification('🔓 VAULT 5 UNLOCKED! Financial statements complete!','success',3000);
+    setTimeout(()=>{currentRoom=6;renderRoom6();},3000);
+  },1500);
+}
+
+// ════════════════════════════════════════════
+// ROOM 6 — ETHICS & COMPLIANCE (BOSS ROOM)
+// ════════════════════════════════════════════
+let r6Answers = {};
+let r6Step = 0;
+
+const R6_CHALLENGES = [
+  {
+    id:'c1',
+    title:'The Safety Violation',
+    scenario:'A warehouse employee reports to you that a piece of machinery has been making a dangerous grinding noise for two weeks. The floor manager says "it\'s fine, we\'re too busy to stop production." The employee is now threatening to file a report with a government agency.',
+    question:'As the compliance officer, what is the correct immediate action?',
+    options:[
+      'Tell the employee to wait until the slow season to address it',
+      'Fire the employee for going around the manager',
+      'Shut down the equipment immediately, document the hazard, and remind the manager that the employee has the legal right to report without retaliation',
+      'Send the employee to HR to file an internal complaint and continue production',
+    ],
+    correct:2,
+    law:'OSHA — General Duty Clause protects employees who report safety violations. Retaliation is illegal.',
+  },
+  {
+    id:'c2',
+    title:'The Accommodation Request',
+    scenario:'A top-performing employee discloses she has been diagnosed with severe migraines. Her doctor recommends she be allowed to work in a private office away from fluorescent lights two days per week. Her manager denies the request saying "we treat everyone equally — no exceptions."',
+    question:'Which response is legally correct?',
+    options:[
+      'Require the company to engage in the "interactive process" under the ADA to determine if this is a reasonable accommodation',
+      'Support the manager — equal treatment is an important company value',
+      'Offer the employee unpaid leave instead of the accommodation',
+      'Tell the employee to get a second medical opinion before the company will consider it',
+    ],
+    correct:0,
+    law:'ADA — Employers must engage in an interactive process to find reasonable accommodations. "Equal treatment" is not a valid defense against accommodation requests.',
+  },
+  {
+    id:'c3',
+    title:'The Ethical Dilemma',
+    scenario:'You discover that your company\'s marketing department has been advertising their new supplement as "clinically proven to prevent cancer." In reality, no clinical trials have been conducted. The product simply has not been proven harmful — but it has not been proven beneficial either.',
+    question:'Which agency has authority over this claim, and what must the company do?',
+    options:[
+      'OSHA — require a workplace safety review of the product',
+      'EEOC — file an employment discrimination report',
+      'ADA — ensure the product is accessible to people with disabilities',
+      'FTC — immediately remove the false claim; the FTC prohibits deceptive advertising and "clinically proven" claims require substantiation',
+    ],
+    correct:3,
+    law:'FTC — Section 5 prohibits deceptive acts in commerce. Health claims like "clinically proven" require actual clinical evidence. This is also a CSR violation — companies have an obligation to honest communication with consumers.',
+  },
+];
+
+function renderRoom6(){
+  updateHUD();
+  const c = ROOMS[5];
+  r6Answers = {}; r6Step = 0;
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="room-header">
+      <div class="room-title-bar">
+        <span class="room-num-badge" style="color:${c.color};border-color:${c.color}40;background:${c.color}10">VAULT 6 — BOSS</span>
+        <div class="room-title" style="color:${c.color}">The Ethics Vault</div>
+        <button class="hint-btn" onclick="r6GetHint()">💡 Hint</button>
+      </div>
+      <div class="room-narrative"><strong style="color:${c.color}">FINAL VAULT.</strong> Three ethical dilemmas stand between you and freedom. All three must be answered correctly. There are no partial points here — the company's reputation depends on getting all of this right.</div>
+    </div>
+
+    <div class="vault locked" id="v6-main">
+      <div id="r6-content"></div>
+    </div>
+  </div>`;
+  r6RenderChallenge();
+}
+
+function r6RenderChallenge(){
+  const ch = R6_CHALLENGES[r6Step];
+  if(!ch) return;
+  const el = document.getElementById('r6-content');
+  if(!el) return;
+
+  // Progress dots
+  const dots = R6_CHALLENGES.map((_,i)=>`<div style="width:10px;height:10px;border-radius:50%;background:${i<r6Step?'var(--green)':i===r6Step?'var(--cyan)':'var(--border2)'}"></div>`).join('');
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+      ${dots}
+      <span style="font-size:.72rem;color:var(--text-muted);margin-left:.25rem">Challenge ${r6Step+1} of ${R6_CHALLENGES.length}</span>
+    </div>
+    <div style="font-family:var(--display);font-size:1rem;font-weight:700;color:var(--cyan);margin-bottom:.65rem">${ch.title}</div>
+    <div style="background:var(--surface2);border-left:3px solid var(--cyan);padding:.85rem 1rem;font-size:.83rem;color:var(--text-muted);line-height:1.7;margin-bottom:1rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0">${ch.scenario}</div>
+    <div style="font-size:.85rem;font-weight:600;margin-bottom:.65rem">${ch.question}</div>
+    <div class="mc-opts">
+      ${ch.options.map((o,i)=>`
+        <div class="mc-opt" id="r6opt-${i}" onclick="r6Answer(${i})">
+          <div class="mc-letter">${String.fromCharCode(65+i)}</div>
+          <div>${o}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function r6Answer(idx){
+  const ch = R6_CHALLENGES[r6Step];
+  if(idx === ch.correct){
+    document.getElementById(`r6opt-${idx}`)?.classList.add('correct-anim');
+    showNotification(`✓ Correct! ${ch.law}`,'success', 4000);
+    r6Step++;
+    if(r6Step >= R6_CHALLENGES.length){
+      setTimeout(()=>r6Unlock(), 2000);
+    } else {
+      setTimeout(()=>r6RenderChallenge(), 2500);
+    }
+  } else {
+    addPenalty(60);
+    showNotification('✗ Incorrect! −60 seconds. Think about which agency has jurisdiction here.','error',3000);
+    const el = document.getElementById(`r6opt-${idx}`);
+    el?.classList.add('wrong-anim');
+    setTimeout(()=>el?.classList.remove('wrong-anim'),600);
+  }
+}
+
+function r6GetHint(){
+  const hints = [
+    'Challenge 1: OSHA protects employees who report safety issues. Any retaliation is illegal — even threatening it.',
+    'Challenge 2: The ADA requires an "interactive process" — employers cannot simply say no to accommodation without evaluating it. Equal treatment is NOT a defense.',
+    'Challenge 3: Which agency regulates advertising claims? Health claims require scientific substantiation.',
+  ];
+  useHint(5, hints[r6Step] || 'Think about which government agency regulates this type of situation.');
+}
+
+function r6Unlock(){
+  clearInterval(timerInterval);
+  gameComplete = true;
+  const elapsed = TOTAL_SECONDS - timeRemaining;
+  renderComplete(true, elapsed);
+}
+
+// ════════════════════════════════════════════
+// COMPLETION
+// ════════════════════════════════════════════
+function renderComplete(success, elapsedSeconds=0){
+  gameComplete = true;
+  updateHUD();
+  const m = Math.floor(elapsedSeconds/60);
+  const s = elapsedSeconds%60;
+  const timeStr = `${m}:${s.toString().padStart(2,'0')}`;
+  const timeLeft = Math.floor(timeRemaining/60)+':'+(timeRemaining%60).toString().padStart(2,'0');
+
+  // Save to leaderboard
+  let board = [];
+  try{ board = JSON.parse(localStorage.getItem('apex_lb')||'[]'); }catch(e){}
+  if(success){
+    board.push({name:playerName,elapsed:elapsedSeconds,hints:hintsUsed,penalties,timeStr});
+    board.sort((a,b)=>a.elapsed-b.elapsed);
+    board = board.slice(0,10);
+    try{ localStorage.setItem('apex_lb',JSON.stringify(board)); }catch(e){}
+  }
+
+  const myRank = board.findIndex(e=>e.name===playerName&&e.elapsed===elapsedSeconds)+1;
+
+  document.getElementById('room-container').innerHTML = `
+  <div class="room-screen">
+    <div class="complete-screen">
+      ${success?`
+        <div class="complete-icon">🏆</div>
+        <div class="complete-title">APEX VENTURES SAVED!</div>
+        <div style="color:var(--text-muted);margin-bottom:1rem;font-size:.9rem">All 6 vaults unlocked — the company's systems are restored.</div>
+      `:`
+        <div style="font-size:4rem;margin-bottom:1rem">💀</div>
+        <div class="complete-title" style="background:linear-gradient(135deg,var(--red),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">TIME EXPIRED</div>
+        <div style="color:var(--text-muted);margin-bottom:1rem">The company couldn't be saved. Study up and try again.</div>
+      `}
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" style="color:${success?'var(--green)':'var(--red)'}">${success?timeStr:'—'}</div>
+          <div class="stat-label">Completion Time</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" style="color:var(--cyan)">${currentRoom > 6 ? 6 : currentRoom-1}/6</div>
+          <div class="stat-label">Vaults Opened</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" style="color:var(--amber)">${hintsUsed}</div>
+          <div class="stat-label">Hints Used</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" style="color:var(--red)">${penalties}</div>
+          <div class="stat-label">Penalties</div>
+        </div>
+      </div>
+
+      ${success&&myRank>0?`<div style="background:var(--greenl);border:1px solid var(--greenborder);border-radius:var(--radius-sm);padding:.75rem 1.25rem;margin-bottom:1rem;font-family:var(--display);font-size:.85rem;color:var(--green)">🏆 You ranked #${myRank} on the class leaderboard!</div>`:''}
+
+      <div class="leaderboard">
+        <div class="lb-title">🏆 Class Leaderboard — Top 10</div>
+        ${board.length===0?'<div style="color:var(--text-dim);font-size:.8rem">No entries yet</div>':
+          board.map((e,i)=>`
+            <div class="lb-row ${e.name===playerName&&e.elapsed===elapsedSeconds?'you':''}">
+              <div class="lb-rank">#${i+1}</div>
+              <div class="lb-name">${e.name}</div>
+              <div class="lb-time">${e.timeStr}</div>
+              <div class="lb-hints">💡${e.hints} ⚠️${e.penalties}</div>
+            </div>`).join('')}
+      </div>
+
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem">
+        <button class="action-btn primary" onclick="location.reload()">🔄 Play Again</button>
+        <button class="action-btn secondary" onclick="if(confirm('Clear the class leaderboard? Do this between class periods.')){localStorage.removeItem('apex_lb');location.reload();}">🗑️ Clear Leaderboard</button>
+        <button class="action-btn secondary" onclick="window.print()">🖨️ Print Results</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── INIT ──
+renderIntro();
+</script>
+</body>
+</html>
