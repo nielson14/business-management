@@ -16,19 +16,16 @@
   --blue:#0D47A1;--bluel:#E3F2FD;--bluem:rgba(13,71,161,.2);
   --amber:#E65100;--amberl:#FFF3E0;--amberm:rgba(230,81,0,.2);
   --purple:#4A148C;--purplel:#F3E5F5;--purplem:rgba(74,20,140,.2);
-  --teal:#004D40;--teall:#E0F2F1;--tealm:rgba(0,77,64,.2);
-  --phase1:#0D47A1;--phase1l:#E3F2FD;
-  --phase2:#1B5E20;--phase2l:#E8F5E9;
-  --phase3:#4A148C;--phase3l:#F3E5F5;
+  --teal:#004D40;--teall:#E0F2F1;
   --radius:10px;--radius-sm:6px;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
 
-/* ── HEADER ── */
+/* HEADER */
 header{background:var(--ink);color:#F0EEE8;display:flex;align-items:stretch;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--green);}
 .hbrand{padding:1rem 1.75rem;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;justify-content:center;flex-shrink:0;}
-.hbrand h1{font-family:var(--mono);font-size:1rem;font-weight:700;color:#F0EEE8;letter-spacing:-.3px;}
+.hbrand h1{font-family:var(--mono);font-size:1rem;font-weight:700;color:#F0EEE8;}
 .hbrand .sub{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,238,232,.35);margin-top:.25rem;}
 .hphases{display:flex;flex:1;}
 .hphase{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.6rem .5rem;border-right:1px solid rgba(255,255,255,.06);font-size:.65rem;color:rgba(240,238,232,.3);cursor:default;transition:all .2s;gap:.15rem;}
@@ -37,25 +34,19 @@ header{background:var(--ink);color:#F0EEE8;display:flex;align-items:stretch;posi
 .hphase-icon{font-size:1.1rem;}
 .hphase-name{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;}
 .hright{padding:.75rem 1.5rem;border-left:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:1.25rem;flex-shrink:0;}
-.hstat{text-align:center;}
 .hstat-label{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3);}
-.hstat-val{font-family:var(--mono);font-size:.9rem;font-weight:700;}
-.hstat-val.pos{color:#81C784;}
-.hstat-val.neg{color:#EF9A9A;}
-.hstat-val.neu{color:#FFD54F;}
+.hstat-val{font-family:var(--mono);font-size:.9rem;font-weight:700;color:#FFD54F;}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 .layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 65px);}
 .sidebar{background:var(--ink);color:#F0EEE8;padding:1.25rem;display:flex;flex-direction:column;gap:1.5rem;border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;}
 .main{padding:1.75rem;overflow-y:auto;}
 .sb-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,238,232,.25);margin-bottom:.65rem;}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 .company-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.9rem;}
-.company-name{font-family:var(--mono);font-size:.95rem;font-weight:700;color:#F0EEE8;margin-bottom:.2rem;}
-.company-industry{font-size:.65rem;color:rgba(240,238,232,.4);}
-.company-year{font-size:.62rem;color:rgba(240,238,232,.3);margin-top:.35rem;}
-
+.company-name{font-family:var(--mono);font-size:.9rem;font-weight:700;color:#F0EEE8;margin-bottom:.2rem;}
+.company-type{font-size:.65rem;color:rgba(240,238,232,.4);}
 .stmt-progress{display:flex;flex-direction:column;gap:.4rem;}
 .sp-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border-radius:var(--radius-sm);border:1px solid transparent;transition:all .2s;}
 .sp-row.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);}
@@ -64,111 +55,105 @@ header{background:var(--ink);color:#F0EEE8;display:flex;align-items:stretch;posi
 .sp-name{font-family:var(--mono);font-size:.72rem;color:rgba(240,238,232,.4);transition:color .2s;}
 .sp-row.active .sp-name{color:#F0EEE8;}
 .sp-check{margin-left:auto;font-size:.7rem;color:rgba(100,200,120,.8);}
-
+.formula-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.75rem;}
+.formula-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3);margin-bottom:.5rem;}
+.formula-line{font-family:var(--mono);font-size:.68rem;color:rgba(240,238,232,.6);line-height:1.7;}
+.formula-line.hl{color:#FFD54F;}
 .key-numbers{display:flex;flex-direction:column;gap:.4rem;}
 .kn-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:.5rem .65rem;display:flex;justify-content:space-between;align-items:center;}
 .kn-label{font-size:.62rem;color:rgba(240,238,232,.4);}
 .kn-val{font-family:var(--mono);font-size:.78rem;font-weight:600;}
-.kn-val.pos{color:#81C784;}
-.kn-val.neg{color:#EF9A9A;}
-.kn-val.neu{color:#FFD54F;}
-.kn-val.empty{color:rgba(240,238,232,.2);}
 
-.formula-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.75rem;}
-.formula-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3);margin-bottom:.5rem;}
-.formula-line{font-family:var(--mono);font-size:.68rem;color:rgba(240,238,232,.6);line-height:1.7;}
-.formula-line.highlight{color:#FFD54F;}
+/* DATA SHEET — the source of truth students work from */
+.data-sheet{background:var(--surface);border:2px solid var(--blue);border-radius:var(--radius);margin-bottom:1.5rem;overflow:hidden;}
+.ds-header{background:var(--bluel);padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.65rem;}
+.ds-icon{font-size:1.25rem;}
+.ds-title{font-weight:700;font-size:.9rem;color:var(--blue);}
+.ds-subtitle{font-size:.73rem;color:var(--text-muted);}
+.ds-body{padding:1.1rem 1.25rem;}
+.ds-intro{font-size:.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:1rem;}
+.ds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.4rem;}
+.ds-item{display:flex;justify-content:space-between;align-items:center;padding:.4rem .65rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.8rem;}
+.ds-item-name{color:var(--text-muted);}
+.ds-item-val{font-family:var(--mono);font-weight:700;font-size:.78rem;color:var(--text);}
+.ds-item.used{opacity:.4;}
+.ds-note{font-size:.72rem;color:var(--blue);margin-top:.75rem;font-style:italic;}
 
-/* ── MAIN CONTENT ── */
+/* PHASE HEADER */
 .phase-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:1rem;}
 .ph-num{font-family:var(--mono);font-size:3rem;font-weight:700;line-height:1;flex-shrink:0;width:55px;}
 .ph-title{font-size:1.4rem;font-weight:700;margin-bottom:.3rem;letter-spacing:-.3px;}
 .ph-sub{font-size:.8rem;color:var(--text-muted);line-height:1.6;max-width:500px;}
 .ph-badge{font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .6rem;border-radius:2px;margin-left:auto;flex-shrink:0;}
 
-/* ── FINANCIAL TABLE ── */
+/* FINANCIAL TABLE */
 .fin-table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;}
-.ftc-header{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.ftc-title{font-family:var(--mono);font-size:.82rem;font-weight:700;letter-spacing:-.2px;}
+.ftc-header{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);}
+.ftc-title{font-family:var(--mono);font-size:.82rem;font-weight:700;}
 .ftc-subtitle{font-size:.72rem;color:var(--text-muted);}
-
 .fin-table{width:100%;border-collapse:collapse;}
 .fin-table th{text-align:left;padding:.55rem 1rem;background:var(--surface2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);}
-.fin-table th.right{text-align:right;}
 .fin-table td{padding:.5rem 1rem;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle;}
-.fin-table td.amount{font-family:var(--mono);font-size:.82rem;text-align:right;width:130px;}
-.fin-table td.amount input{font-family:var(--mono);font-size:.82rem;text-align:right;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.3rem .5rem;width:110px;background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;}
+.fin-table td.amount{font-family:var(--mono);font-size:.82rem;text-align:right;width:160px;}
+.fin-table td.amount input{font-family:var(--mono);font-size:.82rem;text-align:right;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.35rem .6rem;width:130px;background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;}
 .fin-table td.amount input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(13,71,161,.1);}
 .fin-table td.amount input.correct{border-color:var(--green);background:var(--greenl);}
 .fin-table td.amount input.incorrect{border-color:var(--red);background:var(--redl);}
-.fin-table tr.section-header td{background:var(--surface2);font-weight:700;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:.4rem 1rem;}
-.fin-table tr.subtotal td{background:var(--surface2);font-weight:700;}
-.fin-table tr.subtotal td.amount{font-family:var(--mono);}
-.fin-table tr.total-row td{background:var(--ink);color:#F0EEE8;font-weight:700;font-size:.9rem;}
-.fin-table tr.total-row td.amount{font-family:var(--mono);font-size:.9rem;}
-.fin-table tr.highlight-row td{background:var(--greenl);color:var(--green);font-weight:700;}
-.fin-table tr.highlight-row.loss td{background:var(--redl);color:var(--red);}
-
+.fin-table tr.section-header td{background:var(--surface2);font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:.4rem 1rem;}
+.fin-table tr.subtotal td{background:var(--surface2);font-weight:700;border-top:2px solid var(--border);}
+.fin-table tr.subtotal td.calc{font-family:var(--mono);color:var(--blue);}
+.fin-table tr.total-row td{background:var(--ink);color:#F0EEE8;font-weight:700;font-size:.88rem;}
+.fin-table tr.total-row td.calc{font-family:var(--mono);}
+.fin-table tr.gp-row td{background:var(--greenl);color:var(--green);font-weight:700;border-top:2px solid var(--border);}
+.fin-table tr.gp-row.neg td{background:var(--redl);color:var(--red);}
+.fin-table tr.ni-row td{background:var(--ink);color:#F0EEE8;font-weight:700;font-size:.9rem;}
 .item-name{display:flex;align-items:center;gap:.5rem;}
-.item-tooltip{cursor:help;font-size:.7rem;color:var(--text-dim);position:relative;}
-.item-tooltip:hover::after{content:attr(data-tip);position:absolute;left:100%;top:50%;transform:translateY(-50%);background:var(--ink);color:#F0EEE8;font-size:.68rem;padding:.35rem .6rem;border-radius:var(--radius-sm);white-space:nowrap;margin-left:.4rem;z-index:10;max-width:220px;white-space:normal;line-height:1.4;}
-.item-category{font-size:.6rem;font-family:var(--mono);padding:.1rem .35rem;border-radius:2px;font-weight:600;margin-left:.25rem;}
+.tip{cursor:help;font-size:.75rem;color:var(--text-dim);position:relative;display:inline-block;}
+.tip:hover::after{content:attr(data-tip);position:absolute;left:100%;top:50%;transform:translateY(-50%);background:var(--ink);color:#F0EEE8;font-size:.68rem;padding:.4rem .7rem;border-radius:var(--radius-sm);white-space:nowrap;margin-left:.4rem;z-index:20;max-width:240px;white-space:normal;line-height:1.4;pointer-events:none;}
 
-/* ── DRAG & DROP CATEGORIZER ── */
-.categorizer{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.25rem;}
-.cat-title{font-family:var(--mono);font-size:.82rem;font-weight:700;margin-bottom:.85rem;}
-.cat-grid{display:grid;grid-template-columns:1fr 2fr;gap:1.25rem;}
-.items-pool{display:flex;flex-direction:column;gap:.4rem;}
-.pool-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.35rem;}
-.pool-item{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.5rem .75rem;font-size:.8rem;cursor:grab;transition:all .15s;display:flex;justify-content:space-between;align-items:center;user-select:none;}
-.pool-item:hover{border-color:var(--blue);background:var(--bluel);}
-.pool-item.placed{opacity:.35;cursor:default;}
-.pool-item .item-amount{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-muted);}
-.drop-zones{display:flex;flex-direction:column;gap:.65rem;}
-.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:.65rem .85rem;min-height:60px;transition:all .2s;}
-.drop-zone.drag-over{border-color:var(--blue);background:var(--bluel);}
-.drop-zone-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:.4rem;}
-.drop-zone-items{display:flex;flex-wrap:wrap;gap:.35rem;}
-.placed-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.3rem .6rem;font-size:.72rem;display:flex;align-items:center;gap:.3rem;cursor:pointer;}
-.placed-item.correct{border-color:var(--green);background:var(--greenl);color:var(--green);}
-.placed-item.incorrect{border-color:var(--red);background:var(--redl);color:var(--red);}
-.placed-item .remove-btn{font-size:.8rem;opacity:.5;cursor:pointer;}
-.placed-item .remove-btn:hover{opacity:1;}
-
-/* ── BALANCE CHECK ── */
+/* BALANCE CHECKER */
 .balance-check{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
 .bc-item{text-align:center;}
 .bc-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.25rem;}
 .bc-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;}
-.bc-equals{font-family:var(--mono);font-size:1.4rem;color:var(--text-muted);}
+.bc-op{font-family:var(--mono);font-size:1.4rem;color:var(--text-muted);}
 .bc-status{font-size:.78rem;font-weight:700;padding:.35rem .85rem;border-radius:100px;}
 .bc-status.balanced{background:var(--greenl);color:var(--green);}
 .bc-status.unbalanced{background:var(--redl);color:var(--red);}
 
-/* ── ANALYSIS QUESTIONS ── */
+/* ANALYSIS */
 .analysis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.25rem;}
-.analysis-q{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
-.analysis-q:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
-.aq-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.35rem;}
-.aq-question{font-size:.9rem;font-weight:600;margin-bottom:.5rem;line-height:1.4;}
+.aq{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+.aq:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.aq-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem;}
+.aq-q{font-size:.9rem;font-weight:600;margin-bottom:.5rem;line-height:1.4;}
 .aq-data{font-family:var(--mono);font-size:.72rem;color:var(--text-muted);background:var(--surface2);padding:.5rem .75rem;border-radius:var(--radius-sm);margin-bottom:.5rem;line-height:1.6;}
-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .85rem;font-family:var(--sans);font-size:.84rem;color:var(--text);resize:vertical;min-height:80px;outline:none;line-height:1.6;transition:border-color .15s;}
+textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .85rem;font-family:var(--sans);font-size:.84rem;color:var(--text);resize:vertical;min-height:85px;outline:none;line-height:1.6;transition:border-color .15s;}
 textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(13,71,161,.1);}
 textarea::placeholder{color:var(--text-dim);}
 
-/* ── SCENARIO SELECTOR ── */
+/* RESULT REVEAL */
+.result-row{display:flex;align-items:center;gap:.65rem;padding:.5rem .75rem;border-radius:var(--radius-sm);margin-bottom:.35rem;font-size:.82rem;}
+.result-row.correct-row{background:var(--greenl);border:1px solid var(--greenm);}
+.result-row.wrong-row{background:var(--redl);border:1px solid var(--redm);}
+.result-icon{font-size:1rem;flex-shrink:0;}
+.result-item{flex:1;}
+.result-yours{font-family:var(--mono);font-size:.75rem;color:var(--text-muted);}
+.result-correct{font-family:var(--mono);font-size:.75rem;font-weight:700;}
+
+/* SCENARIO SELECTOR */
 .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;}
 .sc-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;transition:all .2s;}
 .sc-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08);}
-.sc-card.selected{border-color:var(--blue);}
+.sc-card.selected{border-color:var(--blue);background:var(--bluel);}
 .sc-emoji{font-size:2rem;margin-bottom:.5rem;}
 .sc-name{font-weight:700;font-size:.95rem;margin-bottom:.25rem;}
 .sc-type{font-family:var(--mono);font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
 .sc-desc{font-size:.75rem;color:var(--text-muted);line-height:1.45;}
 .sc-health{display:flex;gap:.4rem;margin-top:.75rem;flex-wrap:wrap;}
-.sc-health-pill{font-size:.62rem;font-weight:600;padding:.15rem .5rem;border-radius:100px;}
+.sc-pill{font-size:.62rem;font-weight:600;padding:.15rem .5rem;border-radius:100px;}
 
-/* ── FEEDBACK ── */
+/* FEEDBACK */
 .feedback-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 .fb-header{background:var(--ink);color:#F0EEE8;padding:1.1rem 1.5rem;display:flex;align-items:center;gap:.85rem;}
 .fb-icon{font-size:1.6rem;}
@@ -186,7 +171,7 @@ textarea::placeholder{color:var(--text-dim);}
 .typing-dot:nth-child(3){animation-delay:.4s;}
 @keyframes blink{0%,80%,100%{opacity:.15}40%{opacity:1}}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{font-family:var(--sans);font-size:.86rem;font-weight:600;padding:.62rem 1.4rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .2s;}
 .btn-primary{background:var(--ink);color:#F0EEE8;}
 .btn-primary:hover{background:#333;transform:translateY(-1px);}
@@ -194,16 +179,22 @@ textarea::placeholder{color:var(--text-dim);}
 .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border);}
 .btn-outline:hover{border-color:var(--text-muted);}
 .btn-green{background:var(--green);color:#fff;}
-.btn-green:hover{background:#1B5E20;}
+.btn-green:hover{background:#1B5E20;transform:translateY(-1px);}
 .btn-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin-top:1.1rem;}
-
 .inst-box{padding:.8rem 1rem;border-radius:var(--radius-sm);font-size:.8rem;line-height:1.6;margin-bottom:1rem;border-left:3px solid;}
 .divider{height:1px;background:var(--border);margin:1.25rem 0;}
+
+/* RATIO CARD */
+.ratio-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.65rem;margin-bottom:1.25rem;}
+.ratio-card{border-radius:var(--radius-sm);padding:.75rem;text-align:center;border:1.5px solid transparent;}
+.ratio-val{font-family:var(--mono);font-size:1.1rem;font-weight:700;margin-bottom:.25rem;}
+.ratio-label{font-size:.65rem;font-weight:700;margin-bottom:.15rem;}
+.ratio-desc{font-size:.58rem;opacity:.7;line-height:1.3;}
 
 @media(max-width:768px){
   .layout{grid-template-columns:1fr;}
   .sidebar{display:none;}
-  .scenario-grid,.cat-grid{grid-template-columns:1fr;}
+  .scenario-grid,.ratio-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
 </head>
@@ -215,284 +206,265 @@ const WORKER_URL="https://digitalmarketing.robert-nielson14.workers.dev";
 // ── SCENARIOS ──
 const SCENARIOS=[
   {
-    id:'healthy',
-    emoji:'🏪',
-    name:'Meridian Retail Co.',
-    type:'Retail / Brick & Mortar',
+    id:'healthy',emoji:'🏪',name:'Meridian Retail Co.',type:'Retail / Healthy',
     desc:'An established retail chain with steady sales and solid profitability. Good for learning the basics.',
-    health:[{label:'Profitable',color:'#1B5E20',bg:'#E8F5E9'},{label:'Stable',color:'#0D47A1',bg:'#E3F2FD'},{label:'Low Debt',color:'#4A148C',bg:'#F3E5F5'}],
+    health:[{label:'Profitable',c:'#1B5E20',bg:'#E8F5E9'},{label:'Stable',c:'#0D47A1',bg:'#E3F2FD'},{label:'Low Debt',c:'#4A148C',bg:'#F3E5F5'}],
     year:'Fiscal Year 2024',
-    data:{
-      // Income Statement
-      salesRevenue:850000,
-      serviceRevenue:42000,
-      cogs:510000,
-      salariesWages:98000,
-      rentUtilities:36000,
-      marketingAdv:24000,
-      depreciation:18000,
-      interestExpense:8500,
-      taxRate:0.21,
-      // Balance Sheet
-      cash:95000,
-      accountsReceivable:48000,
-      inventory:62000,
-      prepaidExpenses:8000,
-      propertyEquipment:280000,
-      accumulatedDeprec:72000,
-      intangibles:15000,
-      accountsPayable:38000,
-      shortTermDebt:25000,
-      accruedExpenses:12000,
-      longTermDebt:95000,
-      deferredRevenue:8000,
-      commonStock:150000,
-      retainedEarnings:208000,
-      // Cash Flow
-      netIncome:null,// calculated
-      depreciation2:18000,
-      arChange:-5000,
-      inventoryChange:-8000,
-      apChange:3000,
-      capex:-45000,
-      investments:0,
-      debtRepayment:-15000,
-      dividends:-20000,
-    }
+    // Income data — students see these as a raw list and must place them correctly
+    incomeItems:[
+      {name:'Sales Revenue',key:'salesRevenue',val:850000,section:'revenue',tip:'Money earned from selling products'},
+      {name:'Service Revenue',key:'serviceRevenue',val:42000,section:'revenue',tip:'Money earned from services provided'},
+      {name:'Cost of Goods Sold (COGS)',key:'cogs',val:510000,section:'cogs',tip:'Direct costs to produce goods sold'},
+      {name:'Salaries & Wages',key:'salaries',val:98000,section:'opex',tip:'Employee compensation'},
+      {name:'Rent & Utilities',key:'rent',val:36000,section:'opex',tip:'Facility costs'},
+      {name:'Marketing & Advertising',key:'marketing',val:24000,section:'opex',tip:'Costs to promote the business'},
+      {name:'Depreciation',key:'depreciation',val:18000,section:'opex',tip:'Non-cash expense — spreading cost of assets over time'},
+      {name:'Interest Expense',key:'interest',val:8500,section:'nonop',tip:'Cost of borrowing — paid to lenders'},
+      {name:'Income Tax (21%)',key:'taxes',val:40852,section:'nonop',tip:'Corporate income tax on earnings before tax'},
+    ],
+    // Balance sheet — students see a raw trial balance list
+    balanceItems:[
+      {name:'Cash & Cash Equivalents',key:'cash',val:95000,section:'currentAsset',tip:'Money on hand and in bank accounts'},
+      {name:'Accounts Receivable',key:'ar',val:48000,section:'currentAsset',tip:'Money customers owe for goods already delivered'},
+      {name:'Inventory',key:'inventory',val:62000,section:'currentAsset',tip:'Goods available for sale — valued at cost'},
+      {name:'Prepaid Expenses',key:'prepaid',val:8000,section:'currentAsset',tip:'Expenses paid in advance — insurance, deposits'},
+      {name:'Property & Equipment (gross)',key:'ppe',val:280000,section:'fixedAsset',tip:'Buildings and equipment at original purchase price'},
+      {name:'Accumulated Depreciation',key:'accDeprec',val:-72000,section:'fixedAsset',tip:'Total depreciation taken since purchase — negative number'},
+      {name:'Intangible Assets',key:'intangibles',val:15000,section:'fixedAsset',tip:'Patents, trademarks, goodwill'},
+      {name:'Accounts Payable',key:'ap',val:38000,section:'currentLiab',tip:'Money owed to suppliers'},
+      {name:'Short-Term Debt',key:'stDebt',val:25000,section:'currentLiab',tip:'Loans due within 12 months'},
+      {name:'Accrued Expenses',key:'accrued',val:12000,section:'currentLiab',tip:'Expenses incurred but not yet paid'},
+      {name:'Long-Term Debt',key:'ltDebt',val:95000,section:'ltLiab',tip:'Loans due beyond 12 months'},
+      {name:'Deferred Revenue',key:'deferredRev',val:8000,section:'ltLiab',tip:'Revenue received but not yet earned'},
+      {name:'Common Stock / Paid-in Capital',key:'stock',val:150000,section:'equity',tip:'Money invested by owners or shareholders'},
+      {name:'Retained Earnings',key:'retained',val:208000,section:'equity',tip:'Accumulated profits kept in the business (prior years)'},
+    ],
+    // Cash flow items
+    cashFlowItems:[
+      {name:'Depreciation Add-back',key:'deprAddback',val:18000,section:'operating',tip:'Non-cash — added back to reconcile net income to cash'},
+      {name:'Change in Accounts Receivable',key:'arChange',val:-5000,section:'operating',tip:'Negative = AR increased, less cash collected than billed'},
+      {name:'Change in Inventory',key:'invChange',val:-8000,section:'operating',tip:'Negative = bought more inventory, uses cash'},
+      {name:'Change in Accounts Payable',key:'apChange',val:3000,section:'operating',tip:'Positive = AP increased, keeping cash longer by paying suppliers later'},
+      {name:'Capital Expenditures (CapEx)',key:'capex',val:-45000,section:'investing',tip:'Cash spent on property and equipment — negative outflow'},
+      {name:'Debt Repayment',key:'debtRepay',val:-15000,section:'financing',tip:'Cash paid to reduce loans — negative outflow'},
+      {name:'Dividends Paid',key:'dividends',val:-20000,section:'financing',tip:'Cash returned to shareholders — negative outflow'},
+    ],
+    beginningCash:95000,
   },
   {
-    id:'struggling',
-    emoji:'⚠️',
-    name:'Cascade Services LLC',
-    type:'Service Business / Struggling',
-    desc:'A service company facing financial pressure — high debt, thin margins. Tests whether students can identify warning signs.',
-    health:[{label:'Low Margin',color:'#B71C1C',bg:'#FFEBEE'},{label:'High Debt',color:'#E65100',bg:'#FFF3E0'},{label:'Cash Issues',color:'#B71C1C',bg:'#FFEBEE'}],
+    id:'struggling',emoji:'⚠️',name:'Cascade Services LLC',type:'Service / Struggling',
+    desc:'High debt, thin margins, and a cash crisis. Tests whether students can identify financial warning signs.',
+    health:[{label:'Low Margin',c:'#B71C1C',bg:'#FFEBEE'},{label:'High Debt',c:'#E65100',bg:'#FFF3E0'},{label:'Cash Crisis',c:'#B71C1C',bg:'#FFEBEE'}],
     year:'Fiscal Year 2024',
-    data:{
-      salesRevenue:380000,
-      serviceRevenue:95000,
-      cogs:285000,
-      salariesWages:110000,
-      rentUtilities:48000,
-      marketingAdv:18000,
-      depreciation:22000,
-      interestExpense:32000,
-      taxRate:0.21,
-      cash:12000,
-      accountsReceivable:85000,
-      inventory:15000,
-      prepaidExpenses:4000,
-      propertyEquipment:320000,
-      accumulatedDeprec:145000,
-      intangibles:8000,
-      accountsPayable:72000,
-      shortTermDebt:48000,
-      accruedExpenses:28000,
-      longTermDebt:285000,
-      deferredRevenue:5000,
-      commonStock:80000,
-      retainedEarnings:-146000,
-      capex:-8000,
-      investments:0,
-      debtRepayment:-12000,
-      dividends:0,
-      depreciation2:22000,
-      arChange:-15000,
-      inventoryChange:5000,
-      apChange:8000,
-    }
+    incomeItems:[
+      {name:'Sales Revenue',key:'salesRevenue',val:380000,section:'revenue',tip:'Money earned from product sales'},
+      {name:'Service Revenue',key:'serviceRevenue',val:95000,section:'revenue',tip:'Money earned from services'},
+      {name:'Cost of Goods Sold (COGS)',key:'cogs',val:285000,section:'cogs',tip:'Direct costs to produce goods sold'},
+      {name:'Salaries & Wages',key:'salaries',val:110000,section:'opex',tip:'Employee compensation'},
+      {name:'Rent & Utilities',key:'rent',val:48000,section:'opex',tip:'Facility costs'},
+      {name:'Marketing & Advertising',key:'marketing',val:18000,section:'opex',tip:'Costs to promote the business'},
+      {name:'Depreciation',key:'depreciation',val:22000,section:'opex',tip:'Non-cash asset cost allocation'},
+      {name:'Interest Expense',key:'interest',val:32000,section:'nonop',tip:'High interest from heavy debt load'},
+      {name:'Income Tax (21%)',key:'taxes',val:0,section:'nonop',tip:'No tax owed when there is a net loss'},
+    ],
+    balanceItems:[
+      {name:'Cash & Cash Equivalents',key:'cash',val:12000,section:'currentAsset',tip:'Very low — this is a warning sign'},
+      {name:'Accounts Receivable',key:'ar',val:85000,section:'currentAsset',tip:'High AR suggests customers are slow to pay'},
+      {name:'Inventory',key:'inventory',val:15000,section:'currentAsset',tip:'Goods available for sale'},
+      {name:'Prepaid Expenses',key:'prepaid',val:4000,section:'currentAsset',tip:'Expenses paid in advance'},
+      {name:'Property & Equipment (gross)',key:'ppe',val:320000,section:'fixedAsset',tip:'Equipment at original cost'},
+      {name:'Accumulated Depreciation',key:'accDeprec',val:-145000,section:'fixedAsset',tip:'High — assets are aging'},
+      {name:'Intangible Assets',key:'intangibles',val:8000,section:'fixedAsset',tip:'Patents and trademarks'},
+      {name:'Accounts Payable',key:'ap',val:72000,section:'currentLiab',tip:'High — company is slow paying its own suppliers'},
+      {name:'Short-Term Debt',key:'stDebt',val:48000,section:'currentLiab',tip:'Large amount due within a year'},
+      {name:'Accrued Expenses',key:'accrued',val:28000,section:'currentLiab',tip:'Unpaid wages and other obligations'},
+      {name:'Long-Term Debt',key:'ltDebt',val:285000,section:'ltLiab',tip:'Very high long-term debt load'},
+      {name:'Deferred Revenue',key:'deferredRev',val:5000,section:'ltLiab',tip:'Revenue received but not earned yet'},
+      {name:'Common Stock / Paid-in Capital',key:'stock',val:80000,section:'equity',tip:'Original owner investment'},
+      {name:'Retained Earnings',key:'retained',val:-146000,section:'equity',tip:'Negative — accumulated losses over time'},
+    ],
+    cashFlowItems:[
+      {name:'Depreciation Add-back',key:'deprAddback',val:22000,section:'operating',tip:'Non-cash expense added back'},
+      {name:'Change in Accounts Receivable',key:'arChange',val:-15000,section:'operating',tip:'AR grew — collected less cash than billed'},
+      {name:'Change in Inventory',key:'invChange',val:5000,section:'operating',tip:'Inventory decreased — converted to cash'},
+      {name:'Change in Accounts Payable',key:'apChange',val:8000,section:'operating',tip:'AP grew — delaying payments to preserve cash'},
+      {name:'Capital Expenditures (CapEx)',key:'capex',val:-8000,section:'investing',tip:'Minimal investment — company cannot afford much'},
+      {name:'Debt Repayment',key:'debtRepay',val:-12000,section:'financing',tip:'Required loan payments'},
+    ],
+    beginningCash:12000,
   },
   {
-    id:'growth',
-    emoji:'🚀',
-    name:'NovaTech Solutions',
-    type:'Tech Startup / High Growth',
-    desc:'A fast-growing tech company — strong revenue growth but burning cash on expansion. Tests understanding of cash flow vs profit.',
-    health:[{label:'High Growth',color:'#1B5E20',bg:'#E8F5E9'},{label:'Cash Burn',color:'#B71C1C',bg:'#FFEBEE'},{label:'VC Backed',color:'#4A148C',bg:'#F3E5F5'}],
+    id:'growth',emoji:'🚀',name:'NovaTech Solutions',type:'Tech Startup / Growth',
+    desc:'Strong revenue but burning cash on expansion. Tests the profit vs. cash flow distinction.',
+    health:[{label:'High Growth',c:'#1B5E20',bg:'#E8F5E9'},{label:'Cash Burn',c:'#B71C1C',bg:'#FFEBEE'},{label:'VC Backed',c:'#4A148C',bg:'#F3E5F5'}],
     year:'Fiscal Year 2024',
-    data:{
-      salesRevenue:1250000,
-      serviceRevenue:380000,
-      cogs:620000,
-      salariesWages:520000,
-      rentUtilities:85000,
-      marketingAdv:145000,
-      depreciation:38000,
-      interestExpense:12000,
-      taxRate:0.21,
-      cash:245000,
-      accountsReceivable:185000,
-      inventory:42000,
-      prepaidExpenses:28000,
-      propertyEquipment:450000,
-      accumulatedDeprec:95000,
-      intangibles:125000,
-      accountsPayable:95000,
-      shortTermDebt:50000,
-      accruedExpenses:65000,
-      longTermDebt:120000,
-      deferredRevenue:85000,
-      commonStock:500000,
-      retainedEarnings:165000,
-      capex:-180000,
-      investments:-50000,
-      debtRepayment:-25000,
-      dividends:0,
-      depreciation2:38000,
-      arChange:-45000,
-      inventoryChange:-12000,
-      apChange:18000,
-    }
+    incomeItems:[
+      {name:'Product Revenue',key:'salesRevenue',val:1250000,section:'revenue',tip:'Revenue from product sales'},
+      {name:'Service/Subscription Revenue',key:'serviceRevenue',val:380000,section:'revenue',tip:'Recurring subscription income'},
+      {name:'Cost of Goods Sold (COGS)',key:'cogs',val:620000,section:'cogs',tip:'Direct costs to deliver products and services'},
+      {name:'Salaries & Wages',key:'salaries',val:520000,section:'opex',tip:'Large team — high headcount for growth stage'},
+      {name:'Rent & Utilities',key:'rent',val:85000,section:'opex',tip:'Multiple office locations'},
+      {name:'Marketing & Advertising',key:'marketing',val:145000,section:'opex',tip:'Heavy marketing investment to drive growth'},
+      {name:'Depreciation',key:'depreciation',val:38000,section:'opex',tip:'Equipment and software depreciation'},
+      {name:'Interest Expense',key:'interest',val:12000,section:'nonop',tip:'Interest on growth financing'},
+      {name:'Income Tax (21%)',key:'taxes',val:44226,section:'nonop',tip:'Tax on positive earnings before tax'},
+    ],
+    balanceItems:[
+      {name:'Cash & Cash Equivalents',key:'cash',val:245000,section:'currentAsset',tip:'Higher cash from VC investment'},
+      {name:'Accounts Receivable',key:'ar',val:185000,section:'currentAsset',tip:'Large AR — growing customer base'},
+      {name:'Inventory',key:'inventory',val:42000,section:'currentAsset',tip:'Hardware component inventory'},
+      {name:'Prepaid Expenses',key:'prepaid',val:28000,section:'currentAsset',tip:'Prepaid software and insurance'},
+      {name:'Property & Equipment (gross)',key:'ppe',val:450000,section:'fixedAsset',tip:'Servers, equipment, office build-out'},
+      {name:'Accumulated Depreciation',key:'accDeprec',val:-95000,section:'fixedAsset',tip:'Depreciation on tech equipment'},
+      {name:'Intangible Assets',key:'intangibles',val:125000,section:'fixedAsset',tip:'Proprietary software and patents'},
+      {name:'Accounts Payable',key:'ap',val:95000,section:'currentLiab',tip:'Amounts owed to vendors'},
+      {name:'Short-Term Debt',key:'stDebt',val:50000,section:'currentLiab',tip:'Short-term credit facility'},
+      {name:'Accrued Expenses',key:'accrued',val:65000,section:'currentLiab',tip:'Accrued payroll and bonuses'},
+      {name:'Long-Term Debt',key:'ltDebt',val:120000,section:'ltLiab',tip:'Growth financing loan'},
+      {name:'Deferred Revenue',key:'deferredRev',val:85000,section:'ltLiab',tip:'Subscription payments received in advance'},
+      {name:'Common Stock / Paid-in Capital',key:'stock',val:500000,section:'equity',tip:'VC investment and founder equity'},
+      {name:'Retained Earnings',key:'retained',val:165000,section:'equity',tip:'Accumulated profits since founding'},
+    ],
+    cashFlowItems:[
+      {name:'Depreciation Add-back',key:'deprAddback',val:38000,section:'operating',tip:'Non-cash — added back to net income'},
+      {name:'Change in Accounts Receivable',key:'arChange',val:-45000,section:'operating',tip:'AR grew fast — revenue outpaced cash collected'},
+      {name:'Change in Inventory',key:'invChange',val:-12000,section:'operating',tip:'Built up inventory for growth'},
+      {name:'Change in Accounts Payable',key:'apChange',val:18000,section:'operating',tip:'AP grew — managing cash by paying later'},
+      {name:'Capital Expenditures (CapEx)',key:'capex',val:-180000,section:'investing',tip:'Heavy investment in servers and infrastructure'},
+      {name:'Investment Purchases',key:'investments',val:-50000,section:'investing',tip:'Strategic investment purchases'},
+      {name:'Debt Repayment',key:'debtRepay',val:-25000,section:'financing',tip:'Loan repayments'},
+    ],
+    beginningCash:245000,
   }
 ];
 
-// ── STATE ──
-let phase=0; // 0=select, 1=income, 2=balance, 3=cashflow, 4=analysis, 5=feedback
-let scenario=null;
-let incomeData={};
-let balanceData={};
-let cashFlowData={};
-let analysisData={};
-let calculatedIncome={};
-
-// ── COMPUTED VALUES ──
-function calcIncome(s){
-  const d=s.data;
-  const totalRevenue=d.salesRevenue+d.serviceRevenue;
-  const grossProfit=totalRevenue-d.cogs;
-  const totalOpEx=d.salariesWages+d.rentUtilities+d.marketingAdv+d.depreciation;
-  const operatingIncome=grossProfit-totalOpEx;
-  const ebt=operatingIncome-d.interestExpense;
-  const taxes=Math.max(0,ebt*d.taxRate);
+// ── COMPUTED HELPERS ──
+function calcNet(s){
+  const it=s.incomeItems;
+  const get=key=>it.find(i=>i.key===key)?.val||0;
+  const totalRev=get('salesRevenue')+get('serviceRevenue');
+  const grossProfit=totalRev-get('cogs');
+  const totalOpEx=it.filter(i=>i.section==='opex').reduce((a,i)=>a+i.val,0);
+  const opIncome=grossProfit-totalOpEx;
+  const ebt=opIncome-get('interest');
+  const taxes=get('taxes');
   const netIncome=ebt-taxes;
-  return{totalRevenue,grossProfit,totalOpEx,operatingIncome,ebt,taxes,netIncome};
+  return{totalRev,grossProfit,totalOpEx,opIncome,ebt,taxes,netIncome};
 }
 
-function calcBalance(s){
-  const d=s.data;
-  const currentAssets=d.cash+d.accountsReceivable+d.inventory+d.prepaidExpenses;
-  const fixedAssetsNet=d.propertyEquipment-d.accumulatedDeprec;
-  const totalAssets=currentAssets+fixedAssetsNet+d.intangibles;
-  const currentLiab=d.accountsPayable+d.shortTermDebt+d.accruedExpenses;
-  const totalLiab=currentLiab+d.longTermDebt+d.deferredRevenue;
-  const ni=calcIncome(s).netIncome;
-  const equity=d.commonStock+(d.retainedEarnings+ni);
-  const totalLiabEquity=totalLiab+equity;
-  return{currentAssets,fixedAssetsNet,totalAssets,currentLiab,totalLiab,equity,totalLiabEquity};
+function calcBal(s){
+  const bi=s.balanceItems;
+  const sum=sec=>bi.filter(i=>i.section===sec).reduce((a,i)=>a+i.val,0);
+  const currentAssets=sum('currentAsset');
+  const fixedAssetsNet=sum('fixedAsset');
+  const totalAssets=currentAssets+fixedAssetsNet;
+  const currentLiab=sum('currentLiab');
+  const ltLiab=sum('ltLiab');
+  const totalLiab=currentLiab+ltLiab;
+  const equity=sum('equity')+calcNet(s).netIncome;
+  return{currentAssets,fixedAssetsNet,totalAssets,currentLiab,ltLiab,totalLiab,equity,totalLiabEquity:totalLiab+equity};
 }
 
-function calcCashFlow(s){
-  const ni=calcIncome(s).netIncome;
-  const d=s.data;
-  const operatingCF=ni+d.depreciation2+d.arChange+d.inventoryChange+d.apChange;
-  const investingCF=d.capex+(d.investments||0);
-  const financingCF=d.debtRepayment+(d.dividends||0);
-  const netChange=operatingCF+investingCF+financingCF;
-  const endingCash=d.cash+netChange;
-  return{operatingCF,investingCF,financingCF,netChange,endingCash};
+function calcCF(s){
+  const ni=calcNet(s).netIncome;
+  const cf=s.cashFlowItems;
+  const sum=sec=>cf.filter(i=>i.section===sec).reduce((a,i)=>a+i.val,0);
+  const opCF=ni+sum('operating');
+  const invCF=sum('investing');
+  const finCF=sum('financing');
+  const netChange=opCF+invCF+finCF;
+  const endingCash=s.beginningCash+netChange;
+  return{opCF,invCF,finCF,netChange,endingCash};
 }
 
-function fmt(n){return n>=0?'$'+Math.abs(n).toLocaleString():'($'+Math.abs(n).toLocaleString()+')';}
-function fmtSign(n){return(n>=0?'+':'')+fmt(n);}
-
-// ── BUILD SIDEBAR ──
-function buildSidebar(){
-  const phases=[
-    {name:'Income Statement',color:'var(--phase1)'},
-    {name:'Balance Sheet',color:'var(--phase2)'},
-    {name:'Cash Flow',color:'var(--phase3)'},
-    {name:'Analysis',color:'var(--amber)'},
-  ];
-  const stmtEl=document.getElementById('sb-stmts');
-  if(stmtEl){
-    stmtEl.innerHTML=phases.map((p,i)=>`
-      <div class="sp-row ${phase===i+1?'active':phase>i+1?'done':''}">
-        <div class="sp-dot" style="background:${p.color}"></div>
-        <div class="sp-name">${p.name}</div>
-        ${phase>i+1?'<div class="sp-check">✓</div>':''}
-      </div>`).join('');
-  }
-
-  const knEl=document.getElementById('sb-numbers');
-  if(knEl&&scenario){
-    const ci=calcIncome(scenario);
-    const cb=calcBalance(scenario);
-    const cf=calcCashFlow(scenario);
-    knEl.innerHTML=`
-      <div class="kn-row"><span class="kn-label">Total Revenue</span><span class="kn-val neu">${fmt(ci.totalRevenue)}</span></div>
-      <div class="kn-row"><span class="kn-label">Gross Profit</span><span class="kn-val ${ci.grossProfit>=0?'pos':'neg'}">${fmt(ci.grossProfit)}</span></div>
-      <div class="kn-row"><span class="kn-label">Net Income</span><span class="kn-val ${ci.netIncome>=0?'pos':'neg'}">${fmt(ci.netIncome)}</span></div>
-      <div class="kn-row"><span class="kn-label">Total Assets</span><span class="kn-val neu">${fmt(cb.totalAssets)}</span></div>
-      <div class="kn-row"><span class="kn-label">Total Liabilities</span><span class="kn-val neg">${fmt(cb.totalLiab)}</span></div>
-      <div class="kn-row"><span class="kn-label">Owner's Equity</span><span class="kn-val ${cb.equity>=0?'pos':'neg'}">${fmt(cb.equity)}</span></div>
-      <div class="kn-row"><span class="kn-label">Operating Cash Flow</span><span class="kn-val ${cf.operatingCF>=0?'pos':'neg'}">${fmt(cf.operatingCF)}</span></div>
-    `;
-  }
+function fmt(n){
+  if(n===null||n===undefined)return'—';
+  const abs=Math.abs(Math.round(n));
+  return n<0?'('+abs.toLocaleString()+')':''+abs.toLocaleString();
 }
+function fmtD(n){return n<0?'($'+Math.abs(Math.round(n)).toLocaleString()+')':'$'+Math.round(n).toLocaleString();}
 
+// ── STATE ──
+let phase=0;
+let scenario=null;
+let studentIncome={};
+let studentBalance={};
+let studentCF={};
+let studentAnalysis={};
+let netIncomeFromPhase1=0;
+
+// ── HEADER & SIDEBAR ──
 function buildHeader(){
-  const hphases=document.getElementById('hphases');
-  if(!hphases)return;
-  const items=[
+  const el=document.getElementById('hphases');
+  if(!el)return;
+  const phases=[
     {icon:'📊',name:'Income Stmt'},
     {icon:'⚖️',name:'Balance Sheet'},
     {icon:'💸',name:'Cash Flow'},
     {icon:'🔍',name:'Analysis'},
   ];
-  hphases.innerHTML=items.map((item,i)=>`
+  el.innerHTML=phases.map((p,i)=>`
     <div class="hphase ${phase===i+1?'active':phase>i+1?'done':''}">
-      <div class="hphase-icon">${phase>i+1?'✓':item.icon}</div>
-      <div class="hphase-name">${item.name}</div>
+      <div class="hphase-icon">${phase>i+1?'✓':p.icon}</div>
+      <div class="hphase-name">${p.name}</div>
     </div>`).join('');
-
-  const hcompany=document.getElementById('h-company');
-  if(hcompany)hcompany.textContent=scenario?scenario.name:'—';
-  const hphase=document.getElementById('h-phase');
-  if(hphase){
-    const names=['Select','Income Statement','Balance Sheet','Cash Flow','Analysis','Feedback'];
-    hphase.textContent=names[phase]||'—';
-  }
+  const pn=document.getElementById('h-phase');
+  if(pn){const names=['Select Company','Income Statement','Balance Sheet','Cash Flow Statement','Analysis','Feedback'];pn.textContent=names[phase]||'—';}
+  const cn=document.getElementById('h-company');
+  if(cn)cn.textContent=scenario?scenario.name:'—';
 }
 
-// ── RENDER FUNCTIONS ──
-function renderApp(){
-  switch(phase){
-    case 0:renderSelect();break;
-    case 1:renderIncome();break;
-    case 2:renderBalance();break;
-    case 3:renderCashFlow();break;
-    case 4:renderAnalysis();break;
-    case 5:renderFeedback();break;
+function buildSidebar(){
+  const stmts=document.getElementById('sb-stmts');
+  if(stmts){
+    const phases=[{n:'Income Statement',c:'#64B5F6'},{n:'Balance Sheet',c:'#81C784'},{n:'Cash Flow',c:'#CE93D8'},{n:'Analysis',c:'#FFD54F'}];
+    stmts.innerHTML=phases.map((p,i)=>`
+      <div class="sp-row ${phase===i+1?'active':phase>i+1?'done':''}">
+        <div class="sp-dot" style="background:${p.c}"></div>
+        <div class="sp-name">${p.n}</div>
+        ${phase>i+1?'<div class="sp-check">✓</div>':''}
+      </div>`).join('');
   }
-  buildHeader();
-  buildSidebar();
-  window.scrollTo({top:0,behavior:'smooth'});
+  const kn=document.getElementById('sb-kn');
+  if(kn&&scenario){
+    const ci=calcNet(scenario);
+    const cb=calcBal(scenario);
+    const cf=calcCF(scenario);
+    kn.innerHTML=`
+      <div class="kn-row"><span class="kn-label">Total Revenue</span><span class="kn-val" style="color:#FFD54F">${fmtD(ci.totalRev)}</span></div>
+      <div class="kn-row"><span class="kn-label">Net Income</span><span class="kn-val" style="color:${ci.netIncome>=0?'#81C784':'#EF9A9A'}">${fmtD(ci.netIncome)}</span></div>
+      <div class="kn-row"><span class="kn-label">Total Assets</span><span class="kn-val" style="color:#64B5F6">${fmtD(cb.totalAssets)}</span></div>
+      <div class="kn-row"><span class="kn-label">Total Liabilities</span><span class="kn-val" style="color:#EF9A9A">${fmtD(cb.totalLiab)}</span></div>
+      <div class="kn-row"><span class="kn-label">Owner's Equity</span><span class="kn-val" style="color:${cb.equity>=0?'#81C784':'#EF9A9A'}">${fmtD(cb.equity)}</span></div>
+      <div class="kn-row"><span class="kn-label">Operating CF</span><span class="kn-val" style="color:${cf.opCF>=0?'#81C784':'#EF9A9A'}">${fmtD(cf.opCF)}</span></div>`;
+  }
 }
 
 // ── PHASE 0: SELECT ──
 function renderSelect(){
+  phase=0;
   document.getElementById('app').innerHTML=`
   <header>
     <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5 · Standards 1–3</div></div>
     <div class="hphases" id="hphases"></div>
     <div class="hright">
-      <div class="hstat"><div class="hstat-label">Phase</div><div class="hstat-val neu" id="h-phase">Select</div></div>
-      <div class="hstat"><div class="hstat-label">Company</div><div class="hstat-val neu" id="h-company">—</div></div>
+      <div><div class="hstat-label">Phase</div><div class="hstat-val" id="h-phase">Select</div></div>
+      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">—</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
       <div><div class="sb-label">Statements</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-numbers"><div style="font-size:.68rem;color:rgba(240,238,232,.25);font-style:italic">Select a company to begin</div></div></div>
-      <div><div class="sb-label">Formulas</div>
+      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"><div style="font-size:.68rem;color:rgba(240,238,232,.25);font-style:italic">Select a company to begin</div></div></div>
+      <div><div class="sb-label">How It Works</div>
         <div class="formula-box">
-          <div class="formula-title">Core Equations</div>
-          <div class="formula-line">Revenue − COGS = Gross Profit</div>
-          <div class="formula-line">Gross Profit − OpEx = Operating Income</div>
-          <div class="formula-line">Operating Income − Interest − Tax = Net Income</div>
-          <div class="formula-line highlight">Assets = Liabilities + Equity</div>
-          <div class="formula-line">ROI = (Revenue − Cost) / Cost</div>
-          <div class="formula-line">Break-Even = Fixed Costs / (Price − Variable Cost)</div>
+          <div class="formula-title">Your Task Each Phase</div>
+          <div class="formula-line">1. Read the data sheet</div>
+          <div class="formula-line">2. Enter each value in the</div>
+          <div class="formula-line">   correct location</div>
+          <div class="formula-line">3. Subtotals auto-calculate</div>
+          <div class="formula-line">4. Submit to see results</div>
+          <div class="formula-line hl" style="margin-top:.5rem">No answers shown upfront!</div>
         </div>
       </div>
     </div>
@@ -500,7 +472,7 @@ function renderSelect(){
       <div style="margin-bottom:1.5rem">
         <div style="font-family:var(--mono);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem">Financial Statements Simulator</div>
         <div style="font-size:1.75rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.4rem">Analyze a Real Business</div>
-        <div style="font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:560px">Choose a company scenario. You will build all three financial statements — Income Statement, Balance Sheet, and Cash Flow — then interpret the numbers to make management decisions. The Balance Sheet must balance before you can advance.</div>
+        <div style="font-size:.85rem;color:var(--text-muted);line-height:1.65;max-width:580px">Choose a company. You will receive a data sheet of financial information — like a real accountant would — and build all three financial statements from scratch. No answers are given upfront. The Balance Sheet must balance before you can advance.</div>
       </div>
       <div class="scenario-grid">
         ${SCENARIOS.map(s=>`
@@ -509,10 +481,10 @@ function renderSelect(){
             <div class="sc-name">${s.name}</div>
             <div class="sc-type">${s.type}</div>
             <div class="sc-desc">${s.desc}</div>
-            <div class="sc-health">${s.health.map(h=>`<span class="sc-health-pill" style="background:${h.bg};color:${h.color}">${h.label}</span>`).join('')}</div>
+            <div class="sc-health">${s.health.map(h=>`<span class="sc-pill" style="background:${h.bg};color:${h.c}">${h.label}</span>`).join('')}</div>
           </div>`).join('')}
       </div>
-      <div class="btn-row" id="start-row" style="display:none">
+      <div id="start-row" style="display:none">
         <button class="btn btn-primary" onclick="startSim()">Begin Financial Analysis →</button>
       </div>
     </div>
@@ -523,275 +495,314 @@ function renderSelect(){
 function selectScenario(id){
   scenario=SCENARIOS.find(s=>s.id===id);
   document.querySelectorAll('.sc-card').forEach(el=>el.classList.remove('selected'));
-  document.getElementById(`sc-${id}`).classList.add('selected');
-  document.getElementById('start-row').style.display='flex';
-  calculatedIncome=calcIncome(scenario);
+  document.getElementById('sc-'+id).classList.add('selected');
+  document.getElementById('start-row').style.display='block';
   buildSidebar();
 }
 
 function startSim(){
   if(!scenario)return;
-  phase=1;
+  phase=1;studentIncome={};studentBalance={};studentCF={};studentAnalysis={};
   renderApp();
+}
+
+function renderApp(){
+  buildHeader();buildSidebar();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(phase===1)renderIncome();
+  else if(phase===2)renderBalance();
+  else if(phase===3)renderCashFlow();
+  else if(phase===4)renderAnalysis();
+  else if(phase===5)renderFeedback();
+}
+
+// ── DATA SHEET COMPONENT ──
+function dataSheetHTML(items,title,intro,note){
+  return`
+  <div class="data-sheet">
+    <div class="ds-header">
+      <div class="ds-icon">📋</div>
+      <div>
+        <div class="ds-title">${title}</div>
+        <div class="ds-subtitle">Use these figures to complete the statement below</div>
+      </div>
+    </div>
+    <div class="ds-body">
+      <div class="ds-intro">${intro}</div>
+      <div class="ds-grid">
+        ${items.map(item=>`
+          <div class="ds-item" id="ds-${item.key}">
+            <span class="ds-item-name">${item.name}</span>
+            <span class="ds-item-val">${fmtD(item.val)}</span>
+          </div>`).join('')}
+      </div>
+      ${note?`<div class="ds-note">💡 ${note}</div>`:''}
+    </div>
+  </div>`;
 }
 
 // ── PHASE 1: INCOME STATEMENT ──
 function renderIncome(){
-  const s=scenario;const d=s.data;
-  const ci=calcIncome(s);
-  const gpMargin=((ci.grossProfit/ci.totalRevenue)*100).toFixed(1);
-  const netMargin=((ci.netIncome/ci.totalRevenue)*100).toFixed(1);
-
+  const s=scenario;
+  const ci=calcNet(s);
   document.getElementById('app').innerHTML=`
   <header>
     <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
     <div class="hphases" id="hphases"></div>
     <div class="hright">
-      <div class="hstat"><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#64B5F6" id="h-phase">Income Statement</div></div>
-      <div class="hstat"><div class="hstat-label">Company</div><div class="hstat-val neu" id="h-company">${s.name}</div></div>
+      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#64B5F6" id="h-phase">Income Statement</div></div>
+      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
       <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-numbers"></div></div>
-      <div><div class="sb-label">Income Statement Formulas</div>
+      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
+      <div><div class="sb-label">Income Statement Formula</div>
         <div class="formula-box">
-          <div class="formula-line">Revenue − COGS</div>
-          <div class="formula-line highlight">= Gross Profit</div>
-          <div class="formula-line" style="margin-top:.5rem">Gross Profit − Operating Expenses</div>
-          <div class="formula-line highlight">= Operating Income</div>
-          <div class="formula-line" style="margin-top:.5rem">Operating Income − Interest − Taxes</div>
-          <div class="formula-line highlight">= Net Income</div>
+          <div class="formula-line">Revenue − COGS = Gross Profit</div>
+          <div class="formula-line hl" style="margin-top:.35rem">Gross Profit − OpEx</div>
+          <div class="formula-line hl">= Operating Income</div>
+          <div class="formula-line hl" style="margin-top:.35rem">Op. Income − Interest − Tax</div>
+          <div class="formula-line hl">= Net Income</div>
+          <div class="formula-line" style="margin-top:.5rem;font-size:.62rem">Gross Margin = Gross Profit / Revenue</div>
+          <div class="formula-line" style="font-size:.62rem">Net Margin = Net Income / Revenue</div>
         </div>
-      </div>
-      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.75rem">
-        <div style="font-family:var(--mono);font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,238,232,.25);margin-bottom:.5rem">Target Margins</div>
-        <div style="font-size:.68rem;color:rgba(240,238,232,.5);line-height:1.6">Gross Margin: <span style="color:#FFD54F">${gpMargin}%</span><br>Net Margin: <span style="color:#FFD54F">${netMargin}%</span><br>Net Income: <span id="sidebar-ni-span">${fmt(ci.netIncome)}</span></div>
       </div>
     </div>
     <div class="main">
       <div class="phase-header">
-        <div class="ph-num" style="color:var(--phase1)">1</div>
+        <div class="ph-num" style="color:#0D47A1">1</div>
         <div>
           <div class="ph-title">Income Statement</div>
-          <div class="ph-sub">Also called the Profit & Loss (P&L) Statement. Shows revenue, expenses, and profit over a period of time. Enter the correct values for each line item — the totals calculate automatically.</div>
+          <div class="ph-sub">Also called the Profit & Loss (P&L). Shows revenue, expenses, and profit over a time period. Use the data sheet below to enter each value in the correct row. Totals calculate automatically.</div>
         </div>
-        <span class="ph-badge" style="background:var(--phase1l);color:var(--phase1)">Statement 1 of 3</span>
+        <span class="ph-badge" style="background:#E3F2FD;color:#0D47A1">Statement 1 of 3</span>
       </div>
 
-      <div class="inst-box" style="background:var(--phase1l);border-color:var(--phase1);color:var(--phase1)">
-        <strong>${s.name} — ${s.year}.</strong> Enter the correct dollar amount for each line item. Hover over the ℹ️ icons to understand what each item means. The subtotals and totals will calculate automatically once you enter the values.
-      </div>
+      ${dataSheetHTML(
+        s.incomeItems,
+        s.name+' — Account Balances ('+s.year+')',
+        'These are the financial figures for '+s.name+'. Your job is to place each dollar amount in the correct line of the Income Statement below. Some items are revenues, some are expenses — and they belong in different sections.',
+        'Depreciation is a non-cash expense. Interest Expense goes in Non-Operating Items, not Operating Expenses.'
+      )}
 
       <div class="fin-table-card">
-        <div class="ftc-header">
-          <div><div class="ftc-title">${s.name}</div><div class="ftc-subtitle">Income Statement — ${s.year}</div></div>
-        </div>
+        <div class="ftc-header"><div class="ftc-title">${s.name}</div><div class="ftc-subtitle">Income Statement — ${s.year} (enter values from the data sheet above)</div></div>
         <table class="fin-table">
-          <thead><tr><th>Line Item</th><th style="text-align:right;width:220px">Amount (enter value)</th><th class="right" style="width:130px">Correct Amount</th></tr></thead>
+          <thead><tr><th>Line Item</th><th style="text-align:right;width:180px">Your Entry</th></tr></thead>
           <tbody>
-            <tr class="section-header"><td colspan="3">REVENUE</td></tr>
-            ${incomeRow('salesRevenue','Sales Revenue',d.salesRevenue,'Money earned from selling products or services','Revenue')}
-            ${incomeRow('serviceRevenue','Service Revenue',d.serviceRevenue,'Money earned from services provided','Revenue')}
-            <tr class="subtotal"><td><strong>Total Revenue</strong></td><td class="amount" id="total-revenue-display">—</td><td class="amount" style="color:var(--text-muted)">${fmt(ci.totalRevenue)}</td></tr>
-            <tr class="section-header"><td colspan="3">COST OF GOODS SOLD</td></tr>
-            ${incomeRow('cogs','Cost of Goods Sold (COGS)',d.cogs,'Direct costs to produce the goods or services sold — materials, direct labor','Expense')}
-            <tr class="subtotal highlight-row ${ci.grossProfit<0?'loss':''}"><td><strong>Gross Profit</strong> <span style="font-size:.72rem;font-weight:400;color:inherit;opacity:.7">(Revenue − COGS)</span></td><td class="amount" id="gross-profit-display">—</td><td class="amount">${fmt(ci.grossProfit)}</td></tr>
-            <tr class="section-header"><td colspan="3">OPERATING EXPENSES</td></tr>
-            ${incomeRow('salariesWages','Salaries & Wages',d.salariesWages,'Employee compensation — the largest operating expense for most businesses','Expense')}
-            ${incomeRow('rentUtilities','Rent & Utilities',d.rentUtilities,'Facility costs — rent, electricity, internet, water','Expense')}
-            ${incomeRow('marketingAdv','Marketing & Advertising',d.marketingAdv,'Costs to promote the business and attract customers','Expense')}
-            ${incomeRow('depreciation','Depreciation',d.depreciation,'Spreading the cost of a fixed asset over its useful life — a non-cash expense','Expense')}
-            <tr class="subtotal"><td><strong>Total Operating Expenses</strong></td><td class="amount" id="total-opex-display">—</td><td class="amount" style="color:var(--text-muted)">${fmt(ci.totalOpEx)}</td></tr>
-            <tr class="subtotal highlight-row ${ci.operatingIncome<0?'loss':''}"><td><strong>Operating Income (EBIT)</strong> <span style="font-size:.72rem;font-weight:400;color:inherit;opacity:.7">(Gross Profit − OpEx)</span></td><td class="amount" id="op-income-display">—</td><td class="amount">${fmt(ci.operatingIncome)}</td></tr>
-            <tr class="section-header"><td colspan="3">NON-OPERATING ITEMS</td></tr>
-            ${incomeRow('interestExpense','Interest Expense',d.interestExpense,'Cost of borrowing money — paid to lenders on outstanding debt','Expense')}
-            <tr class="subtotal"><td><strong>Earnings Before Tax (EBT)</strong></td><td class="amount" id="ebt-display">—</td><td class="amount" style="color:var(--text-muted)">${fmt(ci.ebt)}</td></tr>
-            ${incomeRow('taxes','Income Tax ('+(d.taxRate*100).toFixed(0)+'%)',Math.round(Math.max(0,ci.ebt)*d.taxRate),'Corporate income tax — 21% federal rate in this scenario','Expense')}
-            <tr class="total-row ${ci.netIncome<0?'loss':''}"><td><strong>NET INCOME</strong> <span style="font-size:.72rem;font-weight:400;opacity:.7">(Bottom Line)</span></td><td class="amount" id="net-income-display">—</td><td class="amount">${fmt(ci.netIncome)}</td></tr>
+            <tr class="section-header"><td colspan="2">REVENUE</td></tr>
+            ${incomeInputRow('salesRevenue','Sales Revenue','Money earned from selling products or services')}
+            ${incomeInputRow('serviceRevenue','Service Revenue','Money earned from services provided')}
+            <tr class="subtotal"><td><strong>Total Revenue</strong></td><td class="calc" id="c-totalRev">—</td></tr>
+            <tr class="section-header"><td colspan="2">COST OF GOODS SOLD</td></tr>
+            ${incomeInputRow('cogs','Cost of Goods Sold (COGS)','Direct costs to produce the goods or services sold')}
+            <tr class="gp-row" id="gp-row"><td><strong>Gross Profit</strong> <span style="font-size:.72rem;font-weight:400;opacity:.7">(Revenue − COGS)</span></td><td class="calc" id="c-gp">—</td></tr>
+            <tr class="section-header"><td colspan="2">OPERATING EXPENSES</td></tr>
+            ${incomeInputRow('salaries','Salaries & Wages','Employee compensation')}
+            ${incomeInputRow('rent','Rent & Utilities','Facility costs — rent, electricity, internet')}
+            ${incomeInputRow('marketing','Marketing & Advertising','Costs to promote the business')}
+            ${incomeInputRow('depreciation','Depreciation','Non-cash expense — spreading asset cost over time')}
+            <tr class="subtotal"><td><strong>Total Operating Expenses</strong></td><td class="calc" id="c-totalOpEx">—</td></tr>
+            <tr class="subtotal"><td><strong>Operating Income (EBIT)</strong> <span style="font-size:.72rem;font-weight:400;color:var(--text-muted)">(Gross Profit − Op. Expenses)</span></td><td class="calc" id="c-opIncome">—</td></tr>
+            <tr class="section-header"><td colspan="2">NON-OPERATING ITEMS</td></tr>
+            ${incomeInputRow('interest','Interest Expense','Cost of borrowing — paid to lenders on outstanding debt')}
+            <tr class="subtotal"><td><strong>Earnings Before Tax (EBT)</strong></td><td class="calc" id="c-ebt">—</td></tr>
+            ${incomeInputRow('taxes','Income Tax','Corporate income tax — check the data sheet for amount')}
+            <tr class="ni-row"><td><strong>NET INCOME</strong> <span style="font-size:.72rem;font-weight:400;opacity:.7">(The Bottom Line)</span></td><td class="calc" id="c-ni">—</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-outline" onclick="phase=0;renderApp()">← Change Company</button>
-        <button class="btn btn-primary" onclick="checkAndAdvanceIncome()">Check & Continue to Balance Sheet →</button>
+        <button class="btn btn-outline" onclick="phase=0;renderSelect()">← Change Company</button>
+        <button class="btn btn-primary" onclick="submitIncome()">Submit & See Results →</button>
       </div>
     </div>
   </div>`;
   buildSidebar();
-  attachIncomeListeners();
+  document.querySelectorAll('input[data-phase="income"]').forEach(el=>el.addEventListener('input',updateIncomeLive));
 }
 
-function incomeRow(id,name,correctVal,tip,category){
-  const catColor=category==='Revenue'?'var(--green)':'var(--red)';
-  const catBg=category==='Revenue'?'var(--greenl)':'var(--redl)';
+function incomeInputRow(key,name,tip){
   return`<tr>
-    <td><div class="item-name">${name} <span class="item-tooltip" data-tip="${tip}">ℹ️</span><span class="item-category" style="background:${catBg};color:${catColor}">${category}</span></div></td>
-    <td class="amount"><input type="number" id="in-${id}" placeholder="$0" oninput="updateIncomeTotals()"></td>
-    <td class="amount" style="color:var(--text-muted);font-family:var(--mono)">${fmt(correctVal)}</td>
+    <td><div class="item-name">${name} <span class="tip" data-tip="${tip}">ℹ️</span></div></td>
+    <td class="amount"><input type="number" data-key="${key}" data-phase="income" placeholder="Enter amount" min="0"></td>
   </tr>`;
 }
 
-function getInVal(id){return parseFloat(document.getElementById(`in-${id}`)?.value)||0;}
+function getIVal(key){return parseFloat(document.querySelector(`input[data-key="${key}"][data-phase="income"]`)?.value)||0;}
 
-function updateIncomeTotals(){
-  const d=scenario.data;
-  const ci=calcIncome(scenario);
-  const totalRev=getInVal('salesRevenue')+getInVal('serviceRevenue');
-  const grossP=totalRev-getInVal('cogs');
-  const totalOpEx=getInVal('salariesWages')+getInVal('rentUtilities')+getInVal('marketingAdv')+getInVal('depreciation');
-  const opInc=grossP-totalOpEx;
-  const ebt=opInc-getInVal('interestExpense');
-  const taxes=getInVal('taxes');
-  const netInc=ebt-taxes;
+function updateIncomeLive(){
+  const totalRev=getIVal('salesRevenue')+getIVal('serviceRevenue');
+  const gp=totalRev-getIVal('cogs');
+  const totalOpEx=getIVal('salaries')+getIVal('rent')+getIVal('marketing')+getIVal('depreciation');
+  const opIncome=gp-totalOpEx;
+  const ebt=opIncome-getIVal('interest');
+  const ni=ebt-getIVal('taxes');
 
-  const set=(id,val,correct)=>{
-    const el=document.getElementById(id);
-    if(el){
-      el.textContent=fmt(val);
-      el.style.color=Math.round(val)===Math.round(correct)?'var(--green)':'var(--red)';
-    }
-  };
-  set('total-revenue-display',totalRev,ci.totalRevenue);
-  set('gross-profit-display',grossP,ci.grossProfit);
-  set('total-opex-display',totalOpEx,ci.totalOpEx);
-  set('op-income-display',opInc,ci.operatingIncome);
-  set('ebt-display',ebt,ci.ebt);
-  set('net-income-display',netInc,ci.netIncome);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmtD(val);};
+  set('c-totalRev',totalRev);
+  set('c-gp',gp);
+  set('c-totalOpEx',totalOpEx);
+  set('c-opIncome',opIncome);
+  set('c-ebt',ebt);
+  set('c-ni',ni);
+
+  const gpRow=document.getElementById('gp-row');
+  if(gpRow){gpRow.className=gp<0?'gp-row neg':'gp-row';}
 }
 
-function attachIncomeListeners(){
-  document.querySelectorAll('input[type=number]').forEach(el=>{
-    el.addEventListener('input',updateIncomeTotals);
-  });
-}
+function submitIncome(){
+  const s=scenario;
+  const ci=calcNet(s);
+  const keys=['salesRevenue','serviceRevenue','cogs','salaries','rent','marketing','depreciation','interest','taxes'];
+  const correctMap={salesRevenue:s.incomeItems.find(i=>i.key==='salesRevenue').val,serviceRevenue:s.incomeItems.find(i=>i.key==='serviceRevenue').val,cogs:s.incomeItems.find(i=>i.key==='cogs').val,salaries:s.incomeItems.find(i=>i.key==='salaries').val,rent:s.incomeItems.find(i=>i.key==='rent').val,marketing:s.incomeItems.find(i=>i.key==='marketing').val,depreciation:s.incomeItems.find(i=>i.key==='depreciation').val,interest:s.incomeItems.find(i=>i.key==='interest').val,taxes:s.incomeItems.find(i=>i.key==='taxes').val};
 
-function checkAndAdvanceIncome(){
-  const d=scenario.data;
-  const ci=calcIncome(scenario);
-  const fields=[
-    {id:'salesRevenue',correct:d.salesRevenue},
-    {id:'serviceRevenue',correct:d.serviceRevenue},
-    {id:'cogs',correct:d.cogs},
-    {id:'salariesWages',correct:d.salariesWages},
-    {id:'rentUtilities',correct:d.rentUtilities},
-    {id:'marketingAdv',correct:d.marketingAdv},
-    {id:'depreciation',correct:d.depreciation},
-    {id:'interestExpense',correct:d.interestExpense},
-    {id:'taxes',correct:Math.round(Math.max(0,ci.ebt)*d.taxRate)},
-  ];
-  let errors=0;
-  fields.forEach(f=>{
-    const input=document.getElementById(`in-${f.id}`);
-    if(!input)return;
-    const val=parseFloat(input.value)||0;
-    const ok=Math.abs(val-f.correct)<1;
-    input.className=ok?'correct':'incorrect';
-    if(!ok)errors++;
+  let correct=0,errors=0;
+  const results=keys.map(key=>{
+    const entered=getIVal(key);
+    const right=correctMap[key];
+    const ok=Math.abs(entered-right)<1;
+    if(ok)correct++;else errors++;
+    return{key,name:s.incomeItems.find(i=>i.key===key)?.name||key,entered,right,ok};
   });
-  if(errors>0){
-    alert(`${errors} value(s) are incorrect. Check the highlighted fields — refer to the correct amounts in the right column.`);
-    return;
-  }
-  incomeData=fields.reduce((o,f)=>{o[f.id]=f.correct;return o;},{});
-  phase=2;renderApp();
+
+  studentIncome={...correctMap,correct,errors,results,netIncome:ci.netIncome};
+  netIncomeFromPhase1=ci.netIncome;
+
+  // Show results screen before advancing
+  const main=document.querySelector('.main');
+  if(!main)return;
+
+  const html=`
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.25rem">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem">
+      ${errors===0?'✅':'📋'} Income Statement Results — ${correct}/${keys.length} correct
+    </div>
+    ${results.map(r=>`
+      <div class="result-row ${r.ok?'correct-row':'wrong-row'}">
+        <div class="result-icon">${r.ok?'✓':'✗'}</div>
+        <div class="result-item">${r.name}</div>
+        <div class="result-yours">You entered: ${fmtD(r.entered)}</div>
+        ${!r.ok?`<div class="result-correct" style="color:var(--green)">Correct: ${fmtD(r.right)}</div>`:''}
+      </div>`).join('')}
+    <div style="margin-top:1rem;padding:.85rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.82rem;color:var(--text-muted)">
+      <strong>Net Income: ${fmtD(ci.netIncome)}</strong> — this flows into your Balance Sheet and Cash Flow Statement.
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="phase=2;renderApp()">Continue to Balance Sheet →</button>
+    </div>
+  </div>`;
+  main.insertAdjacentHTML('beforeend',html);
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
 }
 
 // ── PHASE 2: BALANCE SHEET ──
 function renderBalance(){
-  const s=scenario;const d=s.data;
-  const cb=calcBalance(s);
+  const s=scenario;
+  const cb=calcBal(s);
+  const ci=calcNet(s);
 
   document.getElementById('app').innerHTML=`
   <header>
     <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
     <div class="hphases" id="hphases"></div>
     <div class="hright">
-      <div class="hstat"><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#81C784" id="h-phase">Balance Sheet</div></div>
-      <div class="hstat"><div class="hstat-label">Must Balance</div><div class="hstat-val neu" id="h-company">Assets = L + E</div></div>
+      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#81C784" id="h-phase">Balance Sheet</div></div>
+      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
       <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-numbers"></div></div>
+      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
       <div><div class="sb-label">Balance Sheet Formula</div>
         <div class="formula-box">
-          <div class="formula-line highlight">Assets = Liabilities + Equity</div>
-          <div class="formula-line" style="margin-top:.5rem">If this does not balance,</div>
-          <div class="formula-line">there is an error somewhere.</div>
-          <div class="formula-line" style="margin-top:.5rem">Current Assets: cash in &lt;1yr</div>
-          <div class="formula-line">Fixed Assets: long-term property</div>
-          <div class="formula-line">Current Liab: due in &lt;1yr</div>
-          <div class="formula-line">Long-term Liab: due in 1yr+</div>
+          <div class="formula-line hl">Assets = Liabilities + Equity</div>
+          <div class="formula-line" style="margin-top:.5rem">Current Assets: cash &lt; 1yr</div>
+          <div class="formula-line">Fixed Assets: long-term</div>
+          <div class="formula-line">Current Liab: due &lt; 1yr</div>
+          <div class="formula-line">Long-term Liab: due 1yr+</div>
+          <div class="formula-line" style="margin-top:.5rem">Retained Earnings includes</div>
+          <div class="formula-line">prior years + net income</div>
         </div>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.75rem">
+        <div class="sb-label" style="margin-bottom:.4rem">Net Income from Phase 1</div>
+        <div style="font-family:var(--mono);font-size:.9rem;font-weight:700;color:${ci.netIncome>=0?'#81C784':'#EF9A9A'}">${fmtD(ci.netIncome)}</div>
+        <div style="font-size:.62rem;color:rgba(240,238,232,.4);margin-top:.2rem">Add to Retained Earnings</div>
       </div>
     </div>
     <div class="main">
       <div class="phase-header">
-        <div class="ph-num" style="color:var(--phase2)">2</div>
+        <div class="ph-num" style="color:#1B5E20">2</div>
         <div>
           <div class="ph-title">Balance Sheet</div>
-          <div class="ph-sub">A snapshot of what the company owns (Assets), owes (Liabilities), and the owners' stake (Equity) on a single date. Assets must equal Liabilities + Equity. This equation MUST balance before you can advance.</div>
+          <div class="ph-sub">A snapshot of what the company owns (Assets), owes (Liabilities), and the owners' stake (Equity) on one date. Place each account from the data sheet into the correct category. Assets MUST equal Liabilities + Equity to advance.</div>
         </div>
-        <span class="ph-badge" style="background:var(--phase2l);color:var(--phase2)">Statement 2 of 3</span>
+        <span class="ph-badge" style="background:#E8F5E9;color:#1B5E20">Statement 2 of 3</span>
       </div>
 
+      ${dataSheetHTML(
+        s.balanceItems,
+        s.name+' — Account Balances (as of end of '+s.year+')',
+        'Below are all balance sheet accounts for '+s.name+'. Place each amount in the correct section — Current Assets, Fixed Assets, Current Liabilities, Long-Term Liabilities, or Owner\'s Equity. The order within each section matters too.',
+        'Accumulated Depreciation is a negative number — it reduces the value of Fixed Assets. Net Income from Phase 1 ('+fmtD(ci.netIncome)+') should be added to Retained Earnings when entering Owner\'s Equity.'
+      )}
+
       <div class="balance-check" id="balance-check">
-        <div class="bc-item"><div class="bc-label">Total Assets</div><div class="bc-val" id="bc-assets" style="color:var(--blue)">$0</div></div>
-        <div class="bc-equals">=</div>
-        <div class="bc-item"><div class="bc-label">Total Liabilities</div><div class="bc-val" id="bc-liab" style="color:var(--red)">$0</div></div>
-        <div class="bc-equals">+</div>
-        <div class="bc-item"><div class="bc-label">Owner's Equity</div><div class="bc-val" id="bc-equity" style="color:var(--green)">$0</div></div>
+        <div class="bc-item"><div class="bc-label">Total Assets</div><div class="bc-val" id="bc-assets" style="color:#0D47A1">$0</div></div>
+        <div class="bc-op">=</div>
+        <div class="bc-item"><div class="bc-label">Total Liabilities</div><div class="bc-val" id="bc-liab" style="color:#B71C1C">$0</div></div>
+        <div class="bc-op">+</div>
+        <div class="bc-item"><div class="bc-label">Owner's Equity</div><div class="bc-val" id="bc-equity" style="color:#1B5E20">$0</div></div>
         <div class="bc-status unbalanced" id="bc-status">⚠ Does Not Balance</div>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
-
         <!-- ASSETS -->
         <div class="fin-table-card">
-          <div class="ftc-header"><div><div class="ftc-title" style="color:var(--blue)">ASSETS</div><div class="ftc-subtitle">What the company owns</div></div></div>
+          <div class="ftc-header"><div class="ftc-title" style="color:#0D47A1">ASSETS — What the company owns</div></div>
           <table class="fin-table">
-            <thead><tr><th>Item</th><th class="right">Amount</th></tr></thead>
+            <thead><tr><th>Account</th><th style="text-align:right;width:150px">Amount</th></tr></thead>
             <tbody>
-              <tr class="section-header"><td colspan="2">Current Assets (liquid within 1 year)</td></tr>
-              ${balRow('cash','Cash & Cash Equivalents',d.cash,'Money on hand and in bank accounts — most liquid asset')}
-              ${balRow('accountsReceivable','Accounts Receivable',d.accountsReceivable,'Money customers owe for goods/services already delivered')}
-              ${balRow('inventory','Inventory',d.inventory,'Goods available for sale — valued at cost')}
-              ${balRow('prepaidExpenses','Prepaid Expenses',d.prepaidExpenses,'Expenses paid in advance — insurance, rent deposits')}
-              <tr class="subtotal"><td><strong>Total Current Assets</strong></td><td class="amount" id="total-current-assets">—</td></tr>
+              <tr class="section-header"><td colspan="2">Current Assets (convert to cash within 1 year)</td></tr>
+              ${balInputRow('cash','Cash & Cash Equivalents','Liquid money — bank accounts and petty cash')}
+              ${balInputRow('ar','Accounts Receivable','Customers owe this — will become cash when collected')}
+              ${balInputRow('inventory','Inventory','Goods available for sale — valued at cost')}
+              ${balInputRow('prepaid','Prepaid Expenses','Paid in advance — insurance, deposits')}
+              <tr class="subtotal"><td><strong>Total Current Assets</strong></td><td class="calc" id="bc-totalCA">—</td></tr>
               <tr class="section-header"><td colspan="2">Fixed Assets (long-term)</td></tr>
-              ${balRow('propertyEquipment','Property & Equipment (gross)',d.propertyEquipment,'Buildings, machinery, vehicles at original purchase price')}
-              ${balRow('accumulatedDeprec','Less: Accumulated Depreciation',-d.accumulatedDeprec,'Total depreciation taken since purchase — shown as negative')}
-              ${balRow('intangibles','Intangible Assets',d.intangibles,'Patents, trademarks, goodwill — non-physical assets')}
-              <tr class="subtotal"><td><strong>Total Fixed Assets (net)</strong></td><td class="amount" id="total-fixed-assets">—</td></tr>
-              <tr class="total-row"><td><strong>TOTAL ASSETS</strong></td><td class="amount" id="total-assets-display">—</td></tr>
+              ${balInputRow('ppe','Property & Equipment (gross)','At original purchase price — before depreciation')}
+              ${balInputRow('accDeprec','Accumulated Depreciation','Enter as NEGATIVE — e.g. -72000')}
+              ${balInputRow('intangibles','Intangible Assets','Patents, trademarks, goodwill')}
+              <tr class="subtotal"><td><strong>Total Fixed Assets (net)</strong></td><td class="calc" id="bc-totalFA">—</td></tr>
+              <tr class="total-row"><td><strong>TOTAL ASSETS</strong></td><td class="calc" id="bc-totalA">—</td></tr>
             </tbody>
           </table>
         </div>
-
         <!-- LIABILITIES + EQUITY -->
         <div class="fin-table-card">
-          <div class="ftc-header"><div><div class="ftc-title" style="color:var(--red)">LIABILITIES & EQUITY</div><div class="ftc-subtitle">What is owed + owner's stake</div></div></div>
+          <div class="ftc-header"><div class="ftc-title" style="color:#B71C1C">LIABILITIES & EQUITY — What is owed + owners' stake</div></div>
           <table class="fin-table">
-            <thead><tr><th>Item</th><th class="right">Amount</th></tr></thead>
+            <thead><tr><th>Account</th><th style="text-align:right;width:150px">Amount</th></tr></thead>
             <tbody>
               <tr class="section-header"><td colspan="2">Current Liabilities (due within 1 year)</td></tr>
-              ${balRow('accountsPayable','Accounts Payable',d.accountsPayable,'Money owed to suppliers for goods/services received')}
-              ${balRow('shortTermDebt','Short-Term Debt',d.shortTermDebt,'Loans and credit lines due within 12 months')}
-              ${balRow('accruedExpenses','Accrued Expenses',d.accruedExpenses,'Expenses incurred but not yet paid — wages, taxes')}
-              <tr class="subtotal"><td><strong>Total Current Liabilities</strong></td><td class="amount" id="total-current-liab">—</td></tr>
+              ${balInputRow('ap','Accounts Payable','Money owed to suppliers')}
+              ${balInputRow('stDebt','Short-Term Debt','Loans due within 12 months')}
+              ${balInputRow('accrued','Accrued Expenses','Incurred but not yet paid — wages, taxes')}
+              <tr class="subtotal"><td><strong>Total Current Liabilities</strong></td><td class="calc" id="bc-totalCL">—</td></tr>
               <tr class="section-header"><td colspan="2">Long-Term Liabilities</td></tr>
-              ${balRow('longTermDebt','Long-Term Debt',d.longTermDebt,'Loans due beyond 12 months — mortgages, bonds')}
-              ${balRow('deferredRevenue','Deferred Revenue',d.deferredRevenue,'Revenue received but not yet earned — customer deposits')}
-              <tr class="subtotal"><td><strong>Total Liabilities</strong></td><td class="amount" id="total-liab-display">—</td></tr>
+              ${balInputRow('ltDebt','Long-Term Debt','Loans due beyond 12 months')}
+              ${balInputRow('deferredRev','Deferred Revenue','Received but not yet earned — subscriptions, deposits')}
+              <tr class="subtotal"><td><strong>Total Liabilities</strong></td><td class="calc" id="bc-totalL">—</td></tr>
               <tr class="section-header"><td colspan="2">Owner's Equity</td></tr>
-              ${balRow('commonStock',"Common Stock / Paid-in Capital",d.commonStock,"Money invested by owners or shareholders")}
-              ${balRowCalc('retainedEarnings',"Retained Earnings (incl. net income)",d.retainedEarnings+calcIncome(s).netIncome,"Prior retained earnings plus this year's net income")}
-              <tr class="subtotal highlight-row ${cb.equity<0?'loss':''}"><td><strong>Total Owner's Equity</strong></td><td class="amount" id="total-equity-display">—</td></tr>
-              <tr class="total-row"><td><strong>TOTAL LIABILITIES + EQUITY</strong></td><td class="amount" id="total-liab-equity-display">—</td></tr>
+              ${balInputRow('stock',"Common Stock / Paid-in Capital","Owner or shareholder investment")}
+              ${balInputRow('retained',"Retained Earnings (incl. Net Income)","Prior retained earnings + this year's net income from Phase 1")}
+              <tr class="subtotal"><td><strong>Total Owner's Equity</strong></td><td class="calc" id="bc-totalE">—</td></tr>
+              <tr class="total-row"><td><strong>TOTAL LIABILITIES + EQUITY</strong></td><td class="calc" id="bc-totalLE">—</td></tr>
             </tbody>
           </table>
         </div>
@@ -799,320 +810,311 @@ function renderBalance(){
 
       <div class="btn-row">
         <button class="btn btn-outline" onclick="phase=1;renderApp()">← Back</button>
-        <button class="btn btn-primary" id="balance-advance-btn" disabled onclick="checkAndAdvanceBalance()">Check Balance & Continue →</button>
+        <button class="btn btn-primary" id="bal-submit-btn" onclick="submitBalance()">Submit & See Results →</button>
       </div>
     </div>
   </div>`;
   buildSidebar();
-  attachBalanceListeners();
+  document.querySelectorAll('input[data-phase="balance"]').forEach(el=>el.addEventListener('input',updateBalanceLive));
 }
 
-function balRow(id,name,correctVal,tip){
+function balInputRow(key,name,tip){
   return`<tr>
-    <td><div class="item-name" style="font-size:.82rem">${name} <span class="item-tooltip" data-tip="${tip}">ℹ️</span></div></td>
-    <td class="amount"><input type="number" id="bal-${id}" placeholder="$0" oninput="updateBalanceTotals()"></td>
-  </tr>`;
-}
-function balRowCalc(id,name,val,tip){
-  return`<tr>
-    <td><div class="item-name" style="font-size:.82rem">${name} <span class="item-tooltip" data-tip="${tip}">ℹ️</span></div></td>
-    <td class="amount"><input type="number" id="bal-${id}" placeholder="$0" value="${Math.round(val)}" oninput="updateBalanceTotals()" style="background:var(--greenl)"></td>
+    <td><div class="item-name">${name} <span class="tip" data-tip="${tip}">ℹ️</span></div></td>
+    <td class="amount"><input type="number" data-key="${key}" data-phase="balance" placeholder="Enter amount"></td>
   </tr>`;
 }
 
-function getBVal(id){return parseFloat(document.getElementById(`bal-${id}`)?.value)||0;}
+function getBVal(key){return parseFloat(document.querySelector('input[data-key="'+key+'"][data-phase="balance"]')?.value)||0;}
 
-function updateBalanceTotals(){
-  const s=scenario;const d=s.data;
-  const totalCA=getBVal('cash')+getBVal('accountsReceivable')+getBVal('inventory')+getBVal('prepaidExpenses');
-  const totalFA=getBVal('propertyEquipment')+getBVal('accumulatedDeprec')+getBVal('intangibles');
-  const totalAssets=totalCA+totalFA;
-  const totalCL=getBVal('accountsPayable')+getBVal('shortTermDebt')+getBVal('accruedExpenses');
-  const totalLiab=totalCL+getBVal('longTermDebt')+getBVal('deferredRevenue');
-  const totalEquity=getBVal('commonStock')+getBVal('retainedEarnings');
-  const totalLE=totalLiab+totalEquity;
-  const balanced=Math.abs(totalAssets-totalLE)<2;
+function updateBalanceLive(){
+  const totalCA=getBVal('cash')+getBVal('ar')+getBVal('inventory')+getBVal('prepaid');
+  const totalFA=getBVal('ppe')+getBVal('accDeprec')+getBVal('intangibles');
+  const totalA=totalCA+totalFA;
+  const totalCL=getBVal('ap')+getBVal('stDebt')+getBVal('accrued');
+  const totalL=totalCL+getBVal('ltDebt')+getBVal('deferredRev');
+  const totalE=getBVal('stock')+getBVal('retained');
+  const totalLE=totalL+totalE;
+  const balanced=Math.abs(totalA-totalLE)<2;
 
-  const setText=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmt(val);};
-  setText('total-current-assets',totalCA);
-  setText('total-fixed-assets',totalFA);
-  setText('total-assets-display',totalAssets);
-  setText('total-current-liab',totalCL);
-  setText('total-liab-display',totalLiab);
-  setText('total-equity-display',totalEquity);
-  setText('total-liab-equity-display',totalLE);
-
-  document.getElementById('bc-assets').textContent=fmt(totalAssets);
-  document.getElementById('bc-liab').textContent=fmt(totalLiab);
-  document.getElementById('bc-equity').textContent=fmt(totalEquity);
-  const statusEl=document.getElementById('bc-status');
-  if(statusEl){
-    statusEl.textContent=balanced?'✓ Balanced!':'⚠ Does Not Balance — difference: '+fmt(Math.abs(totalAssets-totalLE));
-    statusEl.className='bc-status '+(balanced?'balanced':'unbalanced');
-  }
-  const btn=document.getElementById('balance-advance-btn');
-  if(btn)btn.disabled=!balanced;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmtD(val);};
+  set('bc-totalCA',totalCA);set('bc-totalFA',totalFA);set('bc-totalA',totalA);
+  set('bc-totalCL',totalCL);set('bc-totalL',totalL);set('bc-totalE',totalE);set('bc-totalLE',totalLE);
+  document.getElementById('bc-assets').textContent=fmtD(totalA);
+  document.getElementById('bc-liab').textContent=fmtD(totalL);
+  document.getElementById('bc-equity').textContent=fmtD(totalE);
+  const st=document.getElementById('bc-status');
+  if(st){st.textContent=balanced?'✓ Balanced!':'⚠ Difference: '+fmtD(Math.abs(totalA-totalLE));st.className='bc-status '+(balanced?'balanced':'unbalanced');}
 }
 
-function attachBalanceListeners(){
-  document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener('input',updateBalanceTotals));
-}
-
-function checkAndAdvanceBalance(){
-  const s=scenario;const d=s.data;
-  const cb=calcBalance(s);
-  const ci=calcIncome(s);
-  const fields=[
-    {id:'cash',correct:d.cash},{id:'accountsReceivable',correct:d.accountsReceivable},
-    {id:'inventory',correct:d.inventory},{id:'prepaidExpenses',correct:d.prepaidExpenses},
-    {id:'propertyEquipment',correct:d.propertyEquipment},{id:'accumulatedDeprec',correct:-d.accumulatedDeprec},
-    {id:'intangibles',correct:d.intangibles},{id:'accountsPayable',correct:d.accountsPayable},
-    {id:'shortTermDebt',correct:d.shortTermDebt},{id:'accruedExpenses',correct:d.accruedExpenses},
-    {id:'longTermDebt',correct:d.longTermDebt},{id:'deferredRevenue',correct:d.deferredRevenue},
-    {id:'commonStock',correct:d.commonStock},
-  ];
-  let errors=0;
-  fields.forEach(f=>{
-    const input=document.getElementById(`bal-${f.id}`);
-    if(!input)return;
-    const val=parseFloat(input.value)||0;
-    if(Math.abs(val-f.correct)>1)errors++;
+function submitBalance(){
+  const s=scenario;
+  const cb=calcBal(s);
+  const ci=calcNet(s);
+  const correctMap={};
+  s.balanceItems.forEach(i=>{
+    if(i.key==='retained')correctMap[i.key]=i.val+ci.netIncome;
+    else correctMap[i.key]=i.val;
   });
-  if(errors>0){alert(`${errors} value(s) need adjustment. The balance check passes when all values are correct and Assets = Liabilities + Equity.`);return;}
-  balanceData=fields.reduce((o,f)=>{o[f.id]=f.correct;return o;},{});
-  phase=3;renderApp();
+
+  const keys=s.balanceItems.map(i=>i.key);
+  let correct=0,errors=0;
+  const results=keys.map(key=>{
+    const entered=getBVal(key);
+    const right=correctMap[key];
+    const ok=Math.abs(entered-right)<2;
+    if(ok)correct++;else errors++;
+    return{key,name:s.balanceItems.find(i=>i.key===key)?.name||key,entered,right,ok};
+  });
+
+  studentBalance={...correctMap,correct,errors,results};
+
+  const main=document.querySelector('.main');
+  if(!main)return;
+  const html=`
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-top:1.25rem">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:.85rem">${errors===0?'✅':'📋'} Balance Sheet Results — ${correct}/${keys.length} correct</div>
+    ${results.map(r=>`
+      <div class="result-row ${r.ok?'correct-row':'wrong-row'}">
+        <div class="result-icon">${r.ok?'✓':'✗'}</div>
+        <div class="result-item">${r.name}</div>
+        <div class="result-yours">You: ${fmtD(r.entered)}</div>
+        ${!r.ok?`<div class="result-correct" style="color:var(--green)">Correct: ${fmtD(r.right)}</div>`:''}
+      </div>`).join('')}
+    <div style="margin-top:1rem;padding:.75rem 1rem;background:var(--surface2);border-radius:var(--radius-sm);font-size:.8rem;color:var(--text-muted)">
+      Total Assets: <strong>${fmtD(cb.totalAssets)}</strong> = Total Liabilities: <strong>${fmtD(cb.totalLiab)}</strong> + Equity: <strong>${fmtD(cb.equity)}</strong>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="phase=3;renderApp()">Continue to Cash Flow →</button></div>
+  </div>`;
+  main.insertAdjacentHTML('beforeend',html);
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
 }
 
 // ── PHASE 3: CASH FLOW ──
 function renderCashFlow(){
-  const s=scenario;const d=s.data;
-  const ci=calcIncome(s);
-  const cf=calcCashFlow(s);
+  const s=scenario;
+  const ci=calcNet(s);
+  const cf=calcCF(s);
 
   document.getElementById('app').innerHTML=`
   <header>
     <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
     <div class="hphases" id="hphases"></div>
     <div class="hright">
-      <div class="hstat"><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#CE93D8" id="h-phase">Cash Flow</div></div>
-      <div class="hstat"><div class="hstat-label">Company</div><div class="hstat-val neu" id="h-company">${s.name}</div></div>
+      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#CE93D8" id="h-phase">Cash Flow</div></div>
+      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
       <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-numbers"></div></div>
+      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
       <div><div class="sb-label">Cash Flow Formula</div>
         <div class="formula-box">
           <div class="formula-line">Net Income</div>
-          <div class="formula-line">+ Non-cash items (depreciation)</div>
+          <div class="formula-line">+ Depreciation (non-cash)</div>
           <div class="formula-line">± Working capital changes</div>
-          <div class="formula-line highlight">= Operating Cash Flow</div>
-          <div class="formula-line" style="margin-top:.5rem">+ Investing CF</div>
-          <div class="formula-line">+ Financing CF</div>
-          <div class="formula-line highlight">= Net Cash Change</div>
-          <div class="formula-line" style="margin-top:.5rem">Beginning Cash + Net Change</div>
-          <div class="formula-line highlight">= Ending Cash</div>
+          <div class="formula-line hl">= Operating Cash Flow</div>
+          <div class="formula-line" style="margin-top:.35rem">+/- Investing Activities</div>
+          <div class="formula-line">+/- Financing Activities</div>
+          <div class="formula-line hl">= Net Cash Change</div>
+          <div class="formula-line" style="margin-top:.35rem">Beginning Cash + Change</div>
+          <div class="formula-line hl">= Ending Cash</div>
         </div>
       </div>
-      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:.75rem">
-        <div style="font-family:var(--mono);font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(240,238,232,.25);margin-bottom:.5rem">Key Insight</div>
-        <div style="font-size:.65rem;color:rgba(240,238,232,.5);line-height:1.6">Net Income: ${fmt(ci.netIncome)}<br>Operating CF: <span id="cf-sidebar-span">${fmt(cf.operatingCF)}</span><br><br>A company can be profitable and still run out of cash!</div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:.75rem">
+        <div class="sb-label" style="margin-bottom:.35rem">Key Insight</div>
+        <div style="font-size:.68rem;color:rgba(240,238,232,.6);line-height:1.6">Net Income: ${fmtD(ci.netIncome)}<br>Operating CF: ${fmtD(cf.opCF)}<br><br>A profitable company can still run out of cash!</div>
       </div>
     </div>
     <div class="main">
       <div class="phase-header">
-        <div class="ph-num" style="color:var(--phase3)">3</div>
+        <div class="ph-num" style="color:#4A148C">3</div>
         <div>
           <div class="ph-title">Cash Flow Statement</div>
-          <div class="ph-sub">Shows how cash actually moves in and out of the business — from operations, investing, and financing. A company can be profitable on paper but still run out of cash. This statement tells the real story.</div>
+          <div class="ph-sub">Shows how cash actually moves — from operations, investing, and financing. Net Income from Phase 1 is pre-filled. Use the data sheet to enter the adjustments. Cash outflows are negative numbers.</div>
         </div>
-        <span class="ph-badge" style="background:var(--phase3l);color:var(--phase3)">Statement 3 of 3</span>
+        <span class="ph-badge" style="background:#F3E5F5;color:#4A148C">Statement 3 of 3</span>
       </div>
 
-      <div class="inst-box" style="background:var(--phase3l);border-color:var(--phase3);color:var(--phase3)">
-        Net Income from your Income Statement flows directly into Operating Cash Flow. Enter positive numbers for cash inflows and <strong>negative numbers for outflows</strong> (e.g. capital expenditures should be negative).
-      </div>
+      ${dataSheetHTML(
+        s.cashFlowItems,
+        s.name+' — Cash Flow Adjustments ('+s.year+')',
+        'These are the adjustments needed to convert Net Income to actual cash flow. Enter each in the correct activity section below. Cash outflows (money leaving the business) are negative numbers.',
+        'CapEx and debt repayment are always negative — they are cash leaving the business. The depreciation add-back is always positive.'
+      )}
 
       <div class="fin-table-card">
-        <div class="ftc-header"><div><div class="ftc-title">${s.name}</div><div class="ftc-subtitle">Cash Flow Statement — ${s.year}</div></div></div>
+        <div class="ftc-header"><div class="ftc-title">${s.name}</div><div class="ftc-subtitle">Cash Flow Statement — ${s.year}</div></div>
         <table class="fin-table">
-          <thead><tr><th>Item</th><th class="right">Amount (enter value)</th><th class="right" style="width:130px">Correct Amount</th></tr></thead>
+          <thead><tr><th>Item</th><th style="text-align:right;width:180px">Amount</th></tr></thead>
           <tbody>
-            <tr class="section-header"><td colspan="3">OPERATING ACTIVITIES</td></tr>
-            <tr><td><div class="item-name">Net Income <span class="item-tooltip" data-tip="Flows directly from the bottom of the Income Statement">ℹ️</span></div></td>
-              <td class="amount"><input type="number" id="cf-netIncome" value="${Math.round(ci.netIncome)}" style="background:var(--greenl)" oninput="updateCFTotals()"></td>
-              <td class="amount" style="color:var(--text-muted);font-family:var(--mono)">${fmt(ci.netIncome)}</td>
+            <tr class="section-header"><td colspan="2">OPERATING ACTIVITIES — Day-to-day business cash</td></tr>
+            <tr>
+              <td><div class="item-name">Net Income <span class="tip" data-tip="Flows directly from your Income Statement in Phase 1 — pre-filled">ℹ️</span></div></td>
+              <td class="amount"><input type="number" data-key="netIncome" data-phase="cf" value="${Math.round(ci.netIncome)}" style="background:var(--greenl);border-color:var(--green)" oninput="updateCFLive()"></td>
             </tr>
-            ${cfRow('depreciation2','Add: Depreciation (non-cash)',d.depreciation2,'Added back because depreciation is a non-cash expense — it reduces income but not cash')}
-            ${cfRow('arChange','Change in Accounts Receivable',d.arChange,'Negative = AR increased (customers owe more = less cash collected)')}
-            ${cfRow('inventoryChange','Change in Inventory',d.inventoryChange,'Negative = bought more inventory (uses cash)')}
-            ${cfRow('apChange','Change in Accounts Payable',d.apChange,'Positive = AP increased (paying suppliers later = keeps more cash)')}
-            <tr class="subtotal highlight-row ${cf.operatingCF<0?'loss':''}"><td><strong>Net Cash from Operating Activities</strong></td><td class="amount" id="cf-operating-total">—</td><td class="amount">${fmt(cf.operatingCF)}</td></tr>
-            <tr class="section-header"><td colspan="3">INVESTING ACTIVITIES</td></tr>
-            ${cfRow('capex','Capital Expenditures (CapEx)',d.capex,'Money spent on property, equipment, and long-term assets — usually negative')}
-            ${d.investments!==0?cfRow('investments','Purchase of Investments',d.investments,'Cash used to buy investment securities'):''}
-            <tr class="subtotal"><td><strong>Net Cash from Investing Activities</strong></td><td class="amount" id="cf-investing-total">—</td><td class="amount" style="color:var(--text-muted)">${fmt(cf.investingCF)}</td></tr>
-            <tr class="section-header"><td colspan="3">FINANCING ACTIVITIES</td></tr>
-            ${cfRow('debtRepayment','Debt Repayment',d.debtRepayment,'Cash paid to reduce outstanding loans — negative because cash leaves')}
-            ${d.dividends!==0?cfRow('dividends','Dividends Paid',d.dividends,'Cash returned to shareholders — reduces cash'):''}
-            <tr class="subtotal"><td><strong>Net Cash from Financing Activities</strong></td><td class="amount" id="cf-financing-total">—</td><td class="amount" style="color:var(--text-muted)">${fmt(cf.financingCF)}</td></tr>
-            <tr class="subtotal"><td><strong>Net Change in Cash</strong></td><td class="amount" id="cf-net-change">—</td><td class="amount" style="color:var(--text-muted)">${fmt(cf.netChange)}</td></tr>
-            <tr><td><div class="item-name">Beginning Cash Balance <span class="item-tooltip" data-tip="The cash balance at the start of this accounting period">ℹ️</span></div></td>
-              <td class="amount" style="font-family:var(--mono)">${fmt(d.cash)}</td>
-              <td class="amount" style="color:var(--text-muted);font-family:var(--mono)">${fmt(d.cash)}</td>
-            </tr>
-            <tr class="total-row ${cf.endingCash<0?'loss':''}"><td><strong>ENDING CASH BALANCE</strong></td><td class="amount" id="cf-ending-cash">—</td><td class="amount">${fmt(cf.endingCash)}</td></tr>
+            ${cfInputRow('deprAddback','Add: Depreciation (non-cash)','Non-cash expense added back — check data sheet')}
+            ${cfInputRow('arChange','Change in Accounts Receivable','Check data sheet — can be negative')}
+            ${cfInputRow('invChange','Change in Inventory','Check data sheet — can be negative')}
+            ${cfInputRow('apChange','Change in Accounts Payable','Check data sheet — can be positive')}
+            <tr class="subtotal"><td><strong>Net Cash from Operating Activities</strong></td><td class="calc" id="cf-opTotal">—</td></tr>
+            <tr class="section-header"><td colspan="2">INVESTING ACTIVITIES — Long-term asset purchases/sales</td></tr>
+            ${cfInputRow('capex','Capital Expenditures (CapEx)','Enter as negative — cash leaving for equipment')}
+            ${s.cashFlowItems.find(i=>i.key==='investments')?cfInputRow('investments','Investment Purchases','Enter from data sheet'):''}
+            <tr class="subtotal"><td><strong>Net Cash from Investing Activities</strong></td><td class="calc" id="cf-invTotal">—</td></tr>
+            <tr class="section-header"><td colspan="2">FINANCING ACTIVITIES — Borrowing and repaying money</td></tr>
+            ${cfInputRow('debtRepay','Debt Repayment','Enter as negative — cash leaving to repay loans')}
+            ${s.cashFlowItems.find(i=>i.key==='dividends')?cfInputRow('dividends','Dividends Paid','Enter as negative — cash paid to shareholders'):''}
+            <tr class="subtotal"><td><strong>Net Cash from Financing Activities</strong></td><td class="calc" id="cf-finTotal">—</td></tr>
+            <tr class="subtotal"><td><strong>Net Change in Cash</strong></td><td class="calc" id="cf-netChange">—</td></tr>
+            <tr><td><strong>Beginning Cash Balance</strong></td><td class="amount" style="font-family:var(--mono);text-align:right;padding-right:1rem">${fmtD(s.beginningCash)}</td></tr>
+            <tr class="ni-row"><td><strong>ENDING CASH BALANCE</strong></td><td class="calc" id="cf-endCash">—</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="btn-row">
         <button class="btn btn-outline" onclick="phase=2;renderApp()">← Back</button>
-        <button class="btn btn-primary" onclick="checkAndAdvanceCashFlow()">Check & Continue to Analysis →</button>
+        <button class="btn btn-primary" onclick="submitCashFlow()">Submit & Continue to Analysis →</button>
       </div>
     </div>
   </div>`;
   buildSidebar();
-  document.querySelectorAll('input[type=number]').forEach(el=>el.addEventListener('input',updateCFTotals));
-  updateCFTotals();
+  document.querySelectorAll('input[data-phase="cf"]').forEach(el=>el.addEventListener('input',updateCFLive));
+  updateCFLive();
 }
 
-function cfRow(id,name,correctVal,tip){
+function cfInputRow(key,name,tip){
   return`<tr>
-    <td><div class="item-name" style="font-size:.82rem">${name} <span class="item-tooltip" data-tip="${tip}">ℹ️</span></div></td>
-    <td class="amount"><input type="number" id="cf-${id}" placeholder="0" oninput="updateCFTotals()"></td>
-    <td class="amount" style="color:var(--text-muted);font-family:var(--mono)">${correctVal>=0?'$'+Math.abs(correctVal).toLocaleString():'($'+Math.abs(correctVal).toLocaleString()+')'}</td>
+    <td><div class="item-name">${name} <span class="tip" data-tip="${tip}">ℹ️</span></div></td>
+    <td class="amount"><input type="number" data-key="${key}" data-phase="cf" placeholder="Enter amount" oninput="updateCFLive()"></td>
   </tr>`;
 }
 
-function getCFVal(id){return parseFloat(document.getElementById(`cf-${id}`)?.value)||0;}
+function getCFVal(key){return parseFloat(document.querySelector('input[data-key="'+key+'"][data-phase="cf"]')?.value)||0;}
 
-function updateCFTotals(){
-  const s=scenario;const d=s.data;const cf=calcCashFlow(s);
-  const opCF=getCFVal('netIncome')+getCFVal('depreciation2')+getCFVal('arChange')+getCFVal('inventoryChange')+getCFVal('apChange');
-  const invCF=getCFVal('capex')+(d.investments!==0?getCFVal('investments'):d.investments);
-  const finCF=getCFVal('debtRepayment')+(d.dividends!==0?getCFVal('dividends'):d.dividends);
+function updateCFLive(){
+  const s=scenario;
+  const opCF=getCFVal('netIncome')+getCFVal('deprAddback')+getCFVal('arChange')+getCFVal('invChange')+getCFVal('apChange');
+  const invCF=getCFVal('capex')+(s.cashFlowItems.find(i=>i.key==='investments')?getCFVal('investments'):0);
+  const finCF=getCFVal('debtRepay')+(s.cashFlowItems.find(i=>i.key==='dividends')?getCFVal('dividends'):0);
   const netChange=opCF+invCF+finCF;
-  const endingCash=d.cash+netChange;
-
-  const setVal=(id,val,correct)=>{
-    const el=document.getElementById(id);
-    if(el){el.textContent=fmt(val);el.style.color=Math.abs(val-correct)<1?'var(--green)':'var(--red)';}
-  };
-  setVal('cf-operating-total',opCF,cf.operatingCF);
-  setVal('cf-investing-total',invCF,cf.investingCF);
-  setVal('cf-financing-total',finCF,cf.financingCF);
-  setVal('cf-net-change',netChange,cf.netChange);
-  setVal('cf-ending-cash',endingCash,cf.endingCash);
+  const endCash=s.beginningCash+netChange;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=fmtD(val);};
+  set('cf-opTotal',opCF);set('cf-invTotal',invCF);set('cf-finTotal',finCF);set('cf-netChange',netChange);set('cf-endCash',endCash);
 }
 
-function checkAndAdvanceCashFlow(){
-  const s=scenario;const d=s.data;const ci=calcIncome(s);const cf=calcCashFlow(s);
-  const fields=[
-    {id:'netIncome',correct:Math.round(ci.netIncome)},
-    {id:'depreciation2',correct:d.depreciation2},
-    {id:'arChange',correct:d.arChange},
-    {id:'inventoryChange',correct:d.inventoryChange},
-    {id:'apChange',correct:d.apChange},
-    {id:'capex',correct:d.capex},
-    {id:'debtRepayment',correct:d.debtRepayment},
-  ];
-  if(d.investments!==0)fields.push({id:'investments',correct:d.investments});
-  if(d.dividends!==0)fields.push({id:'dividends',correct:d.dividends});
+function submitCashFlow(){
+  const s=scenario;
+  const cf=calcCF(s);
+  const ci=calcNet(s);
+  const cfItems=s.cashFlowItems;
+  const keys=['netIncome',...cfItems.map(i=>i.key)];
+  const correctMap={netIncome:Math.round(ci.netIncome)};
+  cfItems.forEach(i=>{correctMap[i.key]=i.val;});
 
-  let errors=0;
-  fields.forEach(f=>{
-    const input=document.getElementById(`cf-${f.id}`);
-    if(!input)return;
-    const val=parseFloat(input.value)||0;
-    if(Math.abs(val-f.correct)>1)errors++;
+  let correct=0,errors=0;
+  const results=keys.map(key=>{
+    const entered=getCFVal(key);
+    const right=correctMap[key];
+    const ok=Math.abs(entered-right)<2;
+    if(ok)correct++;else errors++;
+    const name=key==='netIncome'?'Net Income':cfItems.find(i=>i.key===key)?.name||key;
+    return{key,name,entered,right,ok};
   });
-  if(errors>0){alert(`${errors} cash flow item(s) are incorrect. Remember: cash outflows should be negative numbers.`);return;}
-  cashFlowData=fields.reduce((o,f)=>{o[f.id]=f.correct;return o;},{});
+
+  studentCF={...correctMap,correct,errors,results};
   phase=4;renderApp();
 }
 
 // ── PHASE 4: ANALYSIS ──
 function renderAnalysis(){
   const s=scenario;
-  const ci=calcIncome(s);const cb=calcBalance(s);const cf=calcCashFlow(s);
-  const gpMargin=((ci.grossProfit/ci.totalRevenue)*100).toFixed(1);
-  const netMargin=((ci.netIncome/ci.totalRevenue)*100).toFixed(1);
-  const debtRatio=(cb.totalLiab/cb.totalAssets*100).toFixed(1);
-  const currentRatio=(cb.currentAssets/cb.currentLiab).toFixed(2);
-  const roi=((ci.netIncome/cb.totalAssets)*100).toFixed(1);
+  const ci=calcNet(s);
+  const cb=calcBal(s);
+  const cf=calcCF(s);
+  const gpMargin=ci.totalRev>0?((ci.grossProfit/ci.totalRev)*100).toFixed(1):0;
+  const netMargin=ci.totalRev>0?((ci.netIncome/ci.totalRev)*100).toFixed(1):0;
+  const curRatio=cb.currentLiab>0?(cb.currentAssets/cb.currentLiab).toFixed(2):0;
+  const debtRatio=cb.totalAssets>0?((cb.totalLiab/cb.totalAssets)*100).toFixed(1):0;
+  const roi=cb.totalAssets>0?((ci.netIncome/cb.totalAssets)*100).toFixed(1):0;
+
+  function ratioCard(label,val,status,desc){
+    const colors={pos:['#E8F5E9','#1B5E20'],neg:['#FFEBEE','#B71C1C'],neu:['#FFF3E0','#E65100']};
+    const[bg,c]=colors[status];
+    return`<div class="ratio-card" style="background:${bg};border-color:${c}30">
+      <div class="ratio-val" style="color:${c}">${val}</div>
+      <div class="ratio-label" style="color:${c}">${label}</div>
+      <div class="ratio-desc" style="color:${c}">${desc}</div>
+    </div>`;
+  }
 
   document.getElementById('app').innerHTML=`
   <header>
     <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
     <div class="hphases" id="hphases"></div>
     <div class="hright">
-      <div class="hstat"><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#FFD54F" id="h-phase">Analysis</div></div>
-      <div class="hstat"><div class="hstat-label">Company</div><div class="hstat-val neu" id="h-company">${s.name}</div></div>
+      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#FFD54F" id="h-phase">Analysis</div></div>
+      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
       <div><div class="sb-label">Progress</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Your Company's Numbers</div><div class="key-numbers" id="sb-numbers"></div></div>
-      <div><div class="sb-label">Industry Benchmarks</div>
+      <div><div class="sb-label">Key Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
+      <div><div class="sb-label">Healthy Benchmarks</div>
         <div class="formula-box">
-          <div class="formula-title">Healthy Ranges</div>
-          <div class="formula-line">Gross Margin: &gt;30% = good</div>
-          <div class="formula-line">Net Margin: &gt;10% = strong</div>
-          <div class="formula-line">Current Ratio: &gt;1.5 = safe</div>
-          <div class="formula-line">Debt Ratio: &lt;50% = low risk</div>
-          <div class="formula-line">ROI: &gt;10% = attractive</div>
+          <div class="formula-line">Gross Margin: &gt;30% good</div>
+          <div class="formula-line">Net Margin: &gt;10% strong</div>
+          <div class="formula-line">Current Ratio: &gt;1.5 safe</div>
+          <div class="formula-line">Debt Ratio: &lt;50% low risk</div>
+          <div class="formula-line">ROI: &gt;10% attractive</div>
         </div>
       </div>
     </div>
     <div class="main">
       <div class="phase-header">
-        <div class="ph-num" style="color:var(--amber)">4</div>
+        <div class="ph-num" style="color:#E65100">4</div>
         <div>
           <div class="ph-title">Financial Analysis</div>
-          <div class="ph-sub">Now interpret what the numbers mean. This is where financial literacy becomes business decision-making. Use the data from all three statements to answer these questions.</div>
+          <div class="ph-sub">Now interpret what the numbers mean. Use all three statements to answer the questions below. Reference specific numbers from your data — vague answers will score poorly.</div>
         </div>
-        <span class="ph-badge" style="background:var(--amberl);color:var(--amber)">Analysis Phase</span>
+        <span class="ph-badge" style="background:#FFF3E0;color:#E65100">Analysis Phase</span>
       </div>
 
-      <!-- Key Ratios Dashboard -->
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.65rem;margin-bottom:1.25rem">
-        ${ratioCard('Gross Margin',gpMargin+'%',parseFloat(gpMargin)>30?'pos':'neg','Revenue after direct costs')}
-        ${ratioCard('Net Margin',netMargin+'%',parseFloat(netMargin)>10?'pos':parseFloat(netMargin)>0?'neu':'neg','Profit per dollar of revenue')}
-        ${ratioCard('Current Ratio',currentRatio+'x',parseFloat(currentRatio)>1.5?'pos':parseFloat(currentRatio)>1?'neu':'neg','Ability to pay short-term debt')}
-        ${ratioCard('Debt Ratio',debtRatio+'%',parseFloat(debtRatio)<50?'pos':parseFloat(debtRatio)<70?'neu':'neg','% of assets financed by debt')}
-        ${ratioCard('ROI',roi+'%',parseFloat(roi)>10?'pos':parseFloat(roi)>0?'neu':'neg','Return on assets invested')}
+      <div class="ratio-grid">
+        ${ratioCard('Gross Margin',gpMargin+'%',parseFloat(gpMargin)>30?'pos':'neg','After direct costs')}
+        ${ratioCard('Net Margin',netMargin+'%',parseFloat(netMargin)>10?'pos':parseFloat(netMargin)>0?'neu':'neg','Profit per revenue $')}
+        ${ratioCard('Current Ratio',curRatio+'x',parseFloat(curRatio)>1.5?'pos':parseFloat(curRatio)>1?'neu':'neg','Short-term liquidity')}
+        ${ratioCard('Debt Ratio',debtRatio+'%',parseFloat(debtRatio)<50?'pos':parseFloat(debtRatio)<70?'neu':'neg','% financed by debt')}
+        ${ratioCard('ROI',roi+'%',parseFloat(roi)>10?'pos':parseFloat(roi)>0?'neu':'neg','Return on assets')}
       </div>
 
       <div class="analysis-card">
-        <div class="analysis-q">
-          <div class="aq-num">Question 1 — Profitability</div>
-          <div class="aq-question">Is ${s.name} profitable? Analyze the Income Statement and calculate the gross profit margin and net profit margin. What do these margins tell you about the health of the business?</div>
-          <div class="aq-data">Total Revenue: ${fmt(ci.totalRevenue)} · Gross Profit: ${fmt(ci.grossProfit)} · Net Income: ${fmt(ci.netIncome)}<br>Gross Margin: ${gpMargin}% · Net Margin: ${netMargin}%</div>
-          <textarea id="aq1" placeholder="e.g. Meridian Retail Co. is profitable with a net income of $XX,XXX. The gross margin of X% means that for every dollar of revenue, X cents remain after direct costs. The net margin of X% means... This is [strong/weak] compared to industry benchmarks because..."></textarea>
+        <div class="aq">
+          <div class="aq-num">Question 1 — Profitability (Income Statement)</div>
+          <div class="aq-q">Is ${s.name} profitable? Calculate and explain the gross profit margin and net profit margin. What do these margins tell you about how well the business controls its costs?</div>
+          <div class="aq-data">Total Revenue: ${fmtD(ci.totalRev)} · Gross Profit: ${fmtD(ci.grossProfit)} · Net Income: ${fmtD(ci.netIncome)}<br>Gross Margin: ${gpMargin}% · Net Margin: ${netMargin}%</div>
+          <textarea id="aq1" placeholder="e.g. ${s.name} has a gross margin of ${gpMargin}% meaning that for every dollar of revenue, ${gpMargin} cents remain after paying direct costs. The net margin of ${netMargin}% means... Compared to healthy benchmarks (gross >30%, net >10%), this business is..."></textarea>
         </div>
-
-        <div class="analysis-q">
-          <div class="aq-num">Question 2 — Liquidity & Solvency</div>
-          <div class="aq-question">Can ${s.name} pay its bills? Analyze the Balance Sheet. Calculate and interpret the current ratio (Current Assets ÷ Current Liabilities). Is the debt level sustainable?</div>
-          <div class="aq-data">Current Assets: ${fmt(cb.currentAssets)} · Current Liabilities: ${fmt(cb.currentLiab)}<br>Current Ratio: ${currentRatio}x · Total Debt: ${fmt(cb.totalLiab)} · Debt Ratio: ${debtRatio}%</div>
-          <textarea id="aq2" placeholder="e.g. The current ratio of X.XX means the company has $X.XX in current assets for every $1.00 of current liabilities. This [is/is not] sufficient because... The debt ratio of X% suggests the company is [highly/moderately/not] leveraged..."></textarea>
+        <div class="aq">
+          <div class="aq-num">Question 2 — Liquidity & Debt (Balance Sheet)</div>
+          <div class="aq-q">Can ${s.name} pay its short-term bills? Calculate the current ratio (Current Assets ÷ Current Liabilities). Is the debt level sustainable? Reference the debt ratio.</div>
+          <div class="aq-data">Current Assets: ${fmtD(cb.currentAssets)} · Current Liabilities: ${fmtD(cb.currentLiab)}<br>Current Ratio: ${curRatio}x · Total Debt: ${fmtD(cb.totalLiab)} · Debt Ratio: ${debtRatio}%</div>
+          <textarea id="aq2" placeholder="e.g. The current ratio of ${curRatio} means the company has $${curRatio} in current assets for every $1.00 of current liabilities. This [is/is not] concerning because... The debt ratio of ${debtRatio}% means..."></textarea>
         </div>
-
-        <div class="analysis-q">
-          <div class="aq-num">Question 3 — Cash vs. Profit</div>
-          <div class="aq-question">Is ${s.name} generating real cash? Compare Net Income to Operating Cash Flow. Explain why these numbers differ and what it means for the business.</div>
-          <div class="aq-data">Net Income: ${fmt(ci.netIncome)} · Operating Cash Flow: ${fmt(cf.operatingCF)}<br>Net Cash Change: ${fmt(cf.netChange)} · Ending Cash: ${fmt(cf.endingCash)}</div>
-          <textarea id="aq3" placeholder="e.g. Net income was $X but operating cash flow was $X. These differ because depreciation ($X) is a non-cash expense that reduces income but not cash. Additionally, accounts receivable changed by $X meaning... A company can be profitable but cash-poor when..."></textarea>
+        <div class="aq">
+          <div class="aq-num">Question 3 — Cash vs. Profit (Cash Flow Statement)</div>
+          <div class="aq-q">Is ${s.name} generating real cash? Compare Net Income to Operating Cash Flow and explain why they are different. Why does this difference matter for business survival?</div>
+          <div class="aq-data">Net Income: ${fmtD(ci.netIncome)} · Operating Cash Flow: ${fmtD(cf.opCF)}<br>Net Change in Cash: ${fmtD(cf.netChange)} · Ending Cash: ${fmtD(cf.endCash)}</div>
+          <textarea id="aq3" placeholder="e.g. Net income was ${fmtD(ci.netIncome)} but operating cash flow was ${fmtD(cf.opCF)}. These differ because depreciation of $X is non-cash... A company can be profitable but cash-poor when..."></textarea>
         </div>
-
-        <div class="analysis-q">
+        <div class="aq">
           <div class="aq-num">Question 4 — Management Decision</div>
-          <div class="aq-question">Based on all three financial statements, should ${s.name} expand operations next year? Make a specific recommendation with evidence from the data. Reference at least 3 specific numbers.</div>
-          <div class="aq-data">Net Income: ${fmt(ci.netIncome)} · Cash on Hand: ${fmt(s.data.cash)} · Operating CF: ${fmt(cf.operatingCF)}<br>Debt Ratio: ${debtRatio}% · ROI: ${roi}% · Ending Cash: ${fmt(cf.endingCash)}</div>
-          <textarea id="aq4" placeholder="e.g. I [recommend/do not recommend] expansion because... The ROI of X% indicates... Cash flow from operations of $X [supports/does not support] taking on additional debt... The current ratio of X suggests..."></textarea>
+          <div class="aq-q">Based on all three financial statements, should ${s.name} expand operations next year? Make a specific recommendation and support it with at least 3 numbers from the statements.</div>
+          <div class="aq-data">Use data from all three statements. Consider: profitability, cash position, debt load, and operating cash flow.</div>
+          <textarea id="aq4" placeholder="e.g. I [recommend/do not recommend] expansion because the ROI of ${roi}% [supports/does not support] taking on additional risk... The operating cash flow of ${fmtD(cf.opCF)} [does/does not] provide enough internal funding... The debt ratio of ${debtRatio}% suggests..."></textarea>
         </div>
       </div>
 
@@ -1125,47 +1127,44 @@ function renderAnalysis(){
   buildSidebar();
 }
 
-function ratioCard(label,val,status,desc){
-  const colors={pos:['var(--greenl)','var(--green)'],neg:['var(--redl)','var(--red)'],neu:['var(--amberl)','var(--amber)']};
-  const[bg,color]=colors[status];
-  return`<div style="background:${bg};border:1.5px solid ${color}30;border-radius:var(--radius-sm);padding:.75rem;text-align:center">
-    <div style="font-family:var(--mono);font-size:1.1rem;font-weight:700;color:${color};margin-bottom:.25rem">${val}</div>
-    <div style="font-size:.65rem;font-weight:700;color:${color};margin-bottom:.15rem">${label}</div>
-    <div style="font-size:.58rem;color:${color};opacity:.7;line-height:1.3">${desc}</div>
-  </div>`;
-}
-
 function submitAnalysis(){
   const fields=['aq1','aq2','aq3','aq4'];
   for(const id of fields){
     const el=document.getElementById(id);
     if(!el?.value.trim()||el.value.trim().length<30){
-      el.style.borderColor='var(--red)';el.focus();
-      alert('Please answer all four analysis questions before continuing.');return;
+      el.style.borderColor='#B71C1C';el.focus();
+      alert('Please answer all four questions before continuing.');return;
     }
   }
-  analysisData={aq1:document.getElementById('aq1').value.trim(),aq2:document.getElementById('aq2').value.trim(),aq3:document.getElementById('aq3').value.trim(),aq4:document.getElementById('aq4').value.trim()};
+  studentAnalysis={aq1:document.getElementById('aq1').value.trim(),aq2:document.getElementById('aq2').value.trim(),aq3:document.getElementById('aq3').value.trim(),aq4:document.getElementById('aq4').value.trim()};
   phase=5;renderApp();
 }
 
 // ── PHASE 5: FEEDBACK ──
 async function renderFeedback(){
   const s=scenario;
-  const ci=calcIncome(s);const cb=calcBalance(s);const cf=calcCashFlow(s);
+  const ci=calcNet(s);
+  const cb=calcBal(s);
+  const cf=calcCF(s);
+  const gpMargin=((ci.grossProfit/ci.totalRev)*100).toFixed(1);
+  const netMargin=((ci.netIncome/ci.totalRev)*100).toFixed(1);
+  const curRatio=(cb.currentAssets/cb.currentLiab).toFixed(2);
+  const debtRatio=((cb.totalLiab/cb.totalAssets)*100).toFixed(1);
+  const roi=((ci.netIncome/cb.totalAssets)*100).toFixed(1);
 
   document.getElementById('app').innerHTML=`
   <header>
     <div class="hbrand"><h1>Financial Statements Simulator</h1><div class="sub">Business Management · Strand 5</div></div>
     <div class="hphases" id="hphases"></div>
     <div class="hright">
-      <div class="hstat"><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#81C784" id="h-phase">Complete</div></div>
-      <div class="hstat"><div class="hstat-label">Company</div><div class="hstat-val neu" id="h-company">${s.name}</div></div>
+      <div><div class="hstat-label">Phase</div><div class="hstat-val" style="color:#81C784" id="h-phase">Complete</div></div>
+      <div><div class="hstat-label">Company</div><div class="hstat-val" id="h-company">${s.name}</div></div>
     </div>
   </header>
   <div class="layout">
     <div class="sidebar">
-      <div><div class="sb-label">All Statements</div><div class="stmt-progress" id="sb-stmts"></div></div>
-      <div><div class="sb-label">Final Numbers</div><div class="key-numbers" id="sb-numbers"></div></div>
+      <div><div class="sb-label">All Statements ✓</div><div class="stmt-progress" id="sb-stmts"></div></div>
+      <div><div class="sb-label">Final Numbers</div><div class="key-numbers" id="sb-kn"></div></div>
     </div>
     <div class="main">
       <div class="feedback-card">
@@ -1175,74 +1174,70 @@ async function renderFeedback(){
             <div class="fb-title">${s.name} — Financial Analysis Review</div>
             <div class="fb-sub">Business Management · Strand 5 · Standards 1–3</div>
           </div>
-        </div>
-        <div style="padding:1.5rem;border-bottom:1px solid var(--border)">
-          <div class="score-row" id="score-row"></div>
-          <div class="fb-body" id="fb-body"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
-        </div>
-        <div style="padding:1.25rem 1.5rem">
-          <div style="font-family:var(--mono);font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem">Statement Summary</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;font-size:.8rem">
-            <div style="background:var(--phase1l);border:1px solid var(--bluem);border-radius:var(--radius-sm);padding:.85rem">
-              <div style="font-weight:700;color:var(--blue);margin-bottom:.4rem">📊 Income Statement</div>
-              Revenue: ${fmt(ci.totalRevenue)}<br>Gross Profit: ${fmt(ci.grossProfit)}<br>Net Income: <span style="font-weight:700;color:green">${fmt(ci.netIncome)}</span>
-            </div>
-            <div style="background:var(--phase2l);border:1px solid var(--greenm);border-radius:var(--radius-sm);padding:.85rem">
-              <div style="font-weight:700;color:var(--green);margin-bottom:.4rem">⚖️ Balance Sheet</div>
-              Total Assets: ${fmt(cb.totalAssets)}<br>Total Liabilities: ${fmt(cb.totalLiab)}<br>Owner's Equity: <span id="fb-equity-span">${fmt(cb.equity)}</span>
-            </div>
-            <div style="background:var(--phase3l);border:1px solid var(--purplem);border-radius:var(--radius-sm);padding:.85rem">
-              <div style="font-weight:700;color:var(--purple);margin-bottom:.4rem">💸 Cash Flow</div>
-              Operating CF: <span id="fb-cf-span">${fmt(cf.operatingCF)}</span><br>Net Change: ${fmt(cf.netChange)}<br>Ending Cash: ${fmt(cf.endingCash)}
+          <div style="margin-left:auto;text-align:right">
+            <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,238,232,.3)">Statement Accuracy</div>
+            <div style="font-family:var(--mono);font-size:.9rem;font-weight:700;color:#FFD54F;margin-top:.2rem">
+              Income: ${studentIncome.correct||0}/${s.incomeItems.length} · Balance: ${studentBalance.correct||0}/${s.balanceItems.length} · CF: ${studentCF.correct||0}/${s.cashFlowItems.length+1}
             </div>
           </div>
         </div>
+        <div style="padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1)">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem;font-size:.82rem">
+            <div style="background:var(--bluel);border:1px solid var(--bluem);border-radius:var(--radius-sm);padding:.85rem">
+              <div style="font-weight:700;color:var(--blue);margin-bottom:.4rem">📊 Income Statement</div>
+              Revenue: ${fmtD(ci.totalRev)}<br>Gross Profit: ${fmtD(ci.grossProfit)}<br>Net Income: <strong style="color:${ci.netIncome>=0?'var(--green)':'var(--red)'}">${fmtD(ci.netIncome)}</strong>
+            </div>
+            <div style="background:var(--greenl);border:1px solid var(--greenm);border-radius:var(--radius-sm);padding:.85rem">
+              <div style="font-weight:700;color:var(--green);margin-bottom:.4rem">⚖️ Balance Sheet</div>
+              Total Assets: ${fmtD(cb.totalAssets)}<br>Total Liabilities: ${fmtD(cb.totalLiab)}<br>Owner's Equity: <strong style="color:${cb.equity>=0?'var(--green)':'var(--red)'}">${fmtD(cb.equity)}</strong>
+            </div>
+            <div style="background:var(--purplel);border:1px solid var(--purplem);border-radius:var(--radius-sm);padding:.85rem">
+              <div style="font-weight:700;color:var(--purple);margin-bottom:.4rem">💸 Cash Flow</div>
+              Operating CF: <strong style="color:${cf.opCF>=0?'var(--green)':'var(--red)'}">${fmtD(cf.opCF)}</strong><br>Net Change: ${fmtD(cf.netChange)}<br>Ending Cash: ${fmtD(cf.endCash)}
+            </div>
+          </div>
+          <div class="score-row" id="score-row"></div>
+          <div class="fb-body" id="fb-body"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+        </div>
       </div>
       <div class="btn-row" style="margin-top:.75rem">
-        <button class="btn btn-outline" onclick="phase=0;scenario=null;renderApp()">🔄 Try Another Company</button>
+        <button class="btn btn-outline" onclick="phase=0;renderSelect()">🔄 Try Another Company</button>
         <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
       </div>
     </div>
   </div>`;
   buildHeader();buildSidebar();
 
-  const gpMargin=((ci.grossProfit/ci.totalRevenue)*100).toFixed(1);
-  const netMargin=((ci.netIncome/ci.totalRevenue)*100).toFixed(1);
-  const debtRatio=(cb.totalLiab/cb.totalAssets*100).toFixed(1);
-  const currentRatio=(cb.currentAssets/cb.currentLiab).toFixed(2);
-  const roi=((ci.netIncome/cb.totalAssets)*100).toFixed(1);
+  const systemPrompt=`You are a demanding but fair financial analysis professor reviewing a high school student's work on financial statements for Utah Business Management Strand 5. Hold work to real professional standards.
 
-  const systemPrompt=`You are a demanding but fair financial analysis professor reviewing a high school student's financial statement analysis for Utah Business Management Strand 5. Hold work to real professional standards. Students who cannot interpret financial statements will struggle in any business career.
-
-SCORING — strict:
-- "Great" = correctly calculated ratios, used financial vocabulary accurately, drew logical conclusions from the data
+SCORING:
+- "Great" = correctly interpreted ratios, used financial vocabulary accurately, drew logical conclusions from data
 - "OK" = correct direction but missing depth, incomplete vocabulary, or weak connections between statements
-- "Needs Work" = incorrect calculations, misunderstood what a ratio means, or conclusions not supported by the data
+- "Needs Work" = incorrect interpretation, misunderstood concepts, or conclusions not supported by numbers
 
 Start with EXACTLY:
 SCORES: Income Statement Analysis:[Great/OK/Needs Work] | Balance Sheet Analysis:[Great/OK/Needs Work] | Cash Flow Analysis:[Great/OK/Needs Work] | Management Decision:[Great/OK/Needs Work] | Overall Financial Literacy:[Great/OK/Needs Work]
 
-Then 4 paragraphs:
-1. Evaluate profitability analysis — did they correctly calculate and interpret gross margin (${gpMargin}%) and net margin (${netMargin}%)? Did they use vocabulary: revenue, COGS, gross profit, operating expenses, net income? Quote their actual words.
-2. Evaluate liquidity/solvency analysis — did they correctly interpret the current ratio (${currentRatio}x) and debt ratio (${debtRatio}%)? Did they explain what these mean for the company's ability to pay bills and survive?
-3. Evaluate cash flow analysis — did they understand WHY net income (${fmt(ci.netIncome)}) differs from operating cash flow (${fmt(cf.operatingCF)})? Depreciation adding back, working capital changes? This is the hardest concept — be specific about whether they got it.
-4. Evaluate the management decision — was it supported by specific data? Did they reference at least 3 numbers? Was the recommendation logically consistent with what the numbers show?
+Then 4 focused paragraphs:
+1. Profitability analysis — did they correctly explain gross margin (${gpMargin}%) and net margin (${netMargin}%)? Did they use vocabulary: revenue, COGS, gross profit, operating expenses, net income?
+2. Liquidity/solvency — did they correctly interpret the current ratio (${curRatio}x) and debt ratio (${debtRatio}%)? Did they explain what these mean for the company's financial health?
+3. Cash vs profit — did they understand WHY net income (${fmtD(ci.netIncome)}) differs from operating cash flow (${fmtD(cf.opCF)})? Did they mention depreciation, working capital changes?
+4. Management decision — was it supported by specific data? Was it logically consistent with what the numbers show?
 
-End with one specific challenge: identify the weakest analysis and give them a concrete example of what a stronger answer would look like. Students are preparing for real business careers. No markdown ** or ##.`;
+End with one specific rewrite challenge — identify their weakest answer and show them what a stronger version looks like. No markdown ** or ##.`;
 
   const userPrompt=`Student Financial Analysis — ${s.name} (${s.type})
 
-COMPANY FINANCIALS:
-Income Statement: Revenue=${fmt(ci.totalRevenue)}, Gross Profit=${fmt(ci.grossProfit)} (${gpMargin}%), Net Income=${fmt(ci.netIncome)} (${netMargin}%)
-Balance Sheet: Total Assets=${fmt(cb.totalAssets)}, Total Liabilities=${fmt(cb.totalLiab)}, Equity=${fmt(cb.equity)}, Current Ratio=${currentRatio}x, Debt Ratio=${debtRatio}%
-Cash Flow: Operating CF=${fmt(cf.operatingCF)}, Investing CF=${fmt(calcCashFlow(s).investingCF)}, Net Change=${fmt(cf.netChange)}, Ending Cash=${fmt(cf.endingCash)}
-Key Ratios: ROI=${roi}%
+Statement accuracy: Income ${studentIncome.correct}/${s.incomeItems.length}, Balance ${studentBalance.correct}/${s.balanceItems.length}, Cash Flow ${studentCF.correct}/${s.cashFlowItems.length+1}
 
-STUDENT ANALYSIS:
-Q1 (Profitability): "${analysisData.aq1}"
-Q2 (Liquidity/Solvency): "${analysisData.aq2}"
-Q3 (Cash vs Profit): "${analysisData.aq3}"
-Q4 (Management Decision): "${analysisData.aq4}"`;
+Key Financials: Revenue=${fmtD(ci.totalRev)}, Gross Profit=${fmtD(ci.grossProfit)} (${gpMargin}%), Net Income=${fmtD(ci.netIncome)} (${netMargin}%)
+Total Assets=${fmtD(cb.totalAssets)}, Total Liabilities=${fmtD(cb.totalLiab)}, Equity=${fmtD(cb.equity)}, Current Ratio=${curRatio}x, Debt Ratio=${debtRatio}%
+Operating CF=${fmtD(cf.opCF)}, Net Change=${fmtD(cf.netChange)}, Ending Cash=${fmtD(cf.endCash)}, ROI=${roi}%
+
+Q1 (Profitability): "${studentAnalysis.aq1}"
+Q2 (Liquidity/Solvency): "${studentAnalysis.aq2}"
+Q3 (Cash vs Profit): "${studentAnalysis.aq3}"
+Q4 (Management Decision): "${studentAnalysis.aq4}"`;
 
   try{
     const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
